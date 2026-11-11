@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Software</title>
+<style>
+:root{--bg:#f6f4ff;--card:#fff;--text:#1d1b2e;--muted:#6b6880;--line:#e6e2f5}
+@media(prefers-color-scheme:dark){:root{--bg:#12101f;--card:#1c1930;--text:#f1eefc;--muted:#a29fbd;--line:#2e2a4a}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text)}
+header{padding:56px 20px 70px;text-align:center;color:#fff;background:linear-gradient(120deg,#7c3aed,#ec4899,#f59e0b);background-size:200% 200%;animation:g 12s ease infinite}
+@keyframes g{50%{background-position:100% 50%}}
+header h1{margin:0 0 8px;font-size:clamp(28px,6vw,48px)}
+header p{margin:0;opacity:.92}
+.wrap{max-width:1150px;margin:-34px auto 60px;padding:0 16px}
+.search{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:16px;padding:6px 16px;box-shadow:0 10px 30px rgba(80,40,160,.18)}
+.search input{flex:1;border:0;outline:0;background:none;color:var(--text);font-size:17px;padding:12px 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
+.chip{border:2px solid var(--c,#7c3aed);color:var(--c,#7c3aed);background:transparent;border-radius:999px;padding:7px 14px;font-weight:600;cursor:pointer;font-size:14px}
+.chip.on{background:var(--c,#7c3aed);color:#fff}
+.meta{color:var(--muted);font-size:14px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px;transition:.2s}
+.card:hover{transform:translateY(-5px);box-shadow:0 14px 30px color-mix(in srgb,var(--c) 30%,transparent)}
+.ic{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;font-size:26px;background:color-mix(in srgb,var(--c) 18%,transparent)}
+.card h3{margin:0;font-size:18px;word-break:break-word}
+.card p{margin:0;color:var(--muted);font-size:14px;flex:1;line-height:1.45}
+.tag{font-size:12px;font-weight:700;color:var(--c)}
+.row{display:flex;gap:12px;font-size:13px;color:var(--muted);align-items:center}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btns a{text-decoration:none;font-size:13px;font-weight:600;padding:7px 12px;border-radius:10px;background:var(--c);color:#fff}
+.btns a.alt{background:transparent;color:var(--c);border:1.5px solid var(--c)}
+.msg{text-align:center;padding:40px;color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:13px;padding-bottom:30px}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">My Software</h1>
+  <p id="sub">Loading from GitHub…</p>
+</header>
+<div class="wrap">
+  <div class="search"><span>🔍</span><input id="q" placeholder="Search by name, description, language or topic…" autocomplete="off"></div>
+  <div class="chips" id="chips"></div>
+  <div class="meta" id="meta"></div>
+  <div class="grid" id="grid"></div>
+  <footer>Updates automatically from GitHub ✨</footer>
+</div>
+<script>
+/* ====== EDIT ONLY THIS PART ====== */
+const USERNAME = "imranulholque";
+const SITE_TITLE = "Imranul's Software";
+const HIDE_FORKS = true;
+const HIDE_REPOS = [USERNAME + ".github.io"]; // repo names to hide
+/* Category rules: topic or keyword -> [category name, icon] */
+const CATEGORIES = {
+  game:["Games","🎮"], games:["Games","🎮"],
+  ai:["AI & ML","🤖"], ml:["AI & ML","🤖"], "machine-learning":["AI & ML","🤖"],
+  web:["Web","🌐"], website:["Web","🌐"], frontend:["Web","🌐"],
+  android:["Mobile","📱"], ios:["Mobile","📱"], mobile:["Mobile","📱"], flutter:["Mobile","📱"],
+  desktop:["Desktop","🖥️"], windows:["Desktop","🖥️"],
+  cli:["Tools","🛠️"], tool:["Tools","🛠️"], tools:["Tools","🛠️"], utility:["Tools","🛠️"],
+  bot:["Bots","🦾"], telegram:["Bots","🦾"], discord:["Bots","🦾"],
+  security:["Security","🔐"], api:["API & Backend","⚙️"], backend:["API & Backend","⚙️"],
+  data:["Data","📊"], education:["Education","🎓"]
+};
+/* If no topic matches, fall back to language */
+const LANGS = {JavaScript:["Web","🌐"],TypeScript:["Web","🌐"],HTML:["Web","🌐"],CSS:["Web","🌐"],
+  Python:["Python Apps","🐍"],Java:["Java Apps","☕"],Kotlin:["Mobile","📱"],Dart:["Mobile","📱"],
+  "C#":["Desktop","🖥️"],"C++":["Desktop","🖥️"],C:["Desktop","🖥️"],Go:["API & Backend","⚙️"],
+  Rust:["Tools","🛠️"],Shell:["Tools","🛠️"],PHP:["Web","🌐"]};
+/* ================================= */
+
+const COLORS=["#7c3aed","#ec4899","#f59e0b","#10b981","#3b82f6","#ef4444","#14b8a6","#8b5cf6","#f97316","#06b6d4"];
+const catColor={};
+const colorOf=n=>catColor[n]||(catColor[n]=COLORS[Object.keys(catColor).length%COLORS.length]);
+let items=[],active="All";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function categorize(r){
+  for(const t of r.topics||[]) if(CATEGORIES[t]) return CATEGORIES[t];
+  if(LANGS[r.language]) return LANGS[r.language];
+  return ["Other","✨"];
+}
+async function load(){
+  $("title").textContent=SITE_TITLE; document.title=SITE_TITLE;
+  const key="repos_"+USERNAME; let data=null;
+  try{
+    const res=await fetch(`https://api.github.com/users/${USERNAME}/repos?per_page=100&sort=created`);
+    if(!res.ok) throw new Error(res.status);
+    data=await res.json();
+    try{localStorage.setItem(key,JSON.stringify(data))}catch(e){}
+  }catch(e){
+    try{data=JSON.parse(localStorage.getItem(key))}catch(_){}
+  }
+  if(!data){$("grid").innerHTML='<div class="msg">Could not load projects. Check USERNAME in index.html or try again later.</div>';$("sub").textContent="";return}
+  items=data.filter(r=>!(HIDE_FORKS&&r.fork)&&!r.archived&&!HIDE_REPOS.includes(r.name))
+    .map(r=>{const[c,i]=categorize(r);return{...r,cat:c,icon:i}})
+    .sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  $("sub").textContent=`${items.length} projects • by @${USERNAME}`;
+  items.forEach(r=>colorOf(r.cat));
+  render();
+}
+function render(){
+  const q=$("q").value.trim().toLowerCase();
+  const cats=["All",...new Set(items.map(r=>r.cat))];
+  $("chips").innerHTML=cats.map(c=>{
+    const n=c==="All"?items.length:items.filter(r=>r.cat===c).length;
+    const ico=c==="All"?"🌈":items.find(r=>r.cat===c).icon;
+    return `<button class="chip ${c===active?"on":""}" style="--c:${c==="All"?"#7c3aed":colorOf(c)}" data-c="${esc(c)}">${ico} ${esc(c)} (${n})</button>`}).join("");
+  const list=items.filter(r=>(active==="All"||r.cat===active)&&
+    (!q||[r.name,r.description,r.language,r.cat,...(r.topics||[])].join(" ").toLowerCase().includes(q)));
+  $("meta").textContent=`Showing ${list.length} of ${items.length}`;
+  $("grid").innerHTML=list.length?list.map(r=>{
+    const name=r.name.replace(/[-_]/g," ").replace(/([a-z0-9])([A-Z])/g,"$1 $2");
+    return `<div class="card" style="--c:${colorOf(r.cat)}">
+      <div class="ic">${r.icon}</div>
+      <span class="tag">${esc(r.cat)}</span>
+      <h3>${esc(name)}</h3>
+      <p>${esc(r.description||"No description yet.")}</p>
+      <div class="row"><span>${esc(r.language||"—")}</span><span>⭐ ${r.stargazers_count}</span><span>🍴 ${r.forks_count}</span></div>
+      <div class="btns">
+        <a href="${esc(r.html_url)}" target="_blank" rel="noopener">GitHub</a>
+        <a class="alt" href="${esc(r.html_url)}/releases/latest" target="_blank" rel="noopener">⬇ Download</a>
+        ${r.homepage?`<a class="alt" href="${esc(r.homepage)}" target="_blank" rel="noopener">Live</a>`:""}
+      </div></div>`}).join(""):'<div class="msg">No software found 😕</div>';
+}
+$("q").addEventListener("input",render);
+$("chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(b){active=b.dataset.c;render()}});
+load();
+</script>
+</body>
+</html>
