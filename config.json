@@ -3,7 +3,8 @@
     "title": "Imranul's Software",
     "tagline": "Free, handy software made by me. Download the latest build in one click.",
     "facebook": "https://www.facebook.com/imranul.hoque.sabbir1",
-    "hideForks": true
+    "hideForks": true,
+    "avatar": "icons/me-mwccsy8l.jpg"
   },
   "apps": {
     "IMageFixer": {
@@ -37,7 +38,8 @@
     "buttonKeymapper": {
       "name": "Button Keymapper",
       "icon": "🎛️",
-      "category": "Android Apps"
+      "category": "Android Apps",
+      "hide": true
     },
     "imageFixer3": {
       "name": "Image Fixer",
@@ -62,7 +64,8 @@
     "pdfEditor2": {
       "name": "PDF Editor",
       "icon": "📄",
-      "category": "Documents"
+      "category": "Documents",
+      "hide": true
     },
     "phone-print": {
       "hide": true
