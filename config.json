@@ -6,14 +6,71 @@
     "hideForks": true
   },
   "apps": {
-    "imageFixer3": { "name": "Image Fixer", "icon": "🖼️", "category": "Photo Tools" },
-    "IMageFixer": { "name": "Image Fixer Old", "icon": "🖼️", "category": "Photo Tools" },
-    "PrintMerged": { "name": "Print Merged", "icon": "🖨️", "category": "Print Tools" },
-    "pcPrint": { "name": "PC Print", "icon": "🖨️", "category": "Print Tools" },
-    "QRPRINT2": { "name": "QR Print", "icon": "📇", "category": "Print Tools" },
-    "pdfEditor2": { "name": "PDF Editor", "icon": "📄", "category": "Documents" },
-    "buttonKeymapper": { "name": "Button Keymapper", "icon": "🎛️", "category": "Android Apps" },
-    "shareHub": { "name": "Share Hub", "icon": "📡", "category": "Sharing" },
-    "ShareUp": { "name": "ShareUp", "icon": "🚀", "category": "Sharing" }
+    "IMageFixer": {
+      "name": "Image Fixer Old",
+      "icon": "🖼️",
+      "category": "Photo Tools",
+      "hide": true
+    },
+    "PrintMerged": {
+      "name": "Print Merged",
+      "icon": "🖨️",
+      "category": "Print Tools"
+    },
+    "QRPRINT": {
+      "hide": true
+    },
+    "QRPRINT2": {
+      "name": "QR Print",
+      "icon": "📇",
+      "category": "Print Tools",
+      "hide": true
+    },
+    "ShareUp": {
+      "name": "ShareUp",
+      "icon": "🚀",
+      "category": "Sharing"
+    },
+    "VideoStream": {
+      "hide": true
+    },
+    "buttonKeymapper": {
+      "name": "Button Keymapper",
+      "icon": "🎛️",
+      "category": "Android Apps"
+    },
+    "imageFixer3": {
+      "name": "Image Fixer",
+      "icon": "🖼️",
+      "category": "Photo Tools"
+    },
+    "imagefixer2": {
+      "hide": true
+    },
+    "keybar": {
+      "hide": true
+    },
+    "pcPrint": {
+      "name": "PC Print",
+      "icon": "🖨️",
+      "category": "Print Tools",
+      "hide": true
+    },
+    "pdfEditor": {
+      "hide": true
+    },
+    "pdfEditor2": {
+      "name": "PDF Editor",
+      "icon": "📄",
+      "category": "Documents"
+    },
+    "phone-print": {
+      "hide": true
+    },
+    "shareHub": {
+      "name": "Share Hub",
+      "icon": "📡",
+      "category": "Sharing"
+    }
   }
 }
