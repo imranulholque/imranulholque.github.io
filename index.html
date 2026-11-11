@@ -61,40 +61,80 @@ footer a{color:#1877f2;font-weight:700;text-decoration:none}
 footer .ad{cursor:pointer;opacity:.6;background:none;border:0;color:var(--muted);font-size:13px}
 .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(30px);background:#1b1830;color:#fff;padding:12px 20px;border-radius:14px;opacity:0;pointer-events:none;transition:.3s;z-index:99;max-width:92vw;box-shadow:0 10px 30px rgba(0,0,0,.4);font-weight:600}
 .toast.show{opacity:1;transform:translateX(-50%)}
+/* DETAILS */
+.mdl{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(15,13,28,.55);backdrop-filter:blur(6px)}
+.mdl.open{display:flex}
+.sheet{width:min(860px,100%);max-height:92vh;display:flex;flex-direction:column;background:var(--card);border-radius:26px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45);animation:pop .28s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes pop{from{opacity:0;transform:translateY(24px) scale(.97)}}
+.sh-h{display:flex;align-items:center;gap:14px;padding:18px 20px;border-bottom:1px solid var(--line);background:linear-gradient(120deg,color-mix(in srgb,var(--c) 20%,transparent),transparent)}
+.sh-h h3{margin:0 0 4px;font-size:22px}
+.sh-x{margin-left:auto;border:0;background:var(--bg);color:var(--text);width:38px;height:38px;border-radius:50%;font-size:17px;cursor:pointer;flex:none}
+.sh-b{flex:1;overflow:auto;padding:22px 24px}
+.sh-f{padding:14px 20px;border-top:1px solid var(--line);display:flex}
+.sh-f a{text-decoration:none;font-weight:700;border-radius:13px;text-align:center}
+.md{line-height:1.7;font-size:15.5px;word-wrap:break-word}
+.md h1,.md h2,.md h3,.md h4{line-height:1.25;margin:1.4em 0 .5em}
+.md h1{font-size:28px;padding-bottom:.3em;border-bottom:2px solid var(--line)}.md h2{font-size:22px;color:var(--c)}.md h3{font-size:18px}
+.md>:first-child{margin-top:0}.md p{margin:.7em 0}.md a{color:var(--c);font-weight:600}
+.md code{background:color-mix(in srgb,var(--c) 12%,transparent);padding:2px 7px;border-radius:7px;font-size:.9em}
+.md pre{background:#17142b;color:#e9e5ff;padding:16px;border-radius:14px;overflow:auto}.md pre code{background:none;padding:0;color:inherit}
+.md img{max-width:100%;height:auto;border-radius:12px}
+.md blockquote{margin:1em 0;padding:8px 16px;border-left:5px solid var(--c);background:color-mix(in srgb,var(--c) 8%,transparent);border-radius:0 12px 12px 0}
+.md ul,.md ol{padding-left:24px}.md li{margin:.3em 0}.md hr{border:0;height:2px;background:var(--line);margin:1.6em 0}
+.tw{overflow-x:auto;margin:1em 0}.md table{border-collapse:collapse;width:100%}.md th,.md td{border:1px solid var(--line);padding:8px 12px;text-align:left}.md th{background:color-mix(in srgb,var(--c) 12%,transparent)}
+@media(max-width:640px){.mdl{padding:0;align-items:flex-end}.sheet{max-height:94vh;border-radius:26px 26px 0 0}.sh-b{padding:18px 16px}.sh-h h3{font-size:19px}}
+@media(max-width:560px){.av{width:104px;height:104px}.grid{grid-template-columns:1fr}.btns a{flex:1}.hero{padding-bottom:96px}.chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px}.chip{white-space:nowrap}}
 /* ADMIN */
-.adm{position:fixed;inset:0;z-index:50;background:var(--bg);display:none;flex-direction:column}
+.adm{position:fixed;inset:0;z-index:50;background:var(--bg);display:none}
 .adm.open{display:flex}
-.adm-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;color:#fff;background:linear-gradient(120deg,#7c3aed,#ec4899)}
-.adm-h b{font-size:18px;flex:1}
-.adm-h button{border:0;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:14px}
-#admSave{background:#10b981;color:#fff}
-#admSave:disabled{background:rgba(255,255,255,.3);cursor:default}
-.adm-h .x{background:rgba(255,255,255,.22);color:#fff}
-.adm-b{flex:1;overflow:auto;padding:16px;max-width:980px;width:100%;margin:0 auto}
-.tabs{display:flex;gap:8px;margin-bottom:16px}
-.tabs button{border:2px solid #7c3aed;background:none;color:#7c3aed;border-radius:12px;padding:8px 16px;font-weight:700;cursor:pointer}
-.tabs button.on{background:#7c3aed;color:#fff}
-.ar{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:14px}
-.ar-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
-.ar-top .ic{width:46px;height:46px;font-size:24px;--c:#7c3aed}
-.ar-top .ic img{width:32px;height:32px}
-.ar-top div:nth-child(2){flex:1;min-width:140px}
-.ar-top small{color:var(--muted);display:block}
-.ar-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
-.ar-grid label,.form label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:var(--muted)}
+.adm-side{width:232px;flex:none;display:flex;flex-direction:column;gap:6px;padding:20px 14px;color:#fff;background:linear-gradient(170deg,#4c1d95,#7c3aed 50%,#db2777)}
+.adm-side .br{font-size:21px;font-weight:900;padding:6px 10px 18px}
+.adm-side button{display:flex;align-items:center;gap:10px;border:0;background:none;color:#fff;font:inherit;font-weight:700;padding:12px 14px;border-radius:14px;cursor:pointer;opacity:.88;transition:.2s}
+.adm-side button:hover{background:rgba(255,255,255,.16)}
+.adm-side button.on{background:#fff;color:#6d28d9;opacity:1;box-shadow:0 8px 22px rgba(0,0,0,.25)}
+.adm-side .sp{flex:1}
+.adm-main{flex:1;display:flex;flex-direction:column;min-width:0}
+.adm-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 22px;border-bottom:1px solid var(--line);background:var(--glass);backdrop-filter:blur(10px)}
+.adm-top h2{margin:0;font-size:22px;flex:1;min-width:150px}
+#admQ{width:240px;max-width:100%}
+#admSave{border:0;border-radius:12px;padding:11px 18px;font-weight:800;font-size:14px;color:#fff;background:linear-gradient(120deg,#10b981,#06b6d4);cursor:pointer;box-shadow:0 8px 20px rgba(16,185,129,.35);transition:.2s}
+#admSave:disabled{background:var(--line);color:var(--muted);box-shadow:none;cursor:default}
+.adm-b{flex:1;overflow:auto;padding:22px}.adm-in{max-width:1000px;margin:0 auto}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.tile{border-radius:18px;padding:14px 16px;color:#fff;font-weight:700;font-size:14px;background:linear-gradient(135deg,var(--a),var(--b));box-shadow:0 10px 22px color-mix(in srgb,var(--a) 35%,transparent)}
+.tile b{font-size:30px;display:block;line-height:1.2}
+.ar{position:relative;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px 16px 16px 22px;margin-bottom:14px;overflow:hidden;transition:.2s}
+.ar::before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:linear-gradient(var(--a,#7c3aed),#ec4899)}
+.ar:hover{box-shadow:0 10px 26px rgba(124,58,237,.16)}.ar.off{opacity:.55}
+.ar-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.ar-top .ic{width:48px;height:48px;font-size:25px;--c:#7c3aed}.ar-top .ic img{width:34px;height:34px}
+.ar-top>div:nth-child(2){flex:1;min-width:140px}.ar-top small{color:var(--muted);display:block}
+.ar-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.ar-grid label,.form label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;color:var(--muted)}
 .wide{grid-column:1/-1}
-.adm input:not([type=checkbox]),.adm textarea{font:inherit;font-size:14px;padding:9px 11px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);width:100%;outline:0}
-.adm input:focus,.adm textarea:focus{border-color:#7c3aed}
+.adm input:not([type=checkbox]),.adm textarea{font:inherit;font-size:14px;padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);width:100%;outline:0;transition:.15s}
+.adm input:focus,.adm textarea:focus{border-color:#7c3aed;box-shadow:0 0 0 4px rgba(124,58,237,.15)}
 .ic-in{display:flex;gap:6px}
-.ic-in button{border:0;border-radius:10px;background:#7c3aed;color:#fff;font-weight:700;padding:0 12px;cursor:pointer;white-space:nowrap}
-.sw{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;cursor:pointer}
-.sw input{width:20px;height:20px;accent-color:#10b981}
-.form{display:grid;gap:14px;max-width:560px}
-.box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;max-width:560px;margin:30px auto}
-.box h3{margin:0 0 8px}
-.box p,.box li{font-size:14px;color:var(--muted);line-height:1.6}
-.box button.go{margin-top:12px;border:0;border-radius:12px;background:linear-gradient(120deg,#7c3aed,#ec4899);color:#fff;font-weight:800;padding:12px 20px;cursor:pointer;width:100%;font-size:15px}
+.sw{display:flex;align-items:center;gap:9px;font-weight:700;font-size:14px;cursor:pointer}
+.sw input{appearance:none;-webkit-appearance:none;width:44px;height:26px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;transition:.2s;flex:none;margin:0}
+.sw input::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.3);transition:.2s}
+.sw input:checked{background:#10b981}.sw input:checked::after{transform:translateX(18px)}
+.mini{border:0;border-radius:11px;padding:9px 13px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;background:#7c3aed;color:#fff;white-space:nowrap;transition:.2s}
+.mini:hover{filter:brightness(1.1)}.mini.red{background:#ef4444}
+.up{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;border-radius:14px;background:color-mix(in srgb,#3b82f6 8%,transparent);border:1.5px dashed #60a5fa;font-size:14px;font-weight:600}
+.up span{flex:1;min-width:150px;word-break:break-all}
+.adv{font-size:13px;color:var(--muted);font-weight:700}.adv summary{cursor:pointer;padding:4px 0}.adv .ar-grid{margin-top:10px}
+.form{display:grid;gap:14px;max-width:600px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:26px;max-width:520px;margin:20px auto;box-shadow:0 20px 50px rgba(124,58,237,.15)}
+.box h3{margin:0 0 8px;font-size:22px}.box p,.box li{font-size:14px;color:var(--muted);line-height:1.65}
+.box button.go{margin-top:14px;border:0;border-radius:14px;background:linear-gradient(120deg,#7c3aed,#ec4899);color:#fff;font-weight:800;padding:14px 20px;cursor:pointer;width:100%;font-size:16px;box-shadow:0 10px 24px rgba(124,58,237,.4)}
 .err{color:#ef4444;font-weight:700;font-size:14px;margin-top:8px}
+.dz{display:flex;flex-direction:column;align-items:center;gap:6px;border:2.5px dashed #a78bfa;border-radius:22px;padding:30px 18px;text-align:center;cursor:pointer;background:color-mix(in srgb,#7c3aed 6%,transparent);color:var(--muted);font-size:13px;transition:.2s}
+.dz b{font-size:16px;color:var(--text)}.dz:hover,.dz.over{background:color-mix(in srgb,#7c3aed 15%,transparent);border-color:#7c3aed;transform:scale(1.01)}
+.fr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;border:1px solid var(--line);background:var(--card);border-radius:16px;margin-bottom:8px}
+.fr span{flex:1;min-width:150px;word-break:break-all;font-weight:700;font-size:14px}
+@media(max-width:760px){.adm{flex-direction:column-reverse}.adm-side{width:auto;flex-direction:row;padding:6px;gap:2px}.adm-side .br,.adm-side .sp{display:none}
+.adm-side button{flex:1;flex-direction:column;gap:2px;font-size:11px;padding:8px 4px;justify-content:center}.adm-top{padding:10px 14px}#admQ{width:100%;order:3}.adm-b{padding:14px}}
 </style>
 </head>
 <body>
@@ -127,15 +167,13 @@ footer .ad{cursor:pointer;opacity:.6;background:none;border:0;color:var(--muted)
 </footer>
 <div class="toast" id="toast"></div>
 
+<div class="mdl" id="mdl"><div class="sheet" role="dialog" aria-modal="true"><div class="sh-h" id="mdlHead"></div><div class="sh-b" id="mdlBody"></div><div class="sh-f"><a href="#" class="dl" id="mdlDl">⬇ Download</a></div></div></div>
 <div class="adm" id="adm">
-  <div class="adm-h">
-    <b>🛠️ Admin Panel</b>
-    <button id="admSave" disabled>💾 Save &amp; Publish</button>
-    <button class="x" id="admOut">Logout</button>
-    <button class="x" id="admClose">✕ Close</button>
-  </div>
-  <div class="adm-b" id="admBody"></div>
-</div>
+ <nav class="adm-side" id="admSide"><div class="br">🛠️ Admin</div>
+  <button data-tab="apps">📦 <span>Software</span></button><button data-tab="files">🗂️ <span>Files</span></button><button data-tab="site">⚙️ <span>Settings</span></button>
+  <div class="sp"></div><button id="admOut">🚪 <span>Logout</span></button><button id="admClose">✕ <span>Close</span></button></nav>
+ <main class="adm-main"><div class="adm-top"><h2 id="admTitle"></h2><input id="admQ" type="search" placeholder="🔍 Search software…"><button id="admSave" disabled>💾 Saved</button></div>
+ <div class="adm-b"><div class="adm-in" id="admBody"></div></div></main></div>
 <datalist id="catlist"></datalist>
 
 <script>
@@ -202,7 +240,7 @@ function readmeSummary(md){
 async function getReadme(name){
   return cached("rm_"+name,30*60e3,async()=>{
     for(const f of["README.md","readme.md","Readme.md","README.txt"]){
-      try{const r=await fetch(`https://raw.githubusercontent.com/${USERNAME}/${name}/HEAD/${f}`);if(r.ok)return(await r.text()).slice(0,8000)}catch(e){}
+      try{const r=await fetch(`https://raw.githubusercontent.com/${USERNAME}/${name}/HEAD/${f}`);if(r.ok)return(await r.text()).slice(0,30000)}catch(e){}
     }
     return"";
   });
@@ -254,6 +292,7 @@ function render(){
       <p title="Click to read more">${esc(r.desc)}</p>
       <div class="btns">
         <a href="#" class="dl" data-r="${esc(r.name)}">⬇ Download</a>
+        <a class="alt" href="#app/${encodeURIComponent(r.name)}">📖 Details</a>
         ${r.homepage&&!/github\.com/i.test(r.homepage)?`<a class="alt" href="${esc(r.homepage)}" target="_blank" rel="noopener">Live</a>`:""}
       </div></div>`).join(""):`<div class="msg">${allRepos.length?"No software found 😕":"Loading software…"}</div>`;
   $("catlist").innerHTML=[...new Set([...catNames,...Object.values(CATEGORIES).map(v=>v[0])])].map(c=>`<option value="${esc(c)}">`).join("");
@@ -285,6 +324,7 @@ async function findFiles(name){
 async function download(r,el){
   const ov=CFG.apps[r.name]||{};
   if(ov.link){location.href=ov.link;return}
+  if(ov.upload){location.href=encodeURI(ov.upload);return}
   if(ov.file){location.href=`https://github.com/${USERNAME}/${r.name}/releases/latest/download/`+encodeURIComponent(ov.file);return}
   const old=el.textContent;el.textContent="⏳ Preparing…";
   try{
@@ -327,40 +367,109 @@ async function load(){
   render();
   await Promise.allSettled(allRepos.filter(r=>!r.archived).map(async r=>{r.summary=readmeSummary(await getReadme(r.name))}));
   render();
-  if(location.hash==="#admin")openAdmin();
+  route();
 }
 
+/* ---------- Details (README viewer) ---------- */
+function md(src,base){
+  const U=u=>{u=u.trim();if(/^javascript:/i.test(u))return"#";return/^(https?:|data:|mailto:|#)/i.test(u)?u:base+u.replace(/^\.?\//,"")};
+  const stash=[],keep=h=>"\u0001"+(stash.push(h)-1)+"\u0001";
+  src=src.replace(/\r/g,"").replace(/<!--[\s\S]*?-->/g,"")
+   .replace(/<h([1-6])[^>]*>([\s\S]*?)<\/h\1>/gi,(m,n,t)=>"\n\n"+"#".repeat(n)+" "+t.replace(/<[^>]+>/g,"")+"\n\n")
+   .replace(/<img\b[^>]*>/gi,t=>{const a=(t.match(/src=["']([^"']+)["']/i)||[])[1],b=(t.match(/alt=["']([^"']*)["']/i)||[])[1]||"";return a?`![${b}](${a})`:""})
+   .replace(/<br\s*\/?>/gi,"\n").replace(/<\/?(?:p|div|center|details|summary|picture|source|span|b|i|em|strong|a|sup|sub|kbd|table|tr|td|th|thead|tbody)\b[^>]*>/gi,"")
+   .replace(/^```\w*[^\n]*\n([\s\S]*?)^```/gm,(m,c)=>"\n\n"+keep(`<pre><code>${esc(c.replace(/\n$/,""))}</code></pre>`)+"\n\n");
+  const inl=s=>{const cd=[];
+    s=s.replace(/`([^`]+)`/g,(m,c)=>"\u0002"+(cd.push(c)-1)+"\u0002");
+    s=esc(s).replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+&quot;[^)]*&quot;)?\)/g,(m,a,u)=>`<img src="${U(u)}" alt="${a}" loading="lazy">`)
+     .replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+&quot;[^)]*&quot;)?\)/g,(m,t,u)=>`<a href="${U(u)}" target="_blank" rel="noopener">${t}</a>`)
+     .replace(/\*\*\*([^*]+)\*\*\*/g,"<b><i>$1</i></b>").replace(/(\*\*|__)(?=\S)([\s\S]*?\S)\1/g,"<b>$2</b>")
+     .replace(/(^|[\s(])\*(?=\S)([^*]+?\S)\*(?=[\s).,!?:;]|$)/g,"$1<i>$2</i>").replace(/~~([^~]+)~~/g,"<s>$1</s>")
+     .replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g,'$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+    return s.replace(/\u0002(\d+)\u0002/g,(m,i)=>`<code>${esc(cd[i])}</code>`)};
+  const L=src.split("\n"),HR=/^\s*([-*_])(\s*\1){2,}\s*$/,isLi=l=>/^\s*(?:[-*+]|\d+[.)])\s+/.test(l),
+    isBlk=l=>/^(#{1,6}\s|>|\u0001)/.test(l)||isLi(l)||HR.test(l);
+  let out="",i=0,m;
+  while(i<L.length){
+    const l=L[i];if(!l.trim()){i++;continue}
+    if(m=l.match(/^\u0001(\d+)\u0001\s*$/)){out+=stash[m[1]];i++;continue}
+    if(m=l.match(/^(#{1,6})\s+(.*?)\s*#*\s*$/)){out+=`<h${m[1].length}>${inl(m[2])}</h${m[1].length}>`;i++;continue}
+    if(HR.test(l)){out+="<hr>";i++;continue}
+    if(l[0]===">"){const t=[];while(i<L.length&&L[i][0]===">")t.push(L[i++].replace(/^>\s?/,""));out+=`<blockquote>${inl(t.join(" "))}</blockquote>`;continue}
+    if(isLi(l)){let it="";const ord=/^\s*\d/.test(l);
+      while(i<L.length&&(isLi(L[i])||/^\s{2,}\S/.test(L[i]))){
+        if(isLi(L[i])){const q=L[i].match(/^(\s*)(?:[-*+]|\d+[.)])\s+(.*)$/);let t=q[2],cb="";const k=t.match(/^\[( |x|X)\]\s+(.*)$/);
+          if(k){cb=`<input type="checkbox" disabled ${k[1]!==" "?"checked":""}> `;t=k[2]}
+          it+=`<li style="margin-left:${Math.min(q[1].length,8)*9}px">${cb}${inl(t)}`}else it+=" "+inl(L[i].trim());
+        i++;if(L[i]!==undefined&&!L[i].trim()&&isLi(L[i+1]||""))i++}
+      out+=ord?`<ol>${it}</ol>`:`<ul>${it}</ul>`;continue}
+    if(l.includes("|")&&/^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$/.test(L[i+1]||"")){
+      const cl=x=>x.trim().replace(/^\||\|$/g,"").split("|").map(c=>c.trim()),hd=cl(l);i+=2;let rw="";
+      while(i<L.length&&L[i].trim()&&L[i].includes("|")){rw+=`<tr>${cl(L[i]).map(c=>`<td>${inl(c)}</td>`).join("")}</tr>`;i++}
+      out+=`<div class="tw"><table><thead><tr>${hd.map(c=>`<th>${inl(c)}</th>`).join("")}</tr></thead><tbody>${rw}</tbody></table></div>`;continue}
+    const p=[];while(i<L.length&&L[i].trim()&&!(p.length&&isBlk(L[i])))p.push(L[i++].trim());
+    out+=`<p>${inl(p.join(" "))}</p>`;
+  }
+  return out;
+}
+function closeModal(){$("mdl").classList.remove("open");document.body.style.overflow=""}
+function shut(){history.replaceState(null,"",location.pathname+location.search);closeModal()}
+async function openDetails(name){
+  const raw=allRepos.find(x=>x.name===name);if(!raw)return;
+  const r=build(raw),m=$("mdl");
+  m.style.setProperty("--c",catColor[r.cat]||"#7c3aed");
+  $("mdlHead").innerHTML=`<div class="ic">${iconHtml(r.icon)}</div><div><h3>${esc(r.dispName)}</h3><span class="tag" style="--c:${catColor[r.cat]||"#7c3aed"}">${esc(r.cat)}</span></div><button class="sh-x" data-x aria-label="Close">✕</button>`;
+  $("mdlDl").dataset.r=name;m.classList.add("open");document.body.style.overflow="hidden";
+  const b=$("mdlBody");b.innerHTML='<div class="msg">Loading details…</div>';
+  const src=r.ov.details||await getReadme(name);
+  if(location.hash!=="#app/"+encodeURIComponent(name))return;
+  b.innerHTML=src?`<div class="md">${md(src,`https://raw.githubusercontent.com/${USERNAME}/${name}/HEAD/`)}</div>`:'<div class="msg">Ei software-er details ekhono lekha hoyni.</div>';
+  b.scrollTop=0;
+}
+function route(){
+  const h=location.hash;
+  if(h==="#admin"){openAdmin();return}
+  if(h.startsWith("#app/")){openDetails(decodeURIComponent(h.slice(5)));return}
+  closeModal();
+}
+$("mdl").addEventListener("click",e=>{
+  if(e.target.id==="mdl"||e.target.closest("[data-x]"))return shut();
+  const b=e.target.closest(".dl");if(b){e.preventDefault();const r=allRepos.find(x=>x.name===b.dataset.r);if(r)download(r,b)}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("mdl").classList.contains("open"))shut()});
+window.addEventListener("hashchange",route);
+
 /* ---------- Admin ---------- */
-const FIELDS=["name","icon","category","desc","file","link","hide"];
+const FIELDS=["name","icon","category","desc","details","file","link","upload","hide"],MAXMB=50;
+let FILES=null;
+const safe=n=>n.replace(/[^\w.\-]+/g,"_"),sz=n=>n>1048576?(n/1048576).toFixed(1)+" MB":Math.max(1,Math.ceil(n/1024))+" KB";
+const toB64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(f)});
+const resize=(file,S,cover,type,q)=>new Promise((res,rej)=>{const img=new Image(),u=URL.createObjectURL(file);
+  img.onload=()=>{const c=document.createElement("canvas");c.width=c.height=S;const x=c.getContext("2d"),k=(cover?Math.max:Math.min)(S/img.width,S/img.height),w=img.width*k,h=img.height*k;
+    x.drawImage(img,(S-w)/2,(S-h)/2,w,h);URL.revokeObjectURL(u);res(c.toDataURL(type,q))};img.onerror=rej;img.src=u});
 function cleaned(){
   const apps={};
   for(const n of Object.keys(CFG.apps).sort()){
     const o=CFG.apps[n],r=allRepos.find(x=>x.name===n),out={};
-    for(const f of FIELDS){
-      let v=o[f];if(v===undefined||v==="")continue;
-      if(f==="hide"&&r&&v===!defaultVisible(r))continue;
-      out[f]=v;
-    }
+    for(const f of FIELDS){let v=o[f];if(v===undefined||v==="")continue;if(f==="hide"&&r&&v===!defaultVisible(r))continue;out[f]=v}
     if(Object.keys(out).length)apps[n]=out;
   }
-  const s=CFG.site;
-  const site={title:s.title,tagline:s.tagline,facebook:s.facebook,hideForks:!!s.hideForks};
+  const s=CFG.site,site={title:s.title,tagline:s.tagline,facebook:s.facebook,hideForks:!!s.hideForks};
   if(s.avatar)site.avatar=s.avatar;
   return{site,apps};
 }
 const isDirty=()=>TOKEN&&JSON.stringify(cleaned())!==savedStr;
-function updDirty(){const d=isDirty(),b=$("admSave");b.disabled=!d;b.textContent=d?"💾 Save & Publish *":"💾 Saved"}
+function updDirty(){const d=isDirty(),b=$("admSave");b.disabled=!d;b.textContent=d?"💾 Save & Publish •":"💾 Saved"}
 window.addEventListener("beforeunload",e=>{if(isDirty()){e.preventDefault();e.returnValue=""}});
-
 async function ghApi(path,opt={}){
   return fetch("https://api.github.com"+path,{...opt,headers:{Accept:"application/vnd.github+json",Authorization:"Bearer "+TOKEN,"Content-Type":"application/json",...(opt.headers||{})}});
 }
-async function putFile(path,b64,msg){
+async function putFile(path,b64c,msg){
   const base=`/repos/${USERNAME}/${SITE_REPO}/contents/${path}`;
   for(let k=0;k<2;k++){
     let sha;const g=await ghApi(`${base}?ref=${BRANCH}&t=${Date.now()}`);
     if(g.ok)sha=(await g.json()).sha;
-    const p=await ghApi(base,{method:"PUT",body:JSON.stringify({message:msg,content:b64,branch:BRANCH,sha})});
+    const p=await ghApi(base,{method:"PUT",body:JSON.stringify({message:msg,content:b64c,branch:BRANCH,sha})});
     if(p.ok)return true;
     if(p.status===401||p.status===403||p.status===404)throw new Error("Permission problem ("+p.status+"). Token check koro.");
     if(p.status!==409&&p.status!==422)throw new Error("Error "+p.status);
@@ -368,51 +477,73 @@ async function putFile(path,b64,msg){
   throw new Error("Conflict, abar try koro");
 }
 const b64=s=>btoa(unescape(encodeURIComponent(s)));
-
+async function uploadFiles(files,dir){
+  for(const f of files){
+    if(f.size>MAXMB*1048576){toast(`❌ ${f.name} khub boro (max ${MAXMB} MB)`);continue}
+    try{toast(`⏳ ${f.name} upload hocche (${sz(f.size)})…`);await putFile(`${dir}/${safe(f.name)}`,await toB64(f),"Upload "+f.name);FILES=null;toast(`✅ ${f.name} upload hoyeche`)}
+    catch(x){toast("❌ "+x.message)}
+  }
+}
+async function loadFiles(){
+  try{const r=await ghApi(`/repos/${USERNAME}/${SITE_REPO}/contents/uploads?ref=${BRANCH}&t=${Date.now()}`);
+    FILES=r.ok?(await r.json()).filter(x=>x.type==="file").map(x=>({name:x.name,path:x.path,sha:x.sha,size:x.size})):[]}
+  catch(e){FILES=[]}
+  if(tab==="files")renderAdmin();
+}
 function loginHtml(){return`<div class="box"><h3>🔐 Admin Login</h3>
-  <p>Shudhu tumi (site owner) save korte parbe. Login korte ekta <b>GitHub Token</b> lagbe. Ekbar banale ei browser-e mone rakhbe.</p>
+  <p>Shudhu tumi (site owner) save korte parbe. Ekta <b>GitHub Token</b> lagbe — ekbar banale ei browser-e mone rakhbe.</p>
   <ol><li>GitHub → Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b> → Generate new token</li>
-  <li>Repository access: <b>Only select repositories</b> → <code>${esc(SITE_REPO)}</code> (shudhu eta)</li>
-  <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li>
-  <li>Token-ta niche paste koro</li></ol>
-  <p>Ei token diye tomar onno software repo-te kichu change kora jabe na.</p>
+  <li>Repository access: <b>Only select repositories</b> → <code>${esc(SITE_REPO)}</code></li>
+  <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li><li>Token-ta niche paste koro</li></ol>
   <input type="password" id="tokIn" placeholder="github_pat_..." autocomplete="off">
-  <label class="sw" style="margin-top:10px"><input type="checkbox" id="tokRem" checked> Ei browser-e mone rakho</label>
+  <label class="sw" style="margin-top:12px"><input type="checkbox" id="tokRem" checked> Ei browser-e mone rakho</label>
   <button class="go" data-act="login">Login</button><div class="err" id="loginErr"></div></div>`}
 function appsHtml(){
-  const repos=allRepos.filter(r=>!r.archived).map(build).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
-  if(!repos.length)return'<div class="msg">No software loaded.</div>';
-  return`<p style="color:var(--muted);font-size:14px;margin-top:0">Khali rakhle GitHub theke auto nibe. Description khali rakhle README theke nibe. Change korle upore <b>Save &amp; Publish</b> chapo.</p>`+repos.map(r=>{
-    const o=r.ov;
-    return`<div class="ar" data-r="${esc(r.name)}">
+  const all=allRepos.filter(r=>!r.archived).map(build).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  if(!all.length)return'<div class="msg">No software loaded.</div>';
+  const q=$("admQ").value.trim().toLowerCase(),pub=all.filter(r=>r.vis).length;
+  const tiles=`<div class="tiles">`+[["📦",all.length,"Total","#7c3aed","#ec4899"],["✅",pub,"Published","#10b981","#06b6d4"],["🙈",all.length-pub,"Hidden","#f59e0b","#ef4444"],["📤",all.filter(r=>r.ov.upload).length,"Uploaded files","#3b82f6","#8b5cf6"]]
+    .map(([i,n,l,a,b])=>`<div class="tile" style="--a:${a};--b:${b}">${i} ${l}<b>${n}</b></div>`).join("")+`</div>`;
+  return tiles+`<p style="color:var(--muted);font-size:14px;margin-top:0">Khali rakhle GitHub theke auto nibe. Change korle <b>Save &amp; Publish</b> chapo.</p>`+
+  all.filter(r=>!q||(r.name+" "+r.dispName).toLowerCase().includes(q)).map(r=>{const o=r.ov;
+    return`<div class="ar ${r.vis?"":"off"}" data-r="${esc(r.name)}" style="--a:${catColor[r.cat]||"#7c3aed"}">
       <div class="ar-top"><div class="ic" data-prev>${iconHtml(r.icon)}</div>
         <div><b>${esc(r.name)}</b><small>GitHub name${r.fork?" · fork":""}</small></div>
         <label class="sw"><input type="checkbox" data-f="pub" ${r.vis?"checked":""}> Published</label></div>
       <div class="ar-grid">
         <label>Display name<input data-f="name" value="${esc(o.name||"")}" placeholder="${esc(r.autoName)}"></label>
         <label>Category<input data-f="category" list="catlist" value="${esc(o.category||"")}" placeholder="${esc(r.autoCat)}"></label>
-        <label>Icon (emoji / image link)<div class="ic-in"><input data-f="icon" value="${esc(o.icon||"")}" placeholder="${esc(r.autoIcon)}"><button type="button" data-up>📤 Upload</button><input type="file" accept="image/*" hidden data-file></div></label>
-        <label>Download file name (optional)<input data-f="file" value="${esc(o.file||"")}" placeholder="auto-detect"></label>
-        <label class="wide">Direct download link (optional, dile eta-i use hobe)<input data-f="link" value="${esc(o.link||"")}" placeholder="https://..."></label>
+        <label class="wide">Icon (emoji / image link)<div class="ic-in"><input data-f="icon" value="${esc(o.icon||"")}" placeholder="${esc(r.autoIcon)}"><button type="button" class="mini" data-up>📤 Upload</button><input type="file" accept="image/*" hidden data-file></div></label>
+        <div class="wide up">${o.upload?`<span>📎 ${esc(o.upload.split("/").pop())}</span><button type="button" class="mini red" data-rmup>Remove</button>`:`<span>📦 Download file upload koro (nahole GitHub release theke auto nibe)</span>`}<button type="button" class="mini" data-appup>📤 Upload file</button><input type="file" hidden data-appfile></div>
         <label class="wide">Description<textarea data-f="desc" rows="2" placeholder="${esc("Auto (README): "+(r.summary||r.description||"—"))}">${esc(o.desc||"")}</textarea></label>
-      </div></div>`}).join("");
+        <label class="wide">Details (Markdown) — khali thakle README dekhabe<textarea data-f="details" rows="5" placeholder="# Features&#10;- ...">${esc(o.details||"")}</textarea></label>
+        <div class="wide"><button type="button" class="mini" data-mdup>📄 .md file theke load koro</button><input type="file" accept=".md,.markdown,.txt" hidden data-mdfile></div>
+        <details class="wide adv"><summary>⚙️ Advanced download options</summary><div class="ar-grid">
+          <label>Release file name<input data-f="file" value="${esc(o.file||"")}" placeholder="auto-detect"></label>
+          <label>Direct download link<input data-f="link" value="${esc(o.link||"")}" placeholder="https://..."></label></div></details>
+      </div></div>`}).join("")||'<div class="msg">Kichu paoa jayni 😕</div>';
+}
+function filesHtml(){
+  const list=FILES===null?'<div class="msg">Loading…</div>':FILES.length?FILES.map(f=>`<div class="fr" data-p="${esc(f.path)}" data-sha="${f.sha}"><span>📄 ${esc(f.name)}<small style="display:block;color:var(--muted);font-weight:500">${sz(f.size)}</small></span><button class="mini" data-copy>🔗 Copy link</button><button class="mini red" data-del>🗑 Delete</button></div>`).join(""):'<div class="msg">Ekhono kono file upload kora hoyni.</div>';
+  return`<label class="dz" id="dz"><span style="font-size:40px">☁️</span><b>File ekhane drop koro ba click kore bachho</b><span>Image, zip, exe, apk, pdf… · max ${MAXMB} MB · <code>uploads/</code> folder-e save hobe, Save chapar dorkar nai</span><input type="file" id="multiUp" multiple hidden></label><h3 style="margin:24px 0 10px">Uploaded files</h3>${list}`;
 }
 function siteHtml(){const s=CFG.site;return`<div class="form">
   <div class="ar" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
     <img id="avPrev" src="${esc(avatarSrc())}" alt="" style="width:84px;height:84px;border-radius:50%;object-fit:cover;background:#fff">
-    <div style="flex:1;min-width:160px"><b>Tomar chobi (profile picture)</b><small style="display:block;color:var(--muted);margin:2px 0 8px">Chobi upload koro, tarpor Save &amp; Publish chapo.</small>
-      <button type="button" style="border:0;border-radius:10px;background:#7c3aed;color:#fff;font-weight:700;padding:9px 14px;cursor:pointer" data-avup>📤 Chobi upload</button>
-      <button type="button" style="border:2px solid #7c3aed;background:none;color:#7c3aed;border-radius:10px;font-weight:700;padding:7px 12px;cursor:pointer" data-avreset>GitHub-er chobi</button>
+    <div style="flex:1;min-width:160px"><b>Tomar chobi (profile picture)</b><small style="display:block;color:var(--muted);margin:2px 0 8px">Upload koro, tarpor Save &amp; Publish chapo.</small>
+      <button type="button" class="mini" data-avup>📤 Chobi upload</button> <button type="button" class="mini" style="background:var(--line);color:var(--text)" data-avreset>GitHub-er chobi</button>
       <input type="file" accept="image/*" hidden id="avFile"></div></div>
   <label>Site title<input data-s="title" value="${esc(s.title)}"></label>
   <label>Tagline<textarea data-s="tagline" rows="2">${esc(s.tagline)}</textarea></label>
   <label>Facebook link<input data-s="facebook" value="${esc(s.facebook)}"></label>
   <label class="sw"><input type="checkbox" data-s="hideForks" ${s.hideForks?"checked":""}> Forked repo gulo default-e hide koro</label></div>`}
 function renderAdmin(){
-  const b=$("admBody");
-  if(!TOKEN){b.innerHTML=loginHtml();$("admSave").style.display="none";$("admOut").style.display="none";return}
-  $("admSave").style.display="";$("admOut").style.display="";
-  b.innerHTML=`<div class="tabs"><button data-tab="apps" class="${tab==="apps"?"on":""}">📦 Software</button><button data-tab="site" class="${tab==="site"?"on":""}">⚙️ Site settings</button></div>`+(tab==="apps"?appsHtml():siteHtml());
+  const on=!!TOKEN;
+  document.querySelectorAll("#admSide [data-tab]").forEach(b=>{b.style.display=on?"":"none";b.classList.toggle("on",b.dataset.tab===tab)});
+  $("admOut").style.display=$("admSave").style.display=on?"":"none";$("admQ").style.display=on&&tab==="apps"?"":"none";
+  $("admTitle").textContent=on?{apps:"📦 Software",files:"🗂️ Files",site:"⚙️ Site settings"}[tab]:"🔐 Admin Login";
+  $("admBody").innerHTML=!on?loginHtml():tab==="apps"?appsHtml():tab==="files"?filesHtml():siteHtml();
+  if(on&&tab==="files"&&FILES===null)loadFiles();
   updDirty();
 }
 async function login(tok,remember){
@@ -432,75 +563,68 @@ async function openAdmin(){
   renderAdmin();
 }
 function closeAdmin(){$("adm").classList.remove("open");if(location.hash==="#admin")history.replaceState(null,"",location.pathname);render()}
-function setField(repo,f,v){
-  const o=CFG.apps[repo]||(CFG.apps[repo]={});
-  if(v===""||v===undefined)delete o[f];else o[f]=v;
-}
+function setField(repo,f,v){const o=CFG.apps[repo]||(CFG.apps[repo]={});if(v===""||v===undefined)delete o[f];else o[f]=v}
 $("admLink").onclick=openAdmin;
 $("admClose").onclick=closeAdmin;
-$("admOut").onclick=()=>{try{localStorage.removeItem("adm_tok");sessionStorage.removeItem("adm_tok")}catch(e){}TOKEN="";renderAdmin()};
-window.addEventListener("hashchange",()=>{if(location.hash==="#admin")openAdmin()});
+$("admOut").onclick=()=>{try{localStorage.removeItem("adm_tok");sessionStorage.removeItem("adm_tok")}catch(e){}TOKEN="";FILES=null;renderAdmin()};
+$("admQ").addEventListener("input",renderAdmin);
 $("admSave").onclick=async()=>{
   const btn=$("admSave");btn.disabled=true;btn.textContent="Saving…";
-  try{
-    const c=cleaned();
-    await putFile("config.json",b64(JSON.stringify(c,null,2)+"\n"),"Update site config from admin panel");
-    savedStr=JSON.stringify(c);toast("✅ Saved! 1-2 minute-er moddhe sobar jonno live hobe.");
-  }catch(e){toast("❌ Save hoyni: "+e.message)}
+  try{const c=cleaned();await putFile("config.json",b64(JSON.stringify(c,null,2)+"\n"),"Update site config from admin panel");
+    savedStr=JSON.stringify(c);toast("✅ Saved! 1-2 minute-er moddhe sobar jonno live hobe.")}
+  catch(e){toast("❌ Save hoyni: "+e.message)}
   updDirty();
 };
-$("admBody").addEventListener("click",async e=>{
-  const t=e.target.closest("[data-tab]");if(t){tab=t.dataset.tab;renderAdmin();return}
-  if(e.target.closest("[data-avup]")){$("avFile").click();return}
-  if(e.target.closest("[data-avreset]")){CFG.site.avatar="";setAvatar();$("avPrev").src=avatarSrc();updDirty();return}
-  const up=e.target.closest("[data-up]");if(up){up.parentNode.querySelector("[data-file]").click();return}
-  if(e.target.closest("[data-act=login]")){
-    const err=$("loginErr");err.textContent="";
-    try{await login($("tokIn").value,$("tokRem").checked);renderAdmin()}catch(x){err.textContent=x.message}
-  }
+$("adm").addEventListener("click",async e=>{
+  const T=e.target,row=T.closest(".ar"),repo=row&&row.dataset.r,q=s=>T.closest(s);
+  if(q("[data-tab]")){tab=q("[data-tab]").dataset.tab;renderAdmin();return}
+  if(q("[data-avup]")){$("avFile").click();return}
+  if(q("[data-avreset]")){CFG.site.avatar="";setAvatar();$("avPrev").src=avatarSrc();updDirty();return}
+  if(q("[data-up]")){row.querySelector("[data-file]").click();return}
+  if(q("[data-appup]")){row.querySelector("[data-appfile]").click();return}
+  if(q("[data-mdup]")){row.querySelector("[data-mdfile]").click();return}
+  if(q("[data-rmup]")){setField(repo,"upload","");renderAdmin();return}
+  if(q("[data-copy]")){const u=new URL(q(".fr").dataset.p,location.origin+location.pathname).href;try{await navigator.clipboard.writeText(u);toast("🔗 Link copy hoyeche")}catch(x){prompt("Link:",u)}return}
+  if(q("[data-del]")){const fr=q(".fr");if(!confirm("Ei file delete korbe?"))return;
+    const r=await ghApi(`/repos/${USERNAME}/${SITE_REPO}/contents/${fr.dataset.p}`,{method:"DELETE",body:JSON.stringify({message:"Delete "+fr.dataset.p,sha:fr.dataset.sha,branch:BRANCH})});
+    if(r.ok){FILES=null;renderAdmin();toast("🗑 Delete hoyeche")}else toast("❌ Delete hoyni ("+r.status+")");return}
+  if(q("[data-act=login]")){const err=$("loginErr");err.textContent="";
+    try{await login($("tokIn").value,$("tokRem").checked);renderAdmin()}catch(x){err.textContent=x.message}}
 });
-$("admBody").addEventListener("input",e=>{
+["dragover","dragleave","drop"].forEach(ev=>$("adm").addEventListener(ev,async e=>{
+  const z=e.target.closest("#dz");if(!z)return;e.preventDefault();
+  z.classList.toggle("over",ev==="dragover");
+  if(ev==="drop"){await uploadFiles([...e.dataTransfer.files],"uploads");renderAdmin()}
+}));
+$("adm").addEventListener("input",e=>{
   const el=e.target;
   if(el.dataset.s){CFG.site[el.dataset.s]=el.type==="checkbox"?el.checked:el.value;applySite();updDirty();rr();return}
   const row=el.closest(".ar");if(!row||!el.dataset.f)return;
   const repo=row.dataset.r,f=el.dataset.f;
-  if(f==="pub")setField(repo,"hide",!el.checked);
+  if(f==="pub"){setField(repo,"hide",!el.checked);row.classList.toggle("off",!el.checked)}
   else setField(repo,f,el.value.trim());
-  if(f==="icon"||f==="category"){
-    const r=build(allRepos.find(x=>x.name===repo));row.querySelector("[data-prev]").innerHTML=iconHtml(r.icon)}
+  if(f==="icon"||f==="category"){const r=build(allRepos.find(x=>x.name===repo));row.querySelector("[data-prev]").innerHTML=iconHtml(r.icon)}
   updDirty();rr();
 });
-$("admBody").addEventListener("change",async e=>{
-  const el=e.target;
-  if(el.id==="avFile"&&el.files[0]){
-    try{
-      toast("⏳ Chobi upload hocche…");
-      const url=await new Promise((res,rej)=>{const img=new Image(),u=URL.createObjectURL(el.files[0]);
-        img.onload=()=>{const S=400,c=document.createElement("canvas");c.width=c.height=S;const x=c.getContext("2d");
-          const k=Math.max(S/img.width,S/img.height),w=img.width*k,h=img.height*k;x.drawImage(img,(S-w)/2,(S-h)/2,w,h);URL.revokeObjectURL(u);res(c.toDataURL("image/jpeg",.88))};
-        img.onerror=rej;img.src=u});
-      const path=`icons/me-${Date.now().toString(36)}.jpg`;
-      await putFile(path,url.split(",")[1],"Update profile picture");
-      pendingIcons[path]=url;CFG.site.avatar=path;setAvatar();$("avPrev").src=url;
-      updDirty();toast("✅ Chobi upload hoyeche. Ekhon Save & Publish chapo.");
-    }catch(x){toast("❌ Chobi upload hoyni: "+x.message)}
-    el.value="";return;
-  }
-  if(!el.matches("[data-file]")||!el.files[0])return;
-  const row=el.closest(".ar"),repo=row.dataset.r;
+$("adm").addEventListener("change",async e=>{
+  const el=e.target,f=el.files&&el.files[0];if(!f)return;
+  const row=el.closest(".ar"),repo=row&&row.dataset.r;
   try{
-    toast("⏳ Icon upload hocche…");
-    const url=await new Promise((res,rej)=>{const img=new Image(),u=URL.createObjectURL(el.files[0]);
-      img.onload=()=>{const s=160,c=document.createElement("canvas");c.width=c.height=s;const x=c.getContext("2d");
-        const k=Math.min(s/img.width,s/img.height),w=img.width*k,h=img.height*k;x.drawImage(img,(s-w)/2,(s-h)/2,w,h);URL.revokeObjectURL(u);res(c.toDataURL("image/png"))};
-      img.onerror=rej;img.src=u});
-    const path=`icons/${repo.toLowerCase().replace(/[^a-z0-9]/g,"")}-${Date.now().toString(36)}.png`;
-    await putFile(path,url.split(",")[1],"Add icon for "+repo);
-    pendingIcons[path]=url;setField(repo,"icon",path);
-    row.querySelector('[data-f="icon"]').value=path;
-    row.querySelector("[data-prev]").innerHTML=iconHtml(path);
-    updDirty();rr();toast("✅ Icon upload hoyeche. Ekhon Save & Publish chapo.");
-  }catch(x){toast("❌ Icon upload hoyni: "+x.message)}
+    if(el.id==="avFile"){
+      toast("⏳ Chobi upload hocche…");const url=await resize(f,400,true,"image/jpeg",.88),path=`icons/me-${Date.now().toString(36)}.jpg`;
+      await putFile(path,url.split(",")[1],"Update profile picture");pendingIcons[path]=url;CFG.site.avatar=path;setAvatar();$("avPrev").src=url;updDirty();toast("✅ Chobi upload hoyeche. Ekhon Save & Publish chapo.")}
+    else if(el.id==="multiUp"){await uploadFiles([...el.files],"uploads");renderAdmin()}
+    else if(el.matches("[data-file]")){
+      toast("⏳ Icon upload hocche…");const url=await resize(f,160,false,"image/png"),path=`icons/${repo.toLowerCase().replace(/[^a-z0-9]/g,"")}-${Date.now().toString(36)}.png`;
+      await putFile(path,url.split(",")[1],"Add icon for "+repo);pendingIcons[path]=url;setField(repo,"icon",path);
+      row.querySelector('[data-f="icon"]').value=path;row.querySelector("[data-prev]").innerHTML=iconHtml(path);updDirty();rr();toast("✅ Icon upload hoyeche. Ekhon Save & Publish chapo.")}
+    else if(el.matches("[data-appfile]")){
+      if(f.size>MAXMB*1048576)throw new Error(`File khub boro (max ${MAXMB} MB)`);
+      toast(`⏳ ${f.name} upload hocche (${sz(f.size)})…`);const path=`files/${repo}/${safe(f.name)}`;
+      await putFile(path,await toB64(f),"Upload download file for "+repo);setField(repo,"upload",path);renderAdmin();toast("✅ File upload hoyeche. Ekhon Save & Publish chapo.")}
+    else if(el.matches("[data-mdfile]")){
+      const t=await f.text();setField(repo,"details",t);row.querySelector('[data-f="details"]').value=t;updDirty();toast("✅ Details load hoyeche. Save & Publish chapo.")}
+  }catch(x){toast("❌ "+(x.message||"Upload hoyni"))}
   el.value="";
 });
 
