@@ -145,7 +145,7 @@ const SITE_REPO="imranulholque.github.io";
 const BRANCH="main";
 const OWNER="Imranul Hoque Sabbir";
 const AVATAR="https://github.com/"+USERNAME+".png?size=400";
-const DEFAULT_CFG={site:{title:"Imranul's Software",tagline:"Free, handy software made by me. Download the latest build in one click.",facebook:"https://www.facebook.com/imranul.hoque.sabbir1",hideForks:true},apps:{}};
+const DEFAULT_CFG={site:{title:"Imranul's Software",tagline:"Free, handy software made by me. Download the latest build in one click.",facebook:"https://www.facebook.com/imranul.hoque.sabbir1",hideForks:true,avatar:""},apps:{}};
 const CATEGORIES={
   game:["Games","🎮"],games:["Games","🎮"],
   ai:["AI & ML","🤖"],ml:["AI & ML","🤖"],"machine-learning":["AI & ML","🤖"],
@@ -219,6 +219,17 @@ function build(r){
 function applySite(){
   const s=CFG.site;$("title").textContent=s.title;document.title=s.title;$("sub").textContent=s.tagline;
   ["fbBtn","fbLink"].forEach(id=>$(id).href=s.facebook||"#");
+  setAvatar();
+}
+function avatarSrc(){const a=CFG.site.avatar;return a?(pendingIcons[a]||a):AVATAR}
+function setAvatar(){
+  const img=$("avatar"),src=avatarSrc();
+  if(img.dataset.src===src)return;
+  img.dataset.src=src;img.parentNode.style.display="";
+  img.onerror=function(){
+    if(this.src!==AVATAR&&!this.dataset.fb){this.dataset.fb=1;this.src=AVATAR}
+    else this.parentNode.style.display="none"};
+  delete img.dataset.fb;img.src=src;
 }
 function render(){
   const q=$("q").value.trim().toLowerCase();
@@ -251,20 +262,40 @@ let rt;const rr=()=>{clearTimeout(rt);rt=setTimeout(render,150)};
 
 /* ---------- Download (latest release, one click) ---------- */
 const PRIORITY=["exe","msi","dmg","appimage","deb","zip","7z","rar"];
+const SKIP=/(source|\.(sha\d*|md5|sig|asc|blockmap|yml|yaml|txt|md|json)$)/i;
+const BIN=/\.(exe|msi|dmg|appimage|deb|apk|zip|7z|rar|aab|jar)$/i;
+const rank=a=>{const e=a.name.split(".").pop().toLowerCase();
+  if(e==="apk")return/android/i.test(navigator.userAgent)?-1:50;const i=PRIORITY.indexOf(e);return i<0?99:i};
+async function findFiles(name){
+  const base=`https://api.github.com/repos/${USERNAME}/${name}`;
+  const rel=await fetch(base+"/releases?per_page=15");
+  if(!rel.ok)throw rel.status;
+  for(const r of await rel.json()){
+    if(r.draft)continue;
+    const f=(r.assets||[]).filter(a=>!SKIP.test(a.name)).map(a=>({name:a.name,url:a.browser_download_url}));
+    if(f.length)return f;
+  }
+  const ct=await fetch(base+"/contents/");
+  if(ct.ok){
+    const f=(await ct.json()).filter(x=>x.type==="file"&&BIN.test(x.name)&&x.download_url).map(x=>({name:x.name,url:x.download_url}));
+    if(f.length)return f;
+  }
+  return[];
+}
 async function download(r,el){
   const ov=CFG.apps[r.name]||{};
+  if(ov.link){location.href=ov.link;return}
   if(ov.file){location.href=`https://github.com/${USERNAME}/${r.name}/releases/latest/download/`+encodeURIComponent(ov.file);return}
   const old=el.textContent;el.textContent="⏳ Preparing…";
   try{
-    const res=await fetch(`https://api.github.com/repos/${USERNAME}/${r.name}/releases/latest`);
-    if(res.status===404){toast("No build has been uploaded for this software yet.");return}
-    if(!res.ok)throw 0;
-    const assets=((await res.json()).assets||[]).filter(a=>!/source/i.test(a.name));
-    const android=/android/i.test(navigator.userAgent);
-    const rank=a=>{const e=a.name.split(".").pop().toLowerCase();if(e==="apk")return android?-1:50;const i=PRIORITY.indexOf(e);return i<0?99:i};
-    const best=[...assets].sort((a,b)=>rank(a)-rank(b))[0];
-    if(best)location.href=best.browser_download_url;else toast("No build has been uploaded for this software yet.");
-  }catch(e){toast("Download is busy right now. Please try again in a few minutes.")}
+    const files=await cached("dl_"+r.name,10*60e3,async()=>{const f=await findFiles(r.name);if(!f.length)throw"none";return f});
+    const best=[...files].sort((a,b)=>rank(a)-rank(b))[0];
+    location.href=best.url;
+  }catch(e){
+    if(e==="none"){
+      toast("Ei software-er download file ekhono upload kora hoyni. Pore abar dekho.");
+    }else toast("Download ekhon busy. Kichukkhon pore abar try koro.");
+  }
   finally{el.textContent=old}
 }
 $("grid").addEventListener("click",e=>{
@@ -282,7 +313,6 @@ async function loadConfig(){
   return structuredClone(DEFAULT_CFG);
 }
 async function load(){
-  $("avatar").src=AVATAR;$("avatar").onerror=function(){this.parentNode.style.display="none"};
   CFG=await loadConfig();applySite();
   try{
     allRepos=(await cached("repos_"+USERNAME,10*60e3,async()=>{
@@ -301,7 +331,7 @@ async function load(){
 }
 
 /* ---------- Admin ---------- */
-const FIELDS=["name","icon","category","desc","file","hide"];
+const FIELDS=["name","icon","category","desc","file","link","hide"];
 function cleaned(){
   const apps={};
   for(const n of Object.keys(CFG.apps).sort()){
@@ -314,7 +344,9 @@ function cleaned(){
     if(Object.keys(out).length)apps[n]=out;
   }
   const s=CFG.site;
-  return{site:{title:s.title,tagline:s.tagline,facebook:s.facebook,hideForks:!!s.hideForks},apps};
+  const site={title:s.title,tagline:s.tagline,facebook:s.facebook,hideForks:!!s.hideForks};
+  if(s.avatar)site.avatar=s.avatar;
+  return{site,apps};
 }
 const isDirty=()=>TOKEN&&JSON.stringify(cleaned())!==savedStr;
 function updDirty(){const d=isDirty(),b=$("admSave");b.disabled=!d;b.textContent=d?"💾 Save & Publish *":"💾 Saved"}
@@ -361,10 +393,17 @@ function appsHtml(){
         <label>Category<input data-f="category" list="catlist" value="${esc(o.category||"")}" placeholder="${esc(r.autoCat)}"></label>
         <label>Icon (emoji / image link)<div class="ic-in"><input data-f="icon" value="${esc(o.icon||"")}" placeholder="${esc(r.autoIcon)}"><button type="button" data-up>📤 Upload</button><input type="file" accept="image/*" hidden data-file></div></label>
         <label>Download file name (optional)<input data-f="file" value="${esc(o.file||"")}" placeholder="auto-detect"></label>
+        <label class="wide">Direct download link (optional, dile eta-i use hobe)<input data-f="link" value="${esc(o.link||"")}" placeholder="https://..."></label>
         <label class="wide">Description<textarea data-f="desc" rows="2" placeholder="${esc("Auto (README): "+(r.summary||r.description||"—"))}">${esc(o.desc||"")}</textarea></label>
       </div></div>`}).join("");
 }
 function siteHtml(){const s=CFG.site;return`<div class="form">
+  <div class="ar" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <img id="avPrev" src="${esc(avatarSrc())}" alt="" style="width:84px;height:84px;border-radius:50%;object-fit:cover;background:#fff">
+    <div style="flex:1;min-width:160px"><b>Tomar chobi (profile picture)</b><small style="display:block;color:var(--muted);margin:2px 0 8px">Chobi upload koro, tarpor Save &amp; Publish chapo.</small>
+      <button type="button" style="border:0;border-radius:10px;background:#7c3aed;color:#fff;font-weight:700;padding:9px 14px;cursor:pointer" data-avup>📤 Chobi upload</button>
+      <button type="button" style="border:2px solid #7c3aed;background:none;color:#7c3aed;border-radius:10px;font-weight:700;padding:7px 12px;cursor:pointer" data-avreset>GitHub-er chobi</button>
+      <input type="file" accept="image/*" hidden id="avFile"></div></div>
   <label>Site title<input data-s="title" value="${esc(s.title)}"></label>
   <label>Tagline<textarea data-s="tagline" rows="2">${esc(s.tagline)}</textarea></label>
   <label>Facebook link<input data-s="facebook" value="${esc(s.facebook)}"></label>
@@ -412,6 +451,8 @@ $("admSave").onclick=async()=>{
 };
 $("admBody").addEventListener("click",async e=>{
   const t=e.target.closest("[data-tab]");if(t){tab=t.dataset.tab;renderAdmin();return}
+  if(e.target.closest("[data-avup]")){$("avFile").click();return}
+  if(e.target.closest("[data-avreset]")){CFG.site.avatar="";setAvatar();$("avPrev").src=avatarSrc();updDirty();return}
   const up=e.target.closest("[data-up]");if(up){up.parentNode.querySelector("[data-file]").click();return}
   if(e.target.closest("[data-act=login]")){
     const err=$("loginErr");err.textContent="";
@@ -430,7 +471,22 @@ $("admBody").addEventListener("input",e=>{
   updDirty();rr();
 });
 $("admBody").addEventListener("change",async e=>{
-  const el=e.target;if(!el.matches("[data-file]")||!el.files[0])return;
+  const el=e.target;
+  if(el.id==="avFile"&&el.files[0]){
+    try{
+      toast("⏳ Chobi upload hocche…");
+      const url=await new Promise((res,rej)=>{const img=new Image(),u=URL.createObjectURL(el.files[0]);
+        img.onload=()=>{const S=400,c=document.createElement("canvas");c.width=c.height=S;const x=c.getContext("2d");
+          const k=Math.max(S/img.width,S/img.height),w=img.width*k,h=img.height*k;x.drawImage(img,(S-w)/2,(S-h)/2,w,h);URL.revokeObjectURL(u);res(c.toDataURL("image/jpeg",.88))};
+        img.onerror=rej;img.src=u});
+      const path=`icons/me-${Date.now().toString(36)}.jpg`;
+      await putFile(path,url.split(",")[1],"Update profile picture");
+      pendingIcons[path]=url;CFG.site.avatar=path;setAvatar();$("avPrev").src=url;
+      updDirty();toast("✅ Chobi upload hoyeche. Ekhon Save & Publish chapo.");
+    }catch(x){toast("❌ Chobi upload hoyni: "+x.message)}
+    el.value="";return;
+  }
+  if(!el.matches("[data-file]")||!el.files[0])return;
   const row=el.closest(".ar"),repo=row.dataset.r;
   try{
     toast("⏳ Icon upload hocche…");
