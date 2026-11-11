@@ -3,132 +3,451 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My Software</title>
+<title>Imranul's Software</title>
 <style>
-:root{--bg:#f6f4ff;--card:#fff;--text:#1d1b2e;--muted:#6b6880;--line:#e6e2f5}
-@media(prefers-color-scheme:dark){:root{--bg:#12101f;--card:#1c1930;--text:#f1eefc;--muted:#a29fbd;--line:#2e2a4a}}
+:root{--bg:#f7f5ff;--card:#fff;--text:#1b1830;--muted:#6a6782;--line:#e8e4f7;--glass:rgba(255,255,255,.8)}
+@media(prefers-color-scheme:dark){:root{--bg:#0f0d1c;--card:#1a1730;--text:#f3f0ff;--muted:#a6a3c2;--line:#2c2849;--glass:rgba(26,23,48,.8)}}
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text)}
-header{padding:56px 20px 70px;text-align:center;color:#fff;background:linear-gradient(120deg,#7c3aed,#ec4899,#f59e0b);background-size:200% 200%;animation:g 12s ease infinite}
-@keyframes g{50%{background-position:100% 50%}}
-header h1{margin:0 0 8px;font-size:clamp(28px,6vw,48px)}
-header p{margin:0;opacity:.92}
-.wrap{max-width:1150px;margin:-34px auto 60px;padding:0 16px}
-.search{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:16px;padding:6px 16px;box-shadow:0 10px 30px rgba(80,40,160,.18)}
-.search input{flex:1;border:0;outline:0;background:none;color:var(--text);font-size:17px;padding:12px 0}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
-.chip{border:2px solid var(--c,#7c3aed);color:var(--c,#7c3aed);background:transparent;border-radius:999px;padding:7px 14px;font-weight:600;cursor:pointer;font-size:14px}
-.chip.on{background:var(--c,#7c3aed);color:#fff}
-.meta{color:var(--muted);font-size:14px;margin-bottom:14px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
-.card{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px;transition:.2s}
-.card:hover{transform:translateY(-5px);box-shadow:0 14px 30px color-mix(in srgb,var(--c) 30%,transparent)}
-.ic{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;font-size:26px;background:color-mix(in srgb,var(--c) 18%,transparent)}
-.card h3{margin:0;font-size:18px;word-break:break-word}
-.card p{margin:0;color:var(--muted);font-size:14px;flex:1;line-height:1.45}
-.tag{font-size:12px;font-weight:700;color:var(--c)}
-.row{display:flex;gap:12px;font-size:13px;color:var(--muted);align-items:center}
-.btns{display:flex;gap:8px;flex-wrap:wrap}
-.btns a{text-decoration:none;font-size:13px;font-weight:600;padding:7px 12px;border-radius:10px;background:var(--c);color:#fff}
-.btns a.alt{background:transparent;color:var(--c);border:1.5px solid var(--c)}
-.msg{text-align:center;padding:40px;color:var(--muted)}
-footer{text-align:center;color:var(--muted);font-size:13px;padding-bottom:30px}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(600px 400px at 10% 30%,rgba(236,72,153,.12),transparent),radial-gradient(600px 400px at 90% 60%,rgba(59,130,246,.12),transparent),radial-gradient(500px 400px at 50% 100%,rgba(245,158,11,.12),transparent)}
+/* HERO */
+.hero{position:relative;overflow:hidden;padding:48px 18px 110px;text-align:center;color:#fff;background:linear-gradient(120deg,#7c3aed,#ec4899,#f59e0b,#10b981,#3b82f6,#7c3aed);background-size:300% 300%;animation:bg 18s ease infinite}
+@keyframes bg{50%{background-position:100% 50%}}
+.blob{position:absolute;border-radius:50%;filter:blur(40px);opacity:.35;background:#fff;animation:fl 9s ease-in-out infinite alternate}
+@keyframes fl{to{transform:translate(40px,30px) scale(1.2)}}
+.hero>*:not(.blob){position:relative}
+.av{width:132px;height:132px;margin:0 auto 14px;border-radius:50%;padding:5px;background:conic-gradient(#fff,#fde68a,#f9a8d4,#a5b4fc,#6ee7b7,#fff);animation:spin 7s linear infinite;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.av img{width:100%;height:100%;border-radius:50%;object-fit:cover;background:#fff;display:block;animation:spin 7s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hero .hi{font-size:14px;letter-spacing:.14em;text-transform:uppercase;opacity:.9;font-weight:700}
+.hero h2{margin:4px 0 2px;font-size:clamp(22px,4vw,30px);font-weight:800}
+.hero h1{margin:6px 0 10px;font-size:clamp(30px,7vw,54px);line-height:1.1;font-weight:900;text-shadow:0 4px 24px rgba(0,0,0,.25)}
+.hero p{margin:0 auto 20px;max-width:560px;opacity:.95;line-height:1.5}
+.fb{display:inline-flex;align-items:center;gap:9px;background:#1877f2;color:#fff;padding:12px 22px;border-radius:999px;font-weight:700;text-decoration:none;box-shadow:0 10px 28px rgba(24,119,242,.5);transition:.2s}
+.fb:hover{transform:translateY(-3px) scale(1.03)}
+.fb svg{width:20px;height:20px;fill:#fff}
+.stats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.pill{background:rgba(255,255,255,.2);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.35);padding:7px 16px;border-radius:999px;font-weight:700;font-size:14px}
+/* LAYOUT */
+.wrap{max-width:1180px;margin:-48px auto 50px;padding:0 16px;position:relative}
+.search{display:flex;align-items:center;gap:10px;background:var(--glass);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:18px;padding:6px 18px;box-shadow:0 14px 40px rgba(124,58,237,.22)}
+.search input{flex:1;border:0;outline:0;background:none;color:var(--text);font-size:17px;padding:13px 0}
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin:22px 0 8px}
+.chip{border:2px solid var(--c,#7c3aed);color:var(--c,#7c3aed);background:transparent;border-radius:999px;padding:7px 15px;font-weight:700;cursor:pointer;font-size:14px;transition:.2s}
+.chip:hover{transform:translateY(-2px)}
+.chip.on{background:var(--c,#7c3aed);color:#fff;box-shadow:0 6px 16px color-mix(in srgb,var(--c) 45%,transparent)}
+.meta{color:var(--muted);font-size:14px;margin:6px 2px 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px}
+.card{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:10px;transition:.25s;animation:up .5s both;animation-delay:calc(var(--i,0)*45ms)}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:6px;background:linear-gradient(90deg,var(--c),color-mix(in srgb,var(--c) 45%,#ec4899))}
+.card::after{content:"";position:absolute;right:-50px;top:-50px;width:150px;height:150px;border-radius:50%;background:var(--c);opacity:.09}
+@keyframes up{from{opacity:0;transform:translateY(18px)}}
+.card:hover{transform:translateY(-7px);box-shadow:0 18px 38px color-mix(in srgb,var(--c) 32%,transparent)}
+.ic{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:30px;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 28%,transparent),color-mix(in srgb,var(--c) 8%,transparent));flex:none}
+.ic img{width:40px;height:40px;object-fit:contain;border-radius:10px}
+.tag{align-self:flex-start;font-size:12px;font-weight:800;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);padding:3px 10px;border-radius:999px}
+.card h3{margin:0;font-size:19px;word-break:break-word}
+.card p{margin:0;color:var(--muted);font-size:14px;line-height:1.55;flex:1;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+.card p.open{display:block}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.btns a{text-decoration:none;font-weight:700;border-radius:13px;text-align:center}
+.dl{flex:1;font-size:15px;padding:12px;color:#fff;background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 50%,#ec4899));box-shadow:0 8px 18px color-mix(in srgb,var(--c) 40%,transparent);transition:.2s}
+.dl:hover{filter:brightness(1.08);transform:scale(1.02)}
+.alt{font-size:14px;padding:11px 16px;color:var(--c);border:2px solid var(--c)}
+.msg{grid-column:1/-1;text-align:center;padding:50px;color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:14px;padding:10px 16px 40px;line-height:1.9}
+footer a{color:#1877f2;font-weight:700;text-decoration:none}
+footer .ad{cursor:pointer;opacity:.6;background:none;border:0;color:var(--muted);font-size:13px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(30px);background:#1b1830;color:#fff;padding:12px 20px;border-radius:14px;opacity:0;pointer-events:none;transition:.3s;z-index:99;max-width:92vw;box-shadow:0 10px 30px rgba(0,0,0,.4);font-weight:600}
+.toast.show{opacity:1;transform:translateX(-50%)}
+/* ADMIN */
+.adm{position:fixed;inset:0;z-index:50;background:var(--bg);display:none;flex-direction:column}
+.adm.open{display:flex}
+.adm-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;color:#fff;background:linear-gradient(120deg,#7c3aed,#ec4899)}
+.adm-h b{font-size:18px;flex:1}
+.adm-h button{border:0;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;font-size:14px}
+#admSave{background:#10b981;color:#fff}
+#admSave:disabled{background:rgba(255,255,255,.3);cursor:default}
+.adm-h .x{background:rgba(255,255,255,.22);color:#fff}
+.adm-b{flex:1;overflow:auto;padding:16px;max-width:980px;width:100%;margin:0 auto}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tabs button{border:2px solid #7c3aed;background:none;color:#7c3aed;border-radius:12px;padding:8px 16px;font-weight:700;cursor:pointer}
+.tabs button.on{background:#7c3aed;color:#fff}
+.ar{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:14px}
+.ar-top{display:flex;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.ar-top .ic{width:46px;height:46px;font-size:24px;--c:#7c3aed}
+.ar-top .ic img{width:32px;height:32px}
+.ar-top div:nth-child(2){flex:1;min-width:140px}
+.ar-top small{color:var(--muted);display:block}
+.ar-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.ar-grid label,.form label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:var(--muted)}
+.wide{grid-column:1/-1}
+.adm input:not([type=checkbox]),.adm textarea{font:inherit;font-size:14px;padding:9px 11px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--text);width:100%;outline:0}
+.adm input:focus,.adm textarea:focus{border-color:#7c3aed}
+.ic-in{display:flex;gap:6px}
+.ic-in button{border:0;border-radius:10px;background:#7c3aed;color:#fff;font-weight:700;padding:0 12px;cursor:pointer;white-space:nowrap}
+.sw{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;cursor:pointer}
+.sw input{width:20px;height:20px;accent-color:#10b981}
+.form{display:grid;gap:14px;max-width:560px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;max-width:560px;margin:30px auto}
+.box h3{margin:0 0 8px}
+.box p,.box li{font-size:14px;color:var(--muted);line-height:1.6}
+.box button.go{margin-top:12px;border:0;border-radius:12px;background:linear-gradient(120deg,#7c3aed,#ec4899);color:#fff;font-weight:800;padding:12px 20px;cursor:pointer;width:100%;font-size:15px}
+.err{color:#ef4444;font-weight:700;font-size:14px;margin-top:8px}
 </style>
 </head>
 <body>
-<header>
-  <h1 id="title">My Software</h1>
-  <p id="sub">Loading from GitHub…</p>
+<header class="hero">
+  <span class="blob" style="width:240px;height:240px;left:-60px;top:-60px"></span>
+  <span class="blob" style="width:300px;height:300px;right:-80px;bottom:-120px;animation-delay:-3s"></span>
+  <span class="blob" style="width:160px;height:160px;left:60%;top:20px;animation-delay:-6s"></span>
+  <div class="av"><img id="avatar" alt="Imranul Hoque Sabbir"></div>
+  <div class="hi">Hello, I'm</div>
+  <h2>Imranul Hoque Sabbir</h2>
+  <h1 id="title">Imranul's Software</h1>
+  <p id="sub"></p>
+  <a class="fb" id="fbBtn" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg>
+    Follow me on Facebook
+  </a>
+  <div class="stats"><span class="pill" id="st1">Loading…</span><span class="pill" id="st2"></span></div>
 </header>
+
 <div class="wrap">
-  <div class="search"><span>🔍</span><input id="q" placeholder="Search by name, description, language or topic…" autocomplete="off"></div>
+  <div class="search"><span>🔍</span><input id="q" placeholder="Search software by name or what it does…" autocomplete="off"></div>
   <div class="chips" id="chips"></div>
   <div class="meta" id="meta"></div>
-  <div class="grid" id="grid"></div>
-  <footer>Updates automatically from GitHub ✨</footer>
+  <div class="grid" id="grid"><div class="msg">Loading software…</div></div>
 </div>
+<footer>
+  <div>✨ New software appears here automatically ✨</div>
+  <div>Made with ❤️ by <b>Imranul Hoque Sabbir</b> · <a id="fbLink" target="_blank" rel="noopener">Facebook</a></div>
+  <button class="ad" id="admLink">Admin</button>
+</footer>
+<div class="toast" id="toast"></div>
+
+<div class="adm" id="adm">
+  <div class="adm-h">
+    <b>🛠️ Admin Panel</b>
+    <button id="admSave" disabled>💾 Save &amp; Publish</button>
+    <button class="x" id="admOut">Logout</button>
+    <button class="x" id="admClose">✕ Close</button>
+  </div>
+  <div class="adm-b" id="admBody"></div>
+</div>
+<datalist id="catlist"></datalist>
+
 <script>
-/* ====== EDIT ONLY THIS PART ====== */
-const USERNAME = "imranulholque";
-const SITE_TITLE = "Imranul's Software";
-const HIDE_FORKS = true;
-const HIDE_REPOS = [USERNAME + ".github.io"]; // repo names to hide
-/* Category rules: topic or keyword -> [category name, icon] */
-const CATEGORIES = {
-  game:["Games","🎮"], games:["Games","🎮"],
-  ai:["AI & ML","🤖"], ml:["AI & ML","🤖"], "machine-learning":["AI & ML","🤖"],
-  web:["Web","🌐"], website:["Web","🌐"], frontend:["Web","🌐"],
-  android:["Mobile","📱"], ios:["Mobile","📱"], mobile:["Mobile","📱"], flutter:["Mobile","📱"],
-  desktop:["Desktop","🖥️"], windows:["Desktop","🖥️"],
-  cli:["Tools","🛠️"], tool:["Tools","🛠️"], tools:["Tools","🛠️"], utility:["Tools","🛠️"],
-  bot:["Bots","🦾"], telegram:["Bots","🦾"], discord:["Bots","🦾"],
-  security:["Security","🔐"], api:["API & Backend","⚙️"], backend:["API & Backend","⚙️"],
-  data:["Data","📊"], education:["Education","🎓"]
-};
-/* If no topic matches, fall back to language */
-const LANGS = {JavaScript:["Web","🌐"],TypeScript:["Web","🌐"],HTML:["Web","🌐"],CSS:["Web","🌐"],
+/* ===== Basic settings (change only if your GitHub names change) ===== */
+const USERNAME="imranulholque";
+const SITE_REPO="imranulholque.github.io";
+const BRANCH="main";
+const OWNER="Imranul Hoque Sabbir";
+const AVATAR="https://github.com/"+USERNAME+".png?size=400";
+const DEFAULT_CFG={site:{title:"Imranul's Software",tagline:"Free, handy software made by me. Download the latest build in one click.",facebook:"https://www.facebook.com/imranul.hoque.sabbir1",hideForks:true},apps:{}};
+const CATEGORIES={
+  game:["Games","🎮"],games:["Games","🎮"],
+  ai:["AI & ML","🤖"],ml:["AI & ML","🤖"],"machine-learning":["AI & ML","🤖"],
+  web:["Web","🌐"],website:["Web","🌐"],frontend:["Web","🌐"],
+  android:["Mobile","📱"],ios:["Mobile","📱"],mobile:["Mobile","📱"],flutter:["Mobile","📱"],
+  desktop:["Desktop","🖥️"],windows:["Desktop","🖥️"],
+  cli:["Tools","🛠️"],tool:["Tools","🛠️"],tools:["Tools","🛠️"],utility:["Tools","🛠️"],
+  bot:["Bots","🦾"],telegram:["Bots","🦾"],discord:["Bots","🦾"],
+  security:["Security","🔐"],api:["API & Backend","⚙️"],backend:["API & Backend","⚙️"],
+  data:["Data","📊"],education:["Education","🎓"]};
+const LANGS={JavaScript:["Web","🌐"],TypeScript:["Web","🌐"],HTML:["Web","🌐"],CSS:["Web","🌐"],
   Python:["Python Apps","🐍"],Java:["Java Apps","☕"],Kotlin:["Mobile","📱"],Dart:["Mobile","📱"],
   "C#":["Desktop","🖥️"],"C++":["Desktop","🖥️"],C:["Desktop","🖥️"],Go:["API & Backend","⚙️"],
   Rust:["Tools","🛠️"],Shell:["Tools","🛠️"],PHP:["Web","🌐"]};
-/* ================================= */
+const COLORS=["#7c3aed","#ec4899","#f59e0b","#10b981","#3b82f6","#ef4444","#14b8a6","#8b5cf6","#f97316","#06b6d4","#84cc16","#d946ef"];
+/* ==================================================================== */
 
-const COLORS=["#7c3aed","#ec4899","#f59e0b","#10b981","#3b82f6","#ef4444","#14b8a6","#8b5cf6","#f97316","#06b6d4"];
-const catColor={};
-const colorOf=n=>catColor[n]||(catColor[n]=COLORS[Object.keys(catColor).length%COLORS.length]);
-let items=[],active="All";
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let CFG=structuredClone(DEFAULT_CFG),allRepos=[],active="All",TOKEN="",savedStr="",tab="apps";
+const pendingIcons={};
+let catColor={};
+
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),4200)}
+async function cached(key,ttl,fn){
+  let c=null;try{c=JSON.parse(localStorage.getItem(key))}catch(e){}
+  if(c&&Date.now()-c.t<ttl)return c.d;
+  try{const d=await fn();try{localStorage.setItem(key,JSON.stringify({t:Date.now(),d}))}catch(e){}return d}
+  catch(e){if(c)return c.d;throw e}
+}
+const iconHtml=i=>{const s=pendingIcons[i]||i||"";
+  return /\.(png|jpe?g|svg|webp|gif|ico)$/i.test(s)||/^(https?:|data:)/.test(s)?`<img src="${esc(s)}" alt="" onerror="this.replaceWith('📦')">`:esc(s)};
 
 function categorize(r){
-  for(const t of r.topics||[]) if(CATEGORIES[t]) return CATEGORIES[t];
-  if(LANGS[r.language]) return LANGS[r.language];
-  return ["Other","✨"];
+  for(const t of r.topics||[])if(CATEGORIES[t])return CATEGORIES[t];
+  if(LANGS[r.language])return LANGS[r.language];
+  return["Other","✨"];
 }
-async function load(){
-  $("title").textContent=SITE_TITLE; document.title=SITE_TITLE;
-  const key="repos_"+USERNAME; let data=null;
-  try{
-    const res=await fetch(`https://api.github.com/users/${USERNAME}/repos?per_page=100&sort=created`);
-    if(!res.ok) throw new Error(res.status);
-    data=await res.json();
-    try{localStorage.setItem(key,JSON.stringify(data))}catch(e){}
-  }catch(e){
-    try{data=JSON.parse(localStorage.getItem(key))}catch(_){}
+function catIconFor(c){
+  const v=Object.values({...LANGS,...CATEGORIES}).find(v=>v[0]===c);return v?v[1]:"📁";
+}
+function readmeSummary(md){
+  if(!md)return"";
+  md=md.replace(/<!--[\s\S]*?-->/g,"").replace(/```[\s\S]*?```/g,"").replace(/<[^>]+>/g," ")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g,"").replace(/\[!\[[^\]]*\]\([^)]*\)\]\([^)]*\)/g,"")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g,"$1").replace(/https?:\/\/\S+/g,"");
+  for(let p of md.split(/\n\s*\n/)){
+    const lines=p.split("\n").map(l=>l.trim()).filter(l=>l&&!/^(#|[-=*_]{3,}|\||>)/.test(l));
+    p=lines.join(" ").replace(/^[-*]\s+/,"").replace(/[*_`~]/g,"").replace(/\s+/g," ").trim();
+    if(p.length>=25)return p.length>260?p.slice(0,257).replace(/\s+\S*$/,"")+"…":p;
   }
-  if(!data){$("grid").innerHTML='<div class="msg">Could not load projects. Check USERNAME in index.html or try again later.</div>';$("sub").textContent="";return}
-  items=data.filter(r=>!(HIDE_FORKS&&r.fork)&&!r.archived&&!HIDE_REPOS.includes(r.name))
-    .map(r=>{const[c,i]=categorize(r);return{...r,cat:c,icon:i}})
-    .sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
-  $("sub").textContent=`${items.length} projects • by @${USERNAME}`;
-  items.forEach(r=>colorOf(r.cat));
-  render();
+  return"";
+}
+async function getReadme(name){
+  return cached("rm_"+name,30*60e3,async()=>{
+    for(const f of["README.md","readme.md","Readme.md","README.txt"]){
+      try{const r=await fetch(`https://raw.githubusercontent.com/${USERNAME}/${name}/HEAD/${f}`);if(r.ok)return(await r.text()).slice(0,8000)}catch(e){}
+    }
+    return"";
+  });
+}
+function defaultVisible(r){return!(r.fork&&CFG.site.hideForks)}
+function build(r){
+  const ov=CFG.apps[r.name]||{};let[c,i]=categorize(r);
+  if(ov.category){c=ov.category;i=catIconFor(c)}
+  const autoName=r.name.replace(/[-_]/g," ").replace(/([a-z0-9])([A-Z])/g,"$1 $2");
+  const vis=ov.hide===true?false:ov.hide===false?true:defaultVisible(r);
+  return{...r,ov,vis,cat:c,catIcon:i,autoName,autoCat:categorize(r)[0],autoIcon:categorize(r)[1],
+    dispName:ov.name||autoName,icon:ov.icon||i,desc:ov.desc||r.summary||r.description||""};
+}
+function applySite(){
+  const s=CFG.site;$("title").textContent=s.title;document.title=s.title;$("sub").textContent=s.tagline;
+  ["fbBtn","fbLink"].forEach(id=>$(id).href=s.facebook||"#");
 }
 function render(){
   const q=$("q").value.trim().toLowerCase();
-  const cats=["All",...new Set(items.map(r=>r.cat))];
+  const items=allRepos.filter(r=>!r.archived).map(build).filter(r=>r.vis)
+    .sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  const catNames=[...new Set(items.map(r=>r.cat))].sort();
+  catColor={};catNames.forEach((c,i)=>catColor[c]=COLORS[i%COLORS.length]);
+  if(active!=="All"&&!catNames.includes(active))active="All";
+  $("st1").textContent=`📦 ${items.length} software`;$("st2").textContent=`🗂️ ${catNames.length} categories`;
+  const cats=["All",...catNames];
   $("chips").innerHTML=cats.map(c=>{
     const n=c==="All"?items.length:items.filter(r=>r.cat===c).length;
-    const ico=c==="All"?"🌈":items.find(r=>r.cat===c).icon;
-    return `<button class="chip ${c===active?"on":""}" style="--c:${c==="All"?"#7c3aed":colorOf(c)}" data-c="${esc(c)}">${ico} ${esc(c)} (${n})</button>`}).join("");
+    const ico=c==="All"?"🌈":items.find(r=>r.cat===c).catIcon;
+    return`<button class="chip ${c===active?"on":""}" style="--c:${c==="All"?"#7c3aed":catColor[c]}" data-c="${esc(c)}">${esc(ico)} ${esc(c)} (${n})</button>`}).join("");
   const list=items.filter(r=>(active==="All"||r.cat===active)&&
-    (!q||[r.name,r.description,r.language,r.cat,...(r.topics||[])].join(" ").toLowerCase().includes(q)));
-  $("meta").textContent=`Showing ${list.length} of ${items.length}`;
-  $("grid").innerHTML=list.length?list.map(r=>{
-    const name=r.name.replace(/[-_]/g," ").replace(/([a-z0-9])([A-Z])/g,"$1 $2");
-    return `<div class="card" style="--c:${colorOf(r.cat)}">
-      <div class="ic">${r.icon}</div>
+    (!q||[r.dispName,r.desc,r.cat,r.language,...(r.topics||[])].join(" ").toLowerCase().includes(q)));
+  $("meta").textContent=allRepos.length?`Showing ${list.length} of ${items.length}`:"";
+  $("grid").innerHTML=list.length?list.map((r,k)=>`<div class="card" style="--c:${catColor[r.cat]};--i:${Math.min(k,12)}">
+      <div class="ic">${iconHtml(r.icon)}</div>
       <span class="tag">${esc(r.cat)}</span>
-      <h3>${esc(name)}</h3>
-      <p>${esc(r.description||"No description yet.")}</p>
-      <div class="row"><span>${esc(r.language||"—")}</span><span>⭐ ${r.stargazers_count}</span><span>🍴 ${r.forks_count}</span></div>
+      <h3>${esc(r.dispName)}</h3>
+      <p title="Click to read more">${esc(r.desc)}</p>
       <div class="btns">
-        <a href="${esc(r.html_url)}" target="_blank" rel="noopener">GitHub</a>
-        <a class="alt" href="${esc(r.html_url)}/releases/latest" target="_blank" rel="noopener">⬇ Download</a>
-        ${r.homepage?`<a class="alt" href="${esc(r.homepage)}" target="_blank" rel="noopener">Live</a>`:""}
-      </div></div>`}).join(""):'<div class="msg">No software found 😕</div>';
+        <a href="#" class="dl" data-r="${esc(r.name)}">⬇ Download</a>
+        ${r.homepage&&!/github\.com/i.test(r.homepage)?`<a class="alt" href="${esc(r.homepage)}" target="_blank" rel="noopener">Live</a>`:""}
+      </div></div>`).join(""):`<div class="msg">${allRepos.length?"No software found 😕":"Loading software…"}</div>`;
+  $("catlist").innerHTML=[...new Set([...catNames,...Object.values(CATEGORIES).map(v=>v[0])])].map(c=>`<option value="${esc(c)}">`).join("");
 }
+let rt;const rr=()=>{clearTimeout(rt);rt=setTimeout(render,150)};
+
+/* ---------- Download (latest release, one click) ---------- */
+const PRIORITY=["exe","msi","dmg","appimage","deb","zip","7z","rar"];
+async function download(r,el){
+  const ov=CFG.apps[r.name]||{};
+  if(ov.file){location.href=`https://github.com/${USERNAME}/${r.name}/releases/latest/download/`+encodeURIComponent(ov.file);return}
+  const old=el.textContent;el.textContent="⏳ Preparing…";
+  try{
+    const res=await fetch(`https://api.github.com/repos/${USERNAME}/${r.name}/releases/latest`);
+    if(res.status===404){toast("No build has been uploaded for this software yet.");return}
+    if(!res.ok)throw 0;
+    const assets=((await res.json()).assets||[]).filter(a=>!/source/i.test(a.name));
+    const android=/android/i.test(navigator.userAgent);
+    const rank=a=>{const e=a.name.split(".").pop().toLowerCase();if(e==="apk")return android?-1:50;const i=PRIORITY.indexOf(e);return i<0?99:i};
+    const best=[...assets].sort((a,b)=>rank(a)-rank(b))[0];
+    if(best)location.href=best.browser_download_url;else toast("No build has been uploaded for this software yet.");
+  }catch(e){toast("Download is busy right now. Please try again in a few minutes.")}
+  finally{el.textContent=old}
+}
+$("grid").addEventListener("click",e=>{
+  const b=e.target.closest(".dl");
+  if(b){e.preventDefault();const r=allRepos.find(x=>x.name===b.dataset.r);if(r)download(r,b);return}
+  const p=e.target.closest(".card p");if(p)p.classList.toggle("open");
+});
 $("q").addEventListener("input",render);
 $("chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(b){active=b.dataset.c;render()}});
+
+/* ---------- Loading ---------- */
+async function loadConfig(){
+  try{const r=await fetch("config.json?t="+Date.now(),{cache:"no-store"});
+    if(r.ok){const j=await r.json();return{site:{...DEFAULT_CFG.site,...(j.site||{})},apps:j.apps||{}}}}catch(e){}
+  return structuredClone(DEFAULT_CFG);
+}
+async function load(){
+  $("avatar").src=AVATAR;$("avatar").onerror=function(){this.parentNode.style.display="none"};
+  CFG=await loadConfig();applySite();
+  try{
+    allRepos=(await cached("repos_"+USERNAME,10*60e3,async()=>{
+      const res=await fetch(`https://api.github.com/users/${USERNAME}/repos?per_page=100&sort=created`);
+      if(!res.ok)throw res.status;
+      return(await res.json()).filter(r=>r.name!==SITE_REPO).map(r=>({name:r.name,description:r.description,fork:r.fork,archived:r.archived,
+        topics:r.topics,language:r.language,homepage:r.homepage,created_at:r.created_at}));
+    }));
+  }catch(e){
+    $("grid").innerHTML='<div class="msg">Could not load software right now. Please try again in a few minutes.</div>';$("st1").textContent="";return}
+  savedStr=JSON.stringify(cleaned());
+  render();
+  await Promise.allSettled(allRepos.filter(r=>!r.archived).map(async r=>{r.summary=readmeSummary(await getReadme(r.name))}));
+  render();
+  if(location.hash==="#admin")openAdmin();
+}
+
+/* ---------- Admin ---------- */
+const FIELDS=["name","icon","category","desc","file","hide"];
+function cleaned(){
+  const apps={};
+  for(const n of Object.keys(CFG.apps).sort()){
+    const o=CFG.apps[n],r=allRepos.find(x=>x.name===n),out={};
+    for(const f of FIELDS){
+      let v=o[f];if(v===undefined||v==="")continue;
+      if(f==="hide"&&r&&v===!defaultVisible(r))continue;
+      out[f]=v;
+    }
+    if(Object.keys(out).length)apps[n]=out;
+  }
+  const s=CFG.site;
+  return{site:{title:s.title,tagline:s.tagline,facebook:s.facebook,hideForks:!!s.hideForks},apps};
+}
+const isDirty=()=>TOKEN&&JSON.stringify(cleaned())!==savedStr;
+function updDirty(){const d=isDirty(),b=$("admSave");b.disabled=!d;b.textContent=d?"💾 Save & Publish *":"💾 Saved"}
+window.addEventListener("beforeunload",e=>{if(isDirty()){e.preventDefault();e.returnValue=""}});
+
+async function ghApi(path,opt={}){
+  return fetch("https://api.github.com"+path,{...opt,headers:{Accept:"application/vnd.github+json",Authorization:"Bearer "+TOKEN,"Content-Type":"application/json",...(opt.headers||{})}});
+}
+async function putFile(path,b64,msg){
+  const base=`/repos/${USERNAME}/${SITE_REPO}/contents/${path}`;
+  for(let k=0;k<2;k++){
+    let sha;const g=await ghApi(`${base}?ref=${BRANCH}&t=${Date.now()}`);
+    if(g.ok)sha=(await g.json()).sha;
+    const p=await ghApi(base,{method:"PUT",body:JSON.stringify({message:msg,content:b64,branch:BRANCH,sha})});
+    if(p.ok)return true;
+    if(p.status===401||p.status===403||p.status===404)throw new Error("Permission problem ("+p.status+"). Token check koro.");
+    if(p.status!==409&&p.status!==422)throw new Error("Error "+p.status);
+  }
+  throw new Error("Conflict, abar try koro");
+}
+const b64=s=>btoa(unescape(encodeURIComponent(s)));
+
+function loginHtml(){return`<div class="box"><h3>🔐 Admin Login</h3>
+  <p>Shudhu tumi (site owner) save korte parbe. Login korte ekta <b>GitHub Token</b> lagbe. Ekbar banale ei browser-e mone rakhbe.</p>
+  <ol><li>GitHub → Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b> → Generate new token</li>
+  <li>Repository access: <b>Only select repositories</b> → <code>${esc(SITE_REPO)}</code> (shudhu eta)</li>
+  <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li>
+  <li>Token-ta niche paste koro</li></ol>
+  <p>Ei token diye tomar onno software repo-te kichu change kora jabe na.</p>
+  <input type="password" id="tokIn" placeholder="github_pat_..." autocomplete="off">
+  <label class="sw" style="margin-top:10px"><input type="checkbox" id="tokRem" checked> Ei browser-e mone rakho</label>
+  <button class="go" data-act="login">Login</button><div class="err" id="loginErr"></div></div>`}
+function appsHtml(){
+  const repos=allRepos.filter(r=>!r.archived).map(build).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  if(!repos.length)return'<div class="msg">No software loaded.</div>';
+  return`<p style="color:var(--muted);font-size:14px;margin-top:0">Khali rakhle GitHub theke auto nibe. Description khali rakhle README theke nibe. Change korle upore <b>Save &amp; Publish</b> chapo.</p>`+repos.map(r=>{
+    const o=r.ov;
+    return`<div class="ar" data-r="${esc(r.name)}">
+      <div class="ar-top"><div class="ic" data-prev>${iconHtml(r.icon)}</div>
+        <div><b>${esc(r.name)}</b><small>GitHub name${r.fork?" · fork":""}</small></div>
+        <label class="sw"><input type="checkbox" data-f="pub" ${r.vis?"checked":""}> Published</label></div>
+      <div class="ar-grid">
+        <label>Display name<input data-f="name" value="${esc(o.name||"")}" placeholder="${esc(r.autoName)}"></label>
+        <label>Category<input data-f="category" list="catlist" value="${esc(o.category||"")}" placeholder="${esc(r.autoCat)}"></label>
+        <label>Icon (emoji / image link)<div class="ic-in"><input data-f="icon" value="${esc(o.icon||"")}" placeholder="${esc(r.autoIcon)}"><button type="button" data-up>📤 Upload</button><input type="file" accept="image/*" hidden data-file></div></label>
+        <label>Download file name (optional)<input data-f="file" value="${esc(o.file||"")}" placeholder="auto-detect"></label>
+        <label class="wide">Description<textarea data-f="desc" rows="2" placeholder="${esc("Auto (README): "+(r.summary||r.description||"—"))}">${esc(o.desc||"")}</textarea></label>
+      </div></div>`}).join("");
+}
+function siteHtml(){const s=CFG.site;return`<div class="form">
+  <label>Site title<input data-s="title" value="${esc(s.title)}"></label>
+  <label>Tagline<textarea data-s="tagline" rows="2">${esc(s.tagline)}</textarea></label>
+  <label>Facebook link<input data-s="facebook" value="${esc(s.facebook)}"></label>
+  <label class="sw"><input type="checkbox" data-s="hideForks" ${s.hideForks?"checked":""}> Forked repo gulo default-e hide koro</label></div>`}
+function renderAdmin(){
+  const b=$("admBody");
+  if(!TOKEN){b.innerHTML=loginHtml();$("admSave").style.display="none";$("admOut").style.display="none";return}
+  $("admSave").style.display="";$("admOut").style.display="";
+  b.innerHTML=`<div class="tabs"><button data-tab="apps" class="${tab==="apps"?"on":""}">📦 Software</button><button data-tab="site" class="${tab==="site"?"on":""}">⚙️ Site settings</button></div>`+(tab==="apps"?appsHtml():siteHtml());
+  updDirty();
+}
+async function login(tok,remember){
+  TOKEN=tok.trim();
+  const r=await ghApi(`/repos/${USERNAME}/${SITE_REPO}`);
+  if(!r.ok){TOKEN="";throw new Error("Token kaj korche na (ba repo access nai)")}
+  const j=await r.json();
+  if(!j.permissions||!j.permissions.push){TOKEN="";throw new Error("Ei token-e write permission nai (Contents: Read and write dao)")}
+  try{(remember?localStorage:sessionStorage).setItem("adm_tok",TOKEN)}catch(e){}
+}
+async function openAdmin(){
+  $("adm").classList.add("open");
+  if(!TOKEN){
+    let t=null;try{t=localStorage.getItem("adm_tok")||sessionStorage.getItem("adm_tok")}catch(e){}
+    if(t){try{await login(t,!!localStorage.getItem("adm_tok"))}catch(e){TOKEN="";try{localStorage.removeItem("adm_tok");sessionStorage.removeItem("adm_tok")}catch(_){}}}
+  }
+  renderAdmin();
+}
+function closeAdmin(){$("adm").classList.remove("open");if(location.hash==="#admin")history.replaceState(null,"",location.pathname);render()}
+function setField(repo,f,v){
+  const o=CFG.apps[repo]||(CFG.apps[repo]={});
+  if(v===""||v===undefined)delete o[f];else o[f]=v;
+}
+$("admLink").onclick=openAdmin;
+$("admClose").onclick=closeAdmin;
+$("admOut").onclick=()=>{try{localStorage.removeItem("adm_tok");sessionStorage.removeItem("adm_tok")}catch(e){}TOKEN="";renderAdmin()};
+window.addEventListener("hashchange",()=>{if(location.hash==="#admin")openAdmin()});
+$("admSave").onclick=async()=>{
+  const btn=$("admSave");btn.disabled=true;btn.textContent="Saving…";
+  try{
+    const c=cleaned();
+    await putFile("config.json",b64(JSON.stringify(c,null,2)+"\n"),"Update site config from admin panel");
+    savedStr=JSON.stringify(c);toast("✅ Saved! 1-2 minute-er moddhe sobar jonno live hobe.");
+  }catch(e){toast("❌ Save hoyni: "+e.message)}
+  updDirty();
+};
+$("admBody").addEventListener("click",async e=>{
+  const t=e.target.closest("[data-tab]");if(t){tab=t.dataset.tab;renderAdmin();return}
+  const up=e.target.closest("[data-up]");if(up){up.parentNode.querySelector("[data-file]").click();return}
+  if(e.target.closest("[data-act=login]")){
+    const err=$("loginErr");err.textContent="";
+    try{await login($("tokIn").value,$("tokRem").checked);renderAdmin()}catch(x){err.textContent=x.message}
+  }
+});
+$("admBody").addEventListener("input",e=>{
+  const el=e.target;
+  if(el.dataset.s){CFG.site[el.dataset.s]=el.type==="checkbox"?el.checked:el.value;applySite();updDirty();rr();return}
+  const row=el.closest(".ar");if(!row||!el.dataset.f)return;
+  const repo=row.dataset.r,f=el.dataset.f;
+  if(f==="pub")setField(repo,"hide",!el.checked);
+  else setField(repo,f,el.value.trim());
+  if(f==="icon"||f==="category"){
+    const r=build(allRepos.find(x=>x.name===repo));row.querySelector("[data-prev]").innerHTML=iconHtml(r.icon)}
+  updDirty();rr();
+});
+$("admBody").addEventListener("change",async e=>{
+  const el=e.target;if(!el.matches("[data-file]")||!el.files[0])return;
+  const row=el.closest(".ar"),repo=row.dataset.r;
+  try{
+    toast("⏳ Icon upload hocche…");
+    const url=await new Promise((res,rej)=>{const img=new Image(),u=URL.createObjectURL(el.files[0]);
+      img.onload=()=>{const s=160,c=document.createElement("canvas");c.width=c.height=s;const x=c.getContext("2d");
+        const k=Math.min(s/img.width,s/img.height),w=img.width*k,h=img.height*k;x.drawImage(img,(s-w)/2,(s-h)/2,w,h);URL.revokeObjectURL(u);res(c.toDataURL("image/png"))};
+      img.onerror=rej;img.src=u});
+    const path=`icons/${repo.toLowerCase().replace(/[^a-z0-9]/g,"")}-${Date.now().toString(36)}.png`;
+    await putFile(path,url.split(",")[1],"Add icon for "+repo);
+    pendingIcons[path]=url;setField(repo,"icon",path);
+    row.querySelector('[data-f="icon"]').value=path;
+    row.querySelector("[data-prev]").innerHTML=iconHtml(path);
+    updDirty();rr();toast("✅ Icon upload hoyeche. Ekhon Save & Publish chapo.");
+  }catch(x){toast("❌ Icon upload hoyni: "+x.message)}
+  el.value="";
+});
+
 load();
 </script>
 </body>

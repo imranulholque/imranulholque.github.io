@@ -1,0 +1,19 @@
+{
+  "site": {
+    "title": "Imranul's Software",
+    "tagline": "Free, handy software made by me. Download the latest build in one click.",
+    "facebook": "https://www.facebook.com/imranul.hoque.sabbir1",
+    "hideForks": true
+  },
+  "apps": {
+    "imageFixer3": { "name": "Image Fixer", "icon": "🖼️", "category": "Photo Tools" },
+    "IMageFixer": { "name": "Image Fixer Old", "icon": "🖼️", "category": "Photo Tools" },
+    "PrintMerged": { "name": "Print Merged", "icon": "🖨️", "category": "Print Tools" },
+    "pcPrint": { "name": "PC Print", "icon": "🖨️", "category": "Print Tools" },
+    "QRPRINT2": { "name": "QR Print", "icon": "📇", "category": "Print Tools" },
+    "pdfEditor2": { "name": "PDF Editor", "icon": "📄", "category": "Documents" },
+    "buttonKeymapper": { "name": "Button Keymapper", "icon": "🎛️", "category": "Android Apps" },
+    "shareHub": { "name": "Share Hub", "icon": "📡", "category": "Sharing" },
+    "ShareUp": { "name": "ShareUp", "icon": "🚀", "category": "Sharing" }
+  }
+}
