@@ -1407,6 +1407,8 @@ function genKey(){FKEY=[...crypto.getRandomValues(new Uint8Array(18))].map(n=>n.
 function prefetchScript(){if(SCRIPT_TXT)return;fetch("apps-script/Code.gs?t="+Date.now()).then(r=>r.text()).then(t=>{SCRIPT_TXT=t}).catch(()=>{})}
 const normUrl=v=>{v=(v||"").trim();if(/^AKfy[\w-]+$/.test(v))v="https://script.google.com/macros/s/"+v+"/exec";return/^https:\/\/script\.google\.com\/.+\/exec$/.test(v)?v:""};
 async function goScript(){
+  const hasDrive=((CFG.feed||{}).accounts||[]).some(a=>a.url);
+  if(!FKEY&&hasDrive){toast("⚠️ Age Google Script-er KEY niche 🔑 Admin key-te paste koro");const d=document.getElementById("fKeyBox");if(d){d.open=true;d.scrollIntoView({block:"center"})}return}
   if(!FKEY)genKey();
   if(!SCRIPT_TXT)SCRIPT_TXT=await(await fetch("apps-script/Code.gs?t="+Date.now())).text();
   const t=SCRIPT_TXT.replace("PASTE_YOUR_ADMIN_KEY_HERE",FKEY);let ok=true;
@@ -1419,7 +1421,8 @@ async function goScript(){
 }
 const gb=n=>n==null?"?":(n/1073741824).toFixed(1)+" GB";
 function feedAdm(){setTimeout(()=>{const m=document.querySelector("[data-m=mode]"),s=Object.values(ACC.st).find(x=>x&&x.mode);if(m)m.value=(s&&s.mode)||"optional"},0);
-  if(!FKEY)genKey();prefetchScript();
+  const noDrive=!((CFG.feed||{}).accounts||[]).some(a=>a.url);
+  if(!FKEY&&noDrive)genKey();prefetchScript();
   const F=CFG.feed,A=F.accounts||[];
   const st=i=>{const s=ACC.st[i];return!s?"checking…":!s.ok?"❌ not reachable / not deployed":`${gb(s.used)} used of ${s.limit?gb(s.limit):"?"} · ${s.full?'<b style="color:#ef4444">FULL</b>':"free "+gb(s.free)}`};
   const sc=(n,ok,t,body)=>`<div class="stp ${ok?"ok":""}"><span class="n">${ok?"✓":n}</span><div><b>${t}</b>${body}</div></div>`;
@@ -1432,9 +1435,10 @@ function feedAdm(){setTimeout(()=>{const m=document.querySelector("[data-m=mode]
   ${sc(1,SET.copied,"Script copy kore Google Script kholo",`<p>Ek click-e script (admin key shoho) copy hobe ar Google Script notun tab-e khulbe. Oi Gmail diye login koro, tarpor <b>Ctrl+A → Ctrl+V → Ctrl+S</b>.</p><div class="row"><button class="mini" data-x="fgo">🚀 Copy script &amp; open Google Script</button></div>${SET.manual?`<p style="color:#f59e0b">Auto-copy hoyni. Niche-r code select kore copy koro:</p><textarea class="code" id="fScr" readonly style="min-height:120px" onfocus="this.select()">${esc(SET.manual)}</textarea>`:""}`)}
   ${sc(2,SET.deployed,"Deploy koro",`<ol><li>Upore dane <b>Deploy → New deployment</b></li><li>⚙️ gear → <b>Web app</b></li><li>Execute as: <b>Me</b> · Who has access: <b>Anyone</b></li><li><b>Deploy</b> → <b>Allow</b> (jodi "not verified" dekhay: <b>Advanced → Go to project</b>)</li><li>Shesh-e dekha <b>Web app URL</b> copy koro</li></ol><div class="row"><button class="mini ghost" data-x="fdep">✅ Deploy hoye gese, URL copy korechi</button></div>`)}
   ${sc(3,false,"URL paste kore Add koro",`<div class="ar-grid"><label>Web app URL<input id="faUrl" value="${esc(SET.url)}" placeholder="https://script.google.com/macros/s/…/exec"></label><label>Name (optional)<input id="faName" value="${esc(SET.name)}" placeholder="Gmail name (label only)"></label></div><div id="faChk"></div><div class="row"><button class="mini" data-x="fadd">➕ Add &amp; Publish</button></div><p>Add korle page URL check kore nijei <b>Save &amp; Publish</b> kore dey.</p>`)}
-  <details style="margin-top:8px"><summary class="hint" style="cursor:pointer">🔑 Admin key (auto-generated, shobar jonno same)</summary>
-  <label>Admin key<div class="ic-in"><input id="fKey" value="${esc(FKEY)}" placeholder="Generate a secret key"><button class="mini" data-x="fgen">🎲 Generate</button></div></label>
-  <p class="hint">Notun key banale age deploy kora Drive-gulo-te script abar copy-deploy korte hobe, nahole key mile na.</p></details></div>
+  ${!FKEY&&!noDrive?`<div class="box2" style="border:2px solid #f59e0b;margin-bottom:10px"><b>⚠️ Ei browser-e Admin key nai</b><p class="hint" style="margin:.4rem 0">Google Script-er prothom-er dike <code>const KEY='…'</code> er moddhe ja lekha ache, oita niche paste koro. Notun key <b>banio na</b> — banale script abar deploy korte hobe.</p></div>`:""}
+  <details id="fKeyBox" style="margin-top:8px" ${!FKEY&&!noDrive?"open":""}><summary class="hint" style="cursor:pointer">🔑 Admin key (shob browser-e same key dite hobe)</summary>
+  <label>Admin key<div class="ic-in"><input id="fKey" value="${esc(FKEY)}" placeholder="Google Script-er KEY ekhane paste koro"><button class="mini" data-x="fgen" ${noDrive?"":'data-warn="1"'}>🎲 Generate</button></div></label><div id="fKeyChk" class="hint"></div>
+  <p class="hint">Key ta ekbar kothao save kore rakho. Notun key banale age deploy kora Drive-gulo-te script abar copy-deploy korte hobe, nahole key mile na.</p></details></div>
   <div class="box2" style="margin-top:14px"><h3>🛡️ Moderation (delete posts / ban users)</h3><div><button class="mini" data-x="fmod">🔄 Load posts</button></div><div class="hint">${esc(MOD.msg)}</div>
   ${MOD.banned.length?`<div class="chips">${MOD.banned.map(b=>`<span class="chip on" style="--c:#ef4444">${esc(b)} <a href="#" data-x="funban" data-e="${esc(b)}" style="color:#fff">✕ unban</a></span>`).join("")}</div>`:""}
   ${MOD.posts.map((p,i)=>`<div class="ar" style="--a:#ec4899"><div><b>${esc(p.name)}</b> · ${esc(p.email)} · ${ago(p.ts)} · ${esc((A[p.src]||{}).name||"")}</div><div style="white-space:pre-wrap;margin:6px 0">${esc(p.text)}</div>${(p.imgs||[]).map(x=>`<img src="${thumb(x)}" alt="" style="height:60px;border-radius:8px;margin-right:6px">`).join("")}${(p.cm||[]).map((c,j)=>`<div style="margin:6px 0 0 14px;padding:6px 8px;border-left:3px solid var(--line);font-size:13px"><b>${esc(c.name)}</b> · ${esc(c.email)} · ${ago(c.ts)}<div style="white-space:pre-wrap;margin:3px 0">${esc(c.text)}</div><button class="mini red" data-x="fcdel" data-i="${i}" data-c="${j}">🗑 Delete comment</button></div>`).join("")}<div style="margin-top:8px;display:flex;gap:8px"><button class="mini red" data-x="fdel" data-i="${i}">🗑 Delete</button><button class="mini red" data-x="fban" data-i="${i}">🚫 Ban user</button></div></div>`).join("")}</div>`;
@@ -1463,7 +1467,11 @@ $("adm").addEventListener("input",e=>{const id=e.target.id;
     out(r&&r.ok?'<span style="color:#10b981">✅ Kaj korche, ebar Add &amp; Publish chapo</span>':'<span style="color:#ef4444">❌ Script uttor dichhe na. Who has access = Anyone dewa ache?</span>')}
     catch(_){out('<span style="color:#ef4444">❌ Reach kora jachhe na. Deploy hoyeche? Who has access = Anyone?</span>')}},600)});
 $("adm").addEventListener("change",async e=>{const m=e.target.dataset.m;if(m){if(!FKEY)return toast("❌ Admin key dao");await modAll({action:"admin_setmode",mode:e.target.value});FEED.mode=e.target.value;toast("✅ Verification: "+e.target.value);return}
-  if(e.target.id==="fKey"){FKEY=e.target.value.replace(/[^\w-]/g,"");try{localStorage.setItem("feed_key",FKEY)}catch(_){}}});
+  if(e.target.id==="fKey"){FKEY=e.target.value.replace(/[^\w-]/g,"");e.target.value=FKEY;try{localStorage.setItem("feed_key",FKEY)}catch(_){}TR.done=false;
+    const a=((CFG.feed||{}).accounts||[]).find(x=>x.url),o=t=>{const el=document.getElementById("fKeyChk");if(el)el.innerHTML=t};
+    if(!FKEY||!a)return o("");o("⏳ Check korchi…");
+    try{const r=await gcall(a.url,{action:"admin_stats",key:FKEY},30000);
+      o(r&&r.error==="auth"?'<span style="color:#ef4444">❌ Key mile nai. Google Script-er <code>const KEY</code> er sathe milao.</span>':'<span style="color:#10b981">✅ Key thik ache, save hoyeche.</span>')}catch(_){o('<span style="color:#f59e0b">⚠️ Check kora gelo na, pore Traffic tab-e dekho.</span>')}}});
 
 /* ===== Software files always go to Google Drive ===== */
 async function driveDest(f){
@@ -1514,7 +1522,7 @@ $("adm").addEventListener("click",async e=>{
       const sv=$("admSave");if(sv&&!sv.disabled)sv.click()}
     else if(x==="frm"){if(confirm("Ei Drive list theke soriye felbe? (Drive-er data thakbe)")){F.accounts.splice(i,1);ACC={done:false,st:{}};updDirty();renderAdmin()}}
     else if(x==="ftest")await testAcc(i);
-    else if(x==="fgen"){genKey();renderAdmin()}
+    else if(x==="fgen"){if(((CFG.feed||{}).accounts||[]).some(a=>a.url)&&!confirm("Sabdhan! Notun key banale Google Script abar copy-deploy na korle Traffic/Moderation kaj korbe na. Tao banabe?"))return;genKey();renderAdmin()}
     else if(x==="fmod"){if(!FKEY)return toast("❌ Admin key dao");await modLoad()}
     else if(x==="fcdel"){const p=MOD.posts[i],j=+b.dataset.c,c=(p.cm||[])[j];if(!c||!confirm("Ei comment delete korbe?"))return;
       const r=await gcall(F.accounts[p.src].url,{action:"admin_delcomment",key:FKEY,pid:p.id,cid:c.id},60000);
