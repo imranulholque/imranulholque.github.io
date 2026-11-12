@@ -86,6 +86,11 @@
   },
   "feed": {
     "enabled": true,
-    "accounts": []
+    "accounts": [
+      {
+        "name": "imranul.hoque.site",
+        "url": "https://script.google.com/macros/s/AKfycbx2WlGTNKDR87jB8z2uZz0NuyTxzFwSVNS0ARYTHC55pVELM-hI_crRD9URRaOCP-Cy0Q/exec"
+      }
+    ]
   }
 }
