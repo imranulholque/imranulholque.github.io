@@ -207,11 +207,77 @@ img,svg,video{max-width:100%}
 .fp-i{display:grid;grid-template-columns:repeat(auto-fill,minmax(7.5rem,1fr));gap:.5rem}.fp-i img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:.75rem}
 @media(max-width:560px){.fr2{grid-template-columns:1fr}}
 @media(max-width:760px){.adm-side{overflow-x:auto}.adm-side button{flex:1 0 auto;min-width:3.6rem}}
+
+/* NAV + FEED v2 */
+.topnav{position:sticky;top:0;z-index:30;background:var(--glass);backdrop-filter:blur(.75rem);-webkit-backdrop-filter:blur(.75rem);border-bottom:1px solid var(--line)}
+.topnav[hidden],.btab[hidden]{display:none}
+.tn-in{max-width:min(96rem,100%);margin:0 auto;padding:.4rem clamp(.75rem,2.5vw,2rem);display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:.5rem}
+.tn-brand{font-weight:900;font-size:1.05rem;color:var(--text);text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tn-tabs{display:flex;gap:.25rem}
+.tn-tabs button,.btab button{border:0;background:none;color:var(--muted);font:inherit;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.4rem;transition:.2s}
+.tn-tabs button{padding:.6rem 1.5rem;font-size:.9375rem;border-radius:.75rem .75rem 0 0}
+.tn-tabs button:hover{background:var(--line)}
+.tn-tabs button.on{color:#7c3aed;box-shadow:inset 0 -3px 0 #7c3aed}
+.tn-r{display:flex;justify-content:flex-end}
+.tn-r .tb{width:2.25rem;height:2.25rem;font-size:1rem;background:var(--card);border-color:var(--line);color:var(--text)}
+.btab{display:none;position:fixed;left:0;right:0;bottom:0;z-index:35;background:var(--glass);backdrop-filter:blur(.75rem);-webkit-backdrop-filter:blur(.75rem);border-top:1px solid var(--line);padding:.25rem .5rem calc(.25rem + env(safe-area-inset-bottom,0px))}
+.btab button{flex:1;flex-direction:column;gap:1px;font-size:.6875rem;padding:.35rem;border-radius:.75rem}
+.btab button i{font-style:normal;font-size:1.35rem;line-height:1.2}
+.btab button.on{color:#7c3aed}
+body.fm .hero{display:none}body.fm .wrap{margin-top:1rem}
+@media(max-width:640px){.tn-tabs{display:none}.tn-in{grid-template-columns:1fr auto}.btab{display:flex}body.hasnav{padding-bottom:4.4rem}body.hasnav .toast{bottom:5.4rem}body.hasnav:not(.fm) .topnav{display:none}}
+.feed{max-width:40rem;margin:0 auto}
+.feed .fp,.cmp{background:var(--card);border:1px solid var(--line);border-radius:1.1rem;margin:0 0 .875rem;max-width:none;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.cmp{padding:.875rem}
+.cmp-row{display:flex;gap:.625rem;align-items:center}
+.cmp-pill{flex:1;text-align:left;border:0;background:var(--bg);color:var(--muted);font:inherit;padding:.7rem 1rem;border-radius:62rem;cursor:pointer;transition:.2s;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cmp-pill:hover{background:var(--line)}
+.cmp-q{display:flex;gap:.25rem;border-top:1px solid var(--line);margin-top:.75rem;padding-top:.5rem}
+.cmp-q button{flex:1;border:0;background:none;color:var(--muted);font:inherit;font-weight:700;font-size:.8125rem;padding:.5rem .25rem;border-radius:.6rem;cursor:pointer}
+.cmp-q button:hover{background:var(--bg);color:var(--text)}
+.cmp.open{padding:1rem;display:grid;gap:.75rem}
+.cmp-h{display:flex;align-items:center;justify-content:space-between;font-size:1.1rem}
+.cmp-h .sh-x{width:2rem;height:2rem;font-size:.9rem}
+.tchips{display:flex;gap:.4rem;flex-wrap:wrap}
+.tchip{border:1.5px solid var(--line);background:none;color:var(--muted);font:inherit;font-weight:700;font-size:.8125rem;padding:.35rem .75rem;border-radius:62rem;cursor:pointer;transition:.15s}
+.tchip.on{background:var(--c);border-color:var(--c);color:#fff}
+.cmp-t{width:100%;border:0;outline:0;background:none;color:var(--text);font:inherit;font-size:1.05rem;line-height:1.55;resize:vertical;min-height:6rem;padding:.25rem 0}
+.cmp-who{background:var(--bg);border-radius:.9rem;padding:.75rem;display:grid;gap:.5rem}
+.cw-h{font-weight:800;font-size:.875rem;display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap}.cw-h small{color:var(--muted);font-weight:600}
+.cmp .fr2{margin:0}.cmp .ffoot{margin:0}
+.vrow{display:flex;align-items:center;gap:.5rem;justify-content:space-between;font-size:.8125rem}.vrow small{display:block;color:var(--muted)}.vrow.ok{color:#10b981;font-weight:700;justify-content:flex-start}
+.vcode{display:flex;gap:.4rem;flex-wrap:wrap}.vcode .fin{flex:1;min-width:9rem}
+.go2{border:0;border-radius:.9rem;background:linear-gradient(120deg,#7c3aed,#ec4899);color:#fff;font:inherit;font-weight:800;padding:.8rem;cursor:pointer;width:100%;box-shadow:0 .5rem 1.25rem rgba(124,58,237,.35)}
+.go2:disabled{opacity:.6;cursor:default}
+.fhd{display:flex;align-items:center;justify-content:space-between;margin:.25rem .25rem .6rem}.fhd h3{margin:0;font-size:1.1rem}.fhd small{color:var(--muted);font-weight:600}
+.rf{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:62rem;padding:.4rem .8rem;font:inherit;font-weight:700;font-size:.8125rem;cursor:pointer}.rf.spin{opacity:.6}
+.feed .fp{padding:.9rem 1rem}
+.feed .fp-h{align-items:flex-start}.feed .fav{width:2.6rem;height:2.6rem}
+.fp-n b{font-size:.95rem}.fp-tag{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.35rem}
+.fp-t.clamp{display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
+.more-b{border:0;background:none;color:#7c3aed;font:inherit;font-weight:700;font-size:.875rem;cursor:pointer;padding:0 0 .5rem}
+.pg{display:grid;gap:3px;border-radius:.8rem;overflow:hidden;margin-top:.4rem}
+.pgi{position:relative;border:0;padding:0;background:var(--bg);cursor:zoom-in;display:block;overflow:hidden}
+.pgi img{width:100%;height:100%;object-fit:cover;display:block;aspect-ratio:1}
+.pg1{grid-template-columns:1fr}.pg1 .pgi img{aspect-ratio:auto;max-height:30rem;height:auto}
+.pg2,.pg4,.pg3{grid-template-columns:1fr 1fr}.pg3 .pgi:first-child{grid-column:1/-1}.pg3 .pgi:first-child img{aspect-ratio:2/1}
+.pgi .more{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.5);color:#fff;font-size:1.8rem;font-weight:800}
+.more-posts{display:block;margin:.5rem auto 1rem;background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:62rem;padding:.7rem 1.5rem;font:inherit;font-weight:700;cursor:pointer}
+.sk{height:7rem;border-radius:1.1rem;margin-bottom:.875rem;background:linear-gradient(90deg,var(--card),var(--line),var(--card));background-size:200% 100%;animation:sk 1.2s linear infinite}@keyframes sk{to{background-position:-200% 0}}
+.lb{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.92);display:grid;place-items:center}.lb[hidden]{display:none}
+.lb img{max-width:96vw;max-height:88vh;object-fit:contain}
+.lb-x,.lb-n{position:absolute;border:0;background:rgba(255,255,255,.18);color:#fff;border-radius:50%;width:2.6rem;height:2.6rem;font-size:1.3rem;cursor:pointer}
+.lb-x{top:1rem;right:1rem}.lb-n{top:50%;transform:translateY(-50%)}.lb-n.l{left:.75rem}.lb-n.r{right:.75rem}
+.lb-c{position:absolute;bottom:1rem;color:#fff;font-weight:700}
+.box ol{background:var(--bg);border-radius:.9rem;padding:.8rem .8rem .8rem 1.9rem}
 </style>
 <style id="customCss"></style>
 </head>
 <body>
 <div class="banner" id="banner" hidden></div>
+<nav class="topnav" id="vnav" hidden><div class="tn-in"><a class="tn-brand" href="./" data-v="soft" id="navTitle">Software Hub</a>
+  <div class="tn-tabs"><button type="button" data-v="soft" class="on">🏠 Home</button><button type="button" data-v="feed">💬 Feed</button></div>
+  <div class="tn-r"><button class="tb" id="themeBtn2" type="button" aria-label="Switch light/dark theme">🌙</button></div></div></nav>
 <header class="hero">
   <span class="blob" style="width:240px;height:240px;left:-60px;top:-90px"></span>
   <span class="blob" style="width:280px;height:280px;right:-80px;bottom:-150px;animation-delay:-3s"></span>
@@ -234,7 +300,6 @@ img,svg,video{max-width:100%}
 </header>
 
 <div class="wrap">
-  <div class="vnav" id="vnav" hidden><button data-v="soft" class="on">📦 Software</button><button data-v="feed">💬 Feed</button></div>
 <div id="swView">
   <div class="search"><span>🔍</span><input id="q" placeholder="Search software by name or what it does…" autocomplete="off"></div>
   <div class="bar"><div class="seg" id="seg"></div>
@@ -252,6 +317,8 @@ img,svg,video{max-width:100%}
   <button class="ad" id="admLink">Admin</button>
 </footer>
 <div class="toast" id="toast"></div>
+<nav class="btab" id="btab" hidden><button type="button" data-v="soft" class="on"><i>🏠</i>Home</button><button type="button" data-v="feed"><i>💬</i>Feed</button></nav>
+<div class="lb" id="lb" hidden></div>
 
 <div class="mdl" id="mdl"><div class="sheet" role="dialog" aria-modal="true"><div class="sh-h" id="mdlHead"></div><div class="sh-b" id="mdlBody"></div><div class="sh-f" id="mdlFoot"></div></div></div>
 <div class="adm" id="adm">
@@ -379,8 +446,8 @@ const linkOf=(v,pre)=>{v=(v||"").trim();return!v?"":/^(https?:|mailto:)/i.test(v
 /* theme */
 function themeMode(){let m="";try{m=localStorage.getItem("theme")||""}catch(e){}return m||CFG.site.theme||"auto"}
 function isDark(){const m=themeMode();return m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme:dark)").matches)}
-function applyTheme(){const m=themeMode();document.documentElement.dataset.theme=m==="auto"?"":m;$("themeBtn").textContent=isDark()?"☀️":"🌙"}
-$("themeBtn").onclick=()=>{try{localStorage.setItem("theme",isDark()?"light":"dark")}catch(e){}applyTheme()};
+function applyTheme(){const m=themeMode();document.documentElement.dataset.theme=m==="auto"?"":m;$("themeBtn").textContent=$("themeBtn2").textContent=isDark()?"☀️":"🌙"}
+$("themeBtn").onclick=$("themeBtn2").onclick=()=>{try{localStorage.setItem("theme",isDark()?"light":"dark")}catch(e){}applyTheme()};
 function applySite(){
   const s=CFG.site;$("title").textContent=s.title;document.title=s.title;$("sub").textContent=s.tagline;
   $("owner").textContent=$("owner2").textContent=s.owner||"";$("avatar").alt=s.owner||"";
@@ -517,6 +584,7 @@ async function loadConfig(){
 }
 async function load(){
   applyTheme();CFG=await loadConfig();platTab=CFG.site.defPlat||"all";applySite();
+  if(!/^#(app\/|admin)/.test(location.hash))route();
   try{
     allRepos=(await cached("repos_"+USERNAME,10*60e3,async()=>{
       const res=await fetch(`https://api.github.com/users/${USERNAME}/repos?per_page=100&sort=created`);
@@ -596,7 +664,7 @@ function route(){
   const h=location.hash;
   if(h==="#admin"){openAdmin();return}
   if(h.startsWith("#app/")){openDetails(decodeURIComponent(h.slice(5)));return}
-  if(h==="#feed"){location.replace(location.pathname+"?feed");return}
+  if(h==="#feed")history.replaceState(null,"",location.pathname+"?feed");
   closeModal();setView(isFeedPage()&&feedOn()?"feed":"soft");
 }
 $("mdl").addEventListener("click",e=>{
@@ -970,41 +1038,71 @@ const ago=t=>{const s=(Date.now()-t)/1e3;return s<60?"just now":s<3600?Math.floo
 const vOK=()=>!!ME.token&&ME.vmail===(ME.email||"").trim().toLowerCase()&&ME.exp>Date.now();
 const wc=t=>t.trim().split(/\s+/).filter(Boolean).length;
 const shrink=f=>new Promise((res,rej)=>{const im=new Image(),u=URL.createObjectURL(f);im.onload=()=>{const k=Math.min(1,1280/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL("image/jpeg",.8))};im.onerror=rej;im.src=u});
-function applyFeedNav(){$("vnav").hidden=!feedOn();if(!feedOn()&&!$("feedView").hidden)setView("soft")}
-function setView(v){$("swView").hidden=v==="feed";$("feedView").hidden=v!=="feed";
-  document.querySelectorAll("#vnav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
-  if(v==="feed"){document.title="Community Feed";if(!FEED.loaded)loadFeed();else renderFeed()}}
-$("vnav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const f=b.dataset.v==="feed";if(f!==isFeedPage())location.href=location.pathname+(f?"?feed":"")});
-async function loadFeed(){
-  FEED.busy=true;renderFeed();const A=accs();
+function applyFeedNav(){const on=feedOn();$("vnav").hidden=!on;$("btab").hidden=!on;document.body.classList.toggle("hasnav",on);$("navTitle").textContent=CFG.site.title||"Software Hub";if(!on&&!$("feedView").hidden)setView("soft")}
+function setView(v){if(v==="feed"&&!feedOn())v="soft";const f=v==="feed";
+  $("swView").hidden=f;$("feedView").hidden=!f;document.body.classList.toggle("fm",f);
+  document.querySelectorAll("#vnav button[data-v],#btab button[data-v]").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  document.title=f?"Community Feed":(CFG.site.title||"Software Hub");
+  if(f){if(!FEED.loaded)loadFeed();else{renderFeed();if(Date.now()-(FEED.t||0)>6e4)loadFeed(true)}}}
+const goV=e=>{const b=e.target.closest("[data-v]");if(!b)return;e.preventDefault();const f=b.dataset.v==="feed";
+  if(f===isFeedPage()&&!location.hash){scrollTo({top:0,behavior:"smooth"});return}
+  history.pushState(null,"",location.pathname+(f?"?feed":""));route();scrollTo(0,0)};
+$("vnav").addEventListener("click",goV);$("btab").addEventListener("click",goV);window.addEventListener("popstate",route);
+async function loadFeed(silent){
+  if(FEED.busy)return;FEED.busy=true;renderFeed();const A=accs();
   const R=await Promise.allSettled(A.map(a=>gcall(a.url+"?action=list")));
-  FEED.items=[];FEED.full=[];FEED.ok=[];
-  R.forEach((r,i)=>{const v=r.value,ok=r.status==="fulfilled"&&v&&v.ok;if(ok&&v.mode&&!FEED.modeSet){FEED.mode=v.mode;FEED.modeSet=1}FEED.ok[i]=!!ok;FEED.full[i]=!!(ok&&v.full);if(ok)v.posts.forEach(p=>FEED.items.push({...p,src:i}))});
-  FEED.items.sort((a,b)=>b.ts-a.ts);FEED.busy=false;FEED.loaded=true;renderFeed();
+  const items=[];FEED.full=[];FEED.ok=[];
+  R.forEach((r,i)=>{const v=r.value,ok=r.status==="fulfilled"&&v&&v.ok;if(ok&&v.mode&&!FEED.modeSet){FEED.mode=v.mode;FEED.modeSet=1}FEED.ok[i]=!!ok;FEED.full[i]=!!(ok&&v.full);if(ok)v.posts.forEach(p=>items.push({...p,src:i}))});
+  if(FEED.ok.some(Boolean)||!silent)FEED.items=items.sort((a,b)=>b.ts-a.ts);
+  FEED.busy=false;FEED.loaded=true;FEED.t=Date.now();renderFeed();
 }
-const postHtml=p=>{const t=FT[p.type]||FT.other;return`<article class="fp"><div class="fp-h"><div class="fav" style="background:${COLORS[(p.name.charCodeAt(0)||0)%COLORS.length]}">${esc((p.name[0]||"?").toUpperCase())}</div><div class="fp-n"><b>${esc(p.name)}</b>${p.v?' <span title="Verified email" style="color:#10b981">✔</span>':""}<small>${ago(p.ts)}</small></div><div class="tags"><span class="tag" style="--c:${t[2]}">${t[0]} ${t[1]}</span>${p.app?`<span class="tag ver">📦 ${esc(p.app)}</span>`:""}</div></div><div class="fp-t">${esc(p.text)}</div>${p.imgs&&p.imgs.length?`<div class="fp-i">${p.imgs.map(i=>`<a href="${thumb(i)}" target="_blank" rel="noopener"><img src="${thumb(i)}" loading="lazy" alt=""></a>`).join("")}</div>`:""}</article>`};
+let COMP=false,SHOWN=10,LB=null;
+const initial=n=>((n||"?").trim()[0]||"?").toUpperCase(),avCol=n=>COLORS[((n||"").charCodeAt(0)||0)%COLORS.length];
+const postHtml=(p,i)=>{const t=FT[p.type]||FT.other,tx=p.text||"",long=tx.length>320||tx.split("\n").length>6,im=p.imgs||[];
+  return`<article class="fp"><div class="fp-h"><div class="fav" style="background:${avCol(p.name)}">${esc(initial(p.name))}</div><div class="fp-n"><b>${esc(p.name)}</b>${p.v?' <span title="Verified email" style="color:#10b981">✔</span>':""}<small title="${esc(new Date(p.ts).toLocaleString())}">${ago(p.ts)} · 🌐 Public</small><div class="fp-tag"><span class="tag" style="--c:${t[2]}">${t[0]} ${t[1]}</span>${p.app?`<span class="tag ver">📦 ${esc(p.app)}</span>`:""}</div></div></div><div class="fp-t${long?" clamp":""}">${esc(tx)}</div>${long?'<button class="more-b" data-more type="button">See more</button>':""}${im.length?`<div class="pg pg${Math.min(im.length,4)}">${im.slice(0,4).map((id,k)=>`<button type="button" class="pgi" data-lb="${i}:${k}"><img src="${thumb(id)}" loading="lazy" alt="">${k===3&&im.length>4?`<span class="more">+${im.length-4}</span>`:""}</button>`).join("")}</div>`:""}</article>`};
 function cnt(){const t=$("fText");if(!t)return;const n=wc(t.value),c=$("fCnt");c.textContent=n+"/200 words";c.style.color=n>200?"#ef4444":""}
+function compHtml(){
+  const me=ME.name||"",req=FEED.mode==="required";
+  if(!COMP)return`<div class="cmp"><div class="cmp-row"><div class="fav" style="background:${avCol(me||"?")}">${me?esc(initial(me)):"👤"}</div><button class="cmp-pill" type="button" data-open="">What's on your mind${me?", "+esc(me.split(" ")[0]):""}?</button></div><div class="cmp-q"><button type="button" data-open="request">🆕 Request software</button><button type="button" data-open="bug">🐞 Report a bug</button><button type="button" data-open="idea">💡 Share an idea</button></div></div>`;
+  const apps=visItems().map(r=>r.dispName).sort();
+  const ver=FEED.mode==="off"?"":vOK()?'<div class="vrow ok">✔ Email verified — your posts get a ✔ badge</div>':`<div class="vrow"><div><b>Verify your email</b><small>${req?"Required to post.":"Optional — verified posts get a ✔ and higher limits."}</small></div><button class="mini" id="fVer" type="button">✉️ Send code</button></div>`+(VSTEP?`<div class="vcode"><input class="fin" id="fCode" inputmode="numeric" maxlength="6" placeholder="6-digit code (check spam too)"><button class="mini" id="fVok" type="button">Confirm</button><button class="mini ghost" id="fRes" type="button" ${Date.now()-VSTEP.t<3e4?"disabled":""}>Resend</button></div>`:"");
+  return`<div class="cmp open"><div class="cmp-h"><b>Create post</b><button class="sh-x" data-close type="button" aria-label="Close">✕</button></div>
+  <div class="tchips">${Object.entries(FT).map(([k,x])=>`<button type="button" class="tchip${DRAFT.type===k?" on":""}" style="--c:${x[2]}" data-t="${k}">${x[0]} ${x[1]}</button>`).join("")}</div>
+  <textarea class="cmp-t" id="fText" rows="4" placeholder="Write here… (max 200 words)">${esc(DRAFT.text)}</textarea>
+  <div class="fimgs">${IMGS.map((d,i)=>`<div><img src="${d}" alt=""><button type="button" data-fx="${i}">✕</button></div>`).join("")}</div>
+  <div class="ffoot"><span id="fCnt"></span><label class="mini ghost">🖼 Photos ${IMGS.length}/5<input type="file" id="fImg" accept="image/*" multiple hidden></label></div>
+  <select class="fin" id="fApp"><option value="">📦 Which software? (optional)</option>${apps.map(a=>`<option ${DRAFT.app===a?"selected":""}>${esc(a)}</option>`).join("")}</select>
+  <div class="cmp-who"><div class="cw-h">👤 About you <small>🔒 Your email stays private</small></div>
+  <div class="fr2"><input class="fin" id="fName" placeholder="Your name" maxlength="40" value="${esc(me)}"><input class="fin" id="fMail" type="email" placeholder="Your email (required)" value="${esc(ME.email||"")}"></div>${ver}</div>
+  <button class="go2" id="fPost" type="button">Post</button><div class="err" id="fErr"></div></div>`}
 function renderFeed(){
   const v=$("feedView");if(v.hidden)return;
-  const ta=$("fText");if(ta)DRAFT.text=ta.value;const ft=$("fType");if(ft)DRAFT.type=ft.value;const fa=$("fApp");if(fa)DRAFT.app=fa.value;
-  const apps=visItems().map(r=>r.dispName).sort();
-  v.innerHTML=`<div class="fc"><h3>💬 Community Feed</h3><p class="fh">Request new software, report a bug, or share anything — up to 200 words and 5 images. Your email is required but stays private; only the site owner can see it.</p>
-  <div class="fr2"><input class="fin" id="fName" placeholder="Your name" maxlength="40" value="${esc(ME.name||"")}"><input class="fin" id="fMail" type="email" placeholder="Your own email (required)" value="${esc(ME.email||"")}"></div>
-  ${FEED.mode!=="off"?`<div class="ffoot" style="margin:0 0 .5rem">${vOK()?'<span class="tag" style="--c:#10b981">✔ Email verified</span>':`<button class="mini ghost" id="fVer" type="button">✉️ Verify email</button><span>${FEED.mode==="required"?"Required to post.":"Optional — verified posts get a ✔ and higher limits."}</span>`}</div>`:""}${VSTEP&&!vOK()?`<div class="fr2"><input class="fin" id="fCode" inputmode="numeric" maxlength="6" placeholder="6-digit code (check spam too)"><div class="ffoot" style="margin:0"><button class="mini" id="fVok" type="button">Confirm</button><button class="mini ghost" id="fRes" type="button" ${Date.now()-VSTEP.t<3e4?"disabled":""}>Resend</button></div></div>`:""}
-  <div class="fr2"><select class="fin" id="fType">${Object.entries(FT).map(([k,t])=>`<option value="${k}" ${DRAFT.type===k?"selected":""}>${t[0]} ${t[1]}</option>`).join("")}</select>
-  <select class="fin" id="fApp"><option value="">Which software? (optional)</option>${apps.map(a=>`<option ${DRAFT.app===a?"selected":""}>${esc(a)}</option>`).join("")}</select></div>
-  <textarea class="fin" id="fText" rows="4" placeholder="Write here…">${esc(DRAFT.text)}</textarea>
-  <div class="fimgs">${IMGS.map((d,i)=>`<div><img src="${d}" alt=""><button type="button" data-fx="${i}">✕</button></div>`).join("")}</div>
-  <div class="ffoot"><span id="fCnt"></span><label class="mini ghost">🖼 Images ${IMGS.length}/5<input type="file" id="fImg" accept="image/*" multiple hidden></label><button class="mini" id="fPost" type="button">Post</button></div><div class="err" id="fErr"></div></div>`
-  +(FEED.busy?'<div class="msg">Loading…</div>':!FEED.ok.some(Boolean)?'<div class="msg">Feed is not available right now.</div>':FEED.items.length?FEED.items.map(postHtml).join(""):'<div class="msg">No posts yet. Be the first! ✨</div>');
+  const ta=$("fText");if(ta)DRAFT.text=ta.value;const fa=$("fApp");if(fa)DRAFT.app=fa.value;
+  const n=FEED.items.length,ok=FEED.ok.some(Boolean);
+  v.innerHTML=`<div class="feed">${compHtml()}<div class="fhd"><h3>💬 Community Feed${n?` <small>· ${n} posts</small>`:""}</h3><button class="rf${FEED.busy?" spin":""}" data-refresh type="button">↻ ${FEED.busy?"Loading…":"Refresh"}</button></div>`
+  +(FEED.busy&&!n?'<div class="sk"></div><div class="sk"></div><div class="sk"></div>':!ok&&FEED.loaded?'<div class="msg">Feed is not available right now.</div>':n?FEED.items.slice(0,SHOWN).map(postHtml).join("")+(n>SHOWN?'<button class="more-posts" data-showmore type="button">Show more posts</button>':""):'<div class="msg">No posts yet. Be the first! ✨</div>')+`</div>`;
   cnt();
 }
+function lbShow(){const l=$("lb");if(!LB){l.hidden=true;document.body.style.overflow="";return}
+  const im=FEED.items[LB[0]].imgs,k=LB[1];
+  l.innerHTML=`<button class="lb-x" data-lbx type="button" aria-label="Close">✕</button>${im.length>1?'<button class="lb-n l" data-lbn="-1" type="button">‹</button><button class="lb-n r" data-lbn="1" type="button">›</button>':""}<img src="https://drive.google.com/thumbnail?id=${im[k]}&sz=w2000" alt=""><div class="lb-c">${k+1} / ${im.length}</div>`;
+  l.hidden=false;document.body.style.overflow="hidden"}
+const lbStep=d=>{const m=FEED.items[LB[0]].imgs.length;LB[1]=(LB[1]+d+m)%m;lbShow()};
+$("lb").addEventListener("click",e=>{const n=e.target.closest("[data-lbn]");if(n)return lbStep(+n.dataset.lbn);if(e.target.id==="lb"||e.target.closest("[data-lbx]")){LB=null;lbShow()}});
+document.addEventListener("keydown",e=>{if(!LB)return;if(e.key==="Escape"){LB=null;lbShow()}else if(e.key==="ArrowRight")lbStep(1);else if(e.key==="ArrowLeft")lbStep(-1)});
 $("feedView").addEventListener("input",e=>{const i=e.target.id;
   if(i==="fText")cnt();
   if(i==="fName"||i==="fMail"){ME={...ME,name:$("fName").value,email:$("fMail").value};try{localStorage.setItem("feed_me",JSON.stringify(ME))}catch(x){}}});
 $("feedView").addEventListener("change",async e=>{if(e.target.id!=="fImg")return;
   for(const f of[...e.target.files].slice(0,5-IMGS.length)){try{IMGS.push(await shrink(f))}catch(x){}}renderFeed()});
 $("feedView").addEventListener("click",async e=>{
+  const o=e.target.closest("[data-open]");if(o){if(o.dataset.open)DRAFT.type=o.dataset.open;COMP=true;renderFeed();const t0=$("fText");if(t0)t0.focus();return}
+  if(e.target.closest("[data-close]")){COMP=false;renderFeed();return}
+  const tc=e.target.closest("[data-t]");if(tc){DRAFT.type=tc.dataset.t;document.querySelectorAll(".tchip").forEach(b=>b.classList.toggle("on",b===tc));return}
+  const mo=e.target.closest("[data-more]");if(mo){const c=mo.previousElementSibling.classList.toggle("clamp");mo.textContent=c?"See more":"See less";return}
+  const lk=e.target.closest("[data-lb]");if(lk){LB=lk.dataset.lb.split(":").map(Number);lbShow();return}
+  if(e.target.closest("[data-refresh]")){loadFeed(true);return}
+  if(e.target.closest("[data-showmore]")){SHOWN+=10;renderFeed();return}
   const x=e.target.closest("[data-fx]");if(x){IMGS.splice(+x.dataset.fx,1);renderFeed();return}
   const id=e.target.id,eb=$("fErr"),mail0=($("fMail")||{value:""}).value.trim().toLowerCase();
   if(id==="fVer"||id==="fRes"){
@@ -1028,7 +1126,7 @@ $("feedView").addEventListener("click",async e=>{
   if(wc(text)>200)return err.textContent="Max 200 words please.";
   if(FEED.mode==="required"&&!vOK())return err.textContent=FERR.verify;
   btn.disabled=true;btn.textContent="Posting…";
-  const body={action:"post",token:vOK()?ME.token:"",name,email:mail,type:$("fType").value,app:$("fApp").value,text,images:IMGS},A=accs();
+  const body={action:"post",token:vOK()?ME.token:"",name,email:mail,type:DRAFT.type,app:$("fApp").value,text,images:IMGS},A=accs();
   let done=false,msg="";
   for(let i=0;i<A.length;i++){if(FEED.ok[i]===false||FEED.full[i])continue;
     try{const r=await gcall(A[i].url,body,90000);
@@ -1036,7 +1134,7 @@ $("feedView").addEventListener("click",async e=>{
       if(r.error==="full"){FEED.full[i]=true;continue}
       msg=FERR[r.error]||"Could not post ("+r.error+")";break}
     catch(x){msg="Network problem, please try again."}}
-  if(done){$("fText").value="";DRAFT.text="";toast("✅ Posted!")}
+  if(done){$("fText").value="";DRAFT.text="";COMP=false;toast("✅ Posted!")}
   renderFeed();if(!done){const e2=$("fErr");if(e2)e2.textContent=msg||"No storage available right now."}
 });
 
