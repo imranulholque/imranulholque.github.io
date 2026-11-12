@@ -88,7 +88,7 @@
     }
   },
   "feed": {
-    "enabled": true,
+    "enabled": false,
     "accounts": [
       {
         "name": "imranul.hoque.site",
