@@ -256,6 +256,16 @@ body.fm .hero{display:none}body.fm .wrap{margin-top:1rem}
 .fp-n b{font-size:.95rem}.fp-tag{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.35rem}
 .fp-t.clamp{display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
 .more-b{border:0;background:none;color:#7c3aed;font:inherit;font-weight:700;font-size:.875rem;cursor:pointer;padding:0 0 .5rem}
+.fc-bar{border-top:1px solid var(--line);margin-top:.5rem;padding-top:.4rem}
+.fc-t{border:0;background:none;color:var(--muted);font:inherit;font-weight:700;font-size:.85rem;cursor:pointer;padding:.25rem .1rem}.fc-t:hover{color:#7c3aed}
+.fc-box{display:flex;flex-direction:column;gap:.6rem;padding-top:.4rem}
+.fc-i{display:flex;gap:.55rem;align-items:flex-start}.feed .fc-av{width:2rem;height:2rem;font-size:.85rem}
+.fc-b{background:var(--bg);border-radius:.9rem;padding:.45rem .8rem;min-width:0;flex:0 1 auto;max-width:100%}
+.fc-n small{color:var(--muted);font-size:.72rem;margin-left:.3rem}.fc-n b{font-size:.85rem}
+.fc-x{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5;font-size:.9rem}
+.fc-f{display:flex;flex-direction:column;gap:.45rem}
+.fc-w{color:#ef4444;font-size:.8rem;font-weight:600;min-height:0}.fc-w:empty{display:none}
+.fc-s{display:flex;justify-content:space-between;align-items:center;gap:.5rem}.fc-s small{color:var(--muted)}
 .pg{display:grid;gap:3px;border-radius:.8rem;overflow:hidden;margin-top:.4rem}
 .pgi{position:relative;border:0;padding:0;background:var(--bg);cursor:zoom-in;display:block;overflow:hidden}
 .pgi img{width:100%;height:100%;object-fit:cover;display:block;aspect-ratio:1}
@@ -762,7 +772,7 @@ function appRow(r){const o=r.ov;
       ${slot(o,"uploadAndroid","📱 Android file (.apk) upload koro",".apk,.aab")}
       ${slot(o,"uploadPC","💻 PC file (.exe / .zip) upload koro","")}
       ${o.upload?`<div class="wide">${slot(o,"upload","📎 Any-platform file","")}</div>`:""}
-      <div class="wide" style="color:var(--muted);font-size:12px;font-weight:600">Upload na korle GitHub release theke auto file nibe.</div>
+      <div class="wide" style="color:var(--muted);font-size:12px;font-weight:600">File sob shomoy Google Drive-e upload hoy. Upload na korle GitHub release theke auto file nibe.</div>
       <label class="wide">Description<textarea data-f="desc" rows="2" placeholder="${esc("Auto (README): "+(r.summary||r.description||"—"))}">${esc(o.desc||"")}</textarea></label>
       <label class="wide">Details (Markdown) — khali thakle README theke shudhu feature/function ongsho dekhabe<textarea data-f="details" rows="5" placeholder="# Features&#10;- ...">${esc(o.details||"")}</textarea></label>
       <div class="wide"><button type="button" class="mini" data-mdup>📄 .md file theke load koro</button><input type="file" accept=".md,.markdown,.txt" hidden data-mdfile></div>
@@ -987,12 +997,8 @@ $("adm").addEventListener("change",async e=>{
       await putFile(path,url.split(",")[1],"Add icon for "+repo);pendingIcons[path]=url;setField(repo,"icon",path);
       row.querySelector('[data-f="icon"]').value=path;row.querySelector("[data-prev]").innerHTML=iconHtml(path);updDirty();rr();toast("✅ Icon upload hoyeche. Ekhon Save & Publish chapo.")}
     else if(el.matches("[data-appfile]")){
-      const dest=await pickDest(f);if(dest===null){el.value="";return}
-      if(dest!=="gh"){const u=await driveUp(f,+dest);setField(repo,el.dataset.appfile,u);renderAdmin();toast("✅ Drive-e upload hoyeche. Ekhon Save & Publish chapo.");return}
-      if(f.size>MAXMB*1048576)throw new Error(`File khub boro (max ${MAXMB} MB)`);
-      toast(`⏳ ${f.name} upload hocche (${sz(f.size)})…`);const k=el.dataset.appfile,sub=k==="uploadAndroid"?"android/":k==="uploadPC"?"pc/":"";
-      const path=`files/${repo}/${sub}${safe(f.name)}`;
-      await putFile(path,await toB64(f),"Upload download file for "+repo);setField(repo,k,path);renderAdmin();toast("✅ File upload hoyeche. Ekhon Save & Publish chapo.")}
+      const di=await driveDest(f);toast(`⏳ ${f.name} → Google Drive…`);
+      const u=await driveUp(f,di);setField(repo,el.dataset.appfile,u);renderAdmin();toast("✅ Google Drive-e upload hoyeche. Ekhon Save & Publish chapo.")}
     else if(el.matches("[data-mdfile]")){
       const t=await f.text();setField(repo,"details",t);row.querySelector('[data-f="details"]').value=t;updDirty();toast("✅ Details load hoyeche. Save & Publish chapo.")}
   }catch(x){toast("❌ "+(x.message||"Upload hoyni"))}
@@ -1000,33 +1006,47 @@ $("adm").addEventListener("change",async e=>{
 });
 
 /* ===== Details: only features & functions (no build / GitHub info) ===== */
-const F_KEEP=/feature|function|usage|\buse\b|using|how|work|what|overview|about|descri|highlight|capabilit|screenshot|demo|preview|option|support|mode|tool|command|shortcut|setting|faq|tips?|workflow|why|benefit|includ|menu|interface|\bui\b|\bgui\b|guide|ফিচার|সুবিধা|ব্যবহার/i;
-const F_DROP=/install|build|compil|setup|set up|clone|develop|contribut|licen|tech|stack|built with|made with|github|\bgit\b|changelog|what'?s new|release|credit|acknowledg|author|contact|donat|sponsor|requirement|prerequisite|dependenc|deploy|structure|roadmap|to-?do|\btests?\b|testing|folder|architect|source|\bcode\b|getting started|quick ?start|history|thanks|\bfork|issue|support me|buy me/i;
-const F_JUNK=/github\.com|git clone|npm (?:i|install|run)|pip install|gradle|android studio|pull request|star this|licensed under|shields\.io|badge/i;
+const F_KEEP=/feature|function|usage|\buse\b|using|how|work|what|overview|about|descri|highlight|capabilit|screenshot|demo|preview|option|support|mode|tool|shortcut|setting|menu|interface|\bui\b|\bgui\b|guide|benefit|why|includ|ফিচার|সুবিধা|ব্যবহার|পরিচিতি|বৈশিষ্ট্য/i;
+const F_DROP=/install|build|compil|setup|set up|clone|develop|contribut|licen|tech|stack|built with|made with|github|\bgit\b|changelog|what'?s new|release|credit|acknowledg|author|contact|donat|sponsor|requirement|prerequisite|dependenc|deploy|structure|roadmap|to-?do|\btests?\b|testing|folder|architect|source|\bcode\b|getting started|quick ?start|history|thanks|\bfork|issue|support me|buy me|download|upload|host|server|backend|frontend|database|\bapi\b|config|environment|\benv\b|permission|version|update|platform|package|command|terminal|\bcli\b|script|tools? used|used tools|\bfaq\b|troubleshoot/i;
+const F_JUNK=/github|gitlab|bitbucket|\bgit\b|repo(?:sitory)?\b|\bcommits?\b|\bbranch|pull request|\bfork|\bnpm\b|\byarn\b|\bpip3? |gradle|android studio|apps? script|\bdeploy|hosted (?:on|at)|source code|codebase|shields\.io|badge|\.(?:java|kt|kts|py|js|ts|jsx|tsx|html|css|gs|json|ya?ml|xml|bat|sh)\b|\b(?:src|app|lib|docs?|scripts?)\/[\w.-]+|`[^`]*(?:\/|\\|--|\$ |\.[a-z]{1,4}\b)[^`]*`|upload(?:ed)? (?:to|on|in)|star this|api key/i;
 function featureText(src){
   if(!src)return"";
-  src=src.replace(/\r/g,"").replace(/<!--[\s\S]*?-->/g,"").replace(/^(```|~~~)[^\n]*\n[\s\S]*?^\1/gm,"");
+  src=src.replace(/\r/g,"").replace(/<!--[\s\S]*?-->/g,"").replace(/^(```|~~~)[^\n]*\n[\s\S]*?^\1/gm,"").replace(/<\/?(?:br|p|div|center|details|summary|b|i|u|em|strong|sup|sub|a)\b[^>]*>/gi,"").replace(/\[!\[[^\]]*\]\([^)]*\)\]\([^)]*\)/g,"");
   const S=[];let c={l:0,t:"",b:[]};
   for(const ln of src.split("\n")){const m=ln.match(/^(#{1,6})\s+(.*?)\s*#*\s*$/);if(m){S.push(c);c={l:m[1].length,t:m[2],b:[]}}else c.b.push(ln)}
   S.push(c);
-  const st=[],out=[];let h1=false;
+  const clean=a=>a.filter(x=>!F_JUNK.test(x)).join("\n").replace(/!\[[^\]]*\]\([^)]*(?:shields\.io|badge)[^)]*\)/gi,"").replace(/\[([^\]]+)\]\((?:https?:|mailto:)[^)]*\)/gi,"$1").replace(/https?:\/\/\S+/g,"").replace(/\n{3,}/g,"\n\n").trim();
+  const isList=l=>/^\s*(?:[-*+•]|\d+[.)])\s+/.test(l);
+  const intro=[],bullets=[],out=[],st=[];let h1=false;
   for(const s of S){
     const t=s.t.replace(/[^\p{L}\p{N}\s'’]/gu,"").trim();
     while(st.length&&st[st.length-1].l>=s.l)st.pop();
     const par=st.length?st[st.length-1].k:false;
-    const k=s.l===0||(s.l===1&&!h1)?true:F_DROP.test(t)?false:F_KEEP.test(t)?true:par;
+    const isIntro=s.l===0||(s.l===1&&!h1);
+    const k=isIntro?false:F_DROP.test(t)?false:F_KEEP.test(t)?true:par;
     if(s.l===1)h1=true;
     st.push({l:s.l,k:s.l<=1?false:k});
+    if(isIntro){
+      for(const para of clean(s.b).split(/\n\s*\n/)){const ls=para.split("\n").filter(x=>x.trim());if(!ls.length)continue;
+        if(ls.every(isList)){bullets.push(...ls)}else if(intro.length<2&&!ls.some(isList)){const x=ls.join(" ").trim();if(x.length>=20)intro.push(x.length>600?x.slice(0,597).replace(/\s+\S*$/,"")+"…":x)}}
+      continue}
     if(!k)continue;
-    const b=s.b.filter(x=>!F_JUNK.test(x)).join("\n").replace(/\[!\[[^\]]*\]\([^)]*\)\]\([^)]*\)/g,"").replace(/<img\b[^>]*(?:shields\.io|badge)[^>]*>/gi,"").replace(/\[([^\]]+)\]\(https?:\/\/(?:www\.)?github\.com[^)]*\)/gi,"$1").trim();
+    const b=clean(s.b);
     if(b)out.push((s.l>1?"#".repeat(s.l)+" "+s.t+"\n\n":"")+b);
   }
-  return out.join("\n\n").slice(0,12000);
+  if(!out.length&&bullets.length)out.push("### Features\n\n"+bullets.slice(0,12).join("\n"));
+  return[intro.join("\n\n"),...out].filter(Boolean).join("\n\n").slice(0,6000);
 }
 
 /* ===== Community feed (data lives in your Google Drive via Apps Script) ===== */
 const FT={request:["🆕","Software request","#3b82f6"],bug:["🐞","Bug fix","#ef4444"],idea:["💡","Idea","#f59e0b"],other:["💬","General","#7c3aed"]};
-const FERR={verify:"Please verify your email first.",mail_failed:"Couldn't send the email right now.",wrong_code:"Wrong code, try again.",expired:"Code expired. Please resend.",banned:"This email is not allowed to post.",too_many:"Too many posts. Please try again later.",bad_email:"Please enter a valid email.",name:"Please enter your name.",empty:"Write something first.",too_long:"Max 200 words please.",bad_image:"One of the images isn't supported.",img_big:"An image is too large.",not_configured:"Feed is not set up yet."};
+const FERR={verify:"Please verify your email first.",mail_failed:"Couldn't send the email right now.",wrong_code:"Wrong code, try again.",expired:"Code expired. Please resend.",banned:"This email is not allowed to post.",too_many:"Too many posts. Please try again later.",bad_email:"Please enter a valid email.",name:"Please enter your name.",empty:"Write something first.",too_long:"Max 200 words please.",bad_image:"One of the images isn't supported.",img_big:"An image is too large.",not_configured:"Feed is not set up yet.",no_links:"Links can't be shared in posts or comments. Please remove the link and try again.",too_long_c:"Max 80 words per comment please.",cfull:"This post has reached its comment limit.",gone:"This post is no longer available.",verify_c:"Please verify your email first (open Create post → Send code).",bad:"Comments aren't available right now."};
+const TLD_RE="com|net|org|io|me|co|app|dev|xyz|info|biz|link|ly|gl|be|tv|bd|in|us|uk|site|online|store|tech|ai|gg|cc|ws|to|fm|page|live|shop|top|click|cloud|pro|club|vip|fun|icu|one|bio|ink|wiki|edu|gov|mil|int|asia|news|blog|world|space|website|download|zip|mov|so|sh|im|ru|cn|de|fr|jp|kr|pk|np|lk|ae|sa|ca|au|nz|za|ng|ke|br|mx|ar|es|it|nl|se|no|fi|pl|ua|tr|ir|id|my|sg|ph|vn|th|tw|hk";
+function hasLink(t){let s=String(t||"");try{s=s.normalize("NFKC")}catch(e){}
+  s=s.replace(/[\u200B-\u200F\u2060\uFEFF\u00AD]/g,"").toLowerCase();
+  s=s.replace(/\s*[\[\(\{]\s*(?:dot|\.)\s*[\]\)\}]\s*/g,".").replace(new RegExp("\\s+(?:dot|\u09a1\u099f)\\s+(?=(?:"+TLD_RE+")\\b)","g"),".").replace(new RegExp("([a-z0-9])\\s+\\.\\s*(?=(?:"+TLD_RE+")\\b)","g"),"$1.").replace(/\bh\s*t\s*t\s*p\s*s?\s*:\s*\/\s*\//g,"http://");
+  if(/(?:https?|ftp|ftps|file):\/\/|\/\/[a-z0-9-]+\.|\bwww\s*\.|\bmailto:|\b(?:t\.me|wa\.me|bit\.ly|tinyurl|youtu\.be|goo\.gl|fb\.me|m\.me|discord\.gg|linktr\.ee)\b/.test(s))return true;
+  return new RegExp("[a-z0-9][a-z0-9-]*(?:\\.[a-z0-9-]+)*\\.(?:"+TLD_RE+")(?![a-z0-9-])(?:[\\/:?#]|\\b)").test(s)}
 let VSTEP=null,FEED={items:[],full:[],ok:[],loaded:false,busy:false,mode:"optional"},IMGS=[],DRAFT={text:"",type:"request",app:""},ME={};
 try{ME=JSON.parse(localStorage.getItem("feed_me")||"{}")}catch(e){}
 function isFeedPage(){return /[?&]feed\b/.test(location.search)}
@@ -1058,8 +1078,28 @@ async function loadFeed(silent){
 }
 let COMP=false,SHOWN=10,LB=null;
 const initial=n=>((n||"?").trim()[0]||"?").toUpperCase(),avCol=n=>COLORS[((n||"").charCodeAt(0)||0)%COLORS.length];
+const OPENC=new Set(),CD={};
+const cmtHtml=p=>{const cm=p.cm||[],open=OPENC.has(p.id);
+  return`<div class="fc-bar"><button type="button" class="fc-t" data-ctog="${p.id}">💬 ${cm.length} comment${cm.length===1?"":"s"} ${open?"▴":"▾"}</button></div>`+(open?`<div class="fc-box">${cm.map(c=>`<div class="fc-i"><div class="fav fc-av" style="background:${avCol(c.name)}">${esc(initial(c.name))}</div><div class="fc-b"><div class="fc-n"><b>${esc(c.name)}</b>${c.v?' <span style="color:#10b981" title="Verified email">✔</span>':""} <small>${ago(c.ts)}</small></div><div class="fc-x">${esc(c.text)}</div></div></div>`).join("")}<div class="fc-f"><div class="fr2"><input class="fin" data-cn maxlength="40" placeholder="Your name" value="${esc(ME.name||"")}"><input class="fin" data-ce type="email" placeholder="Your email (stays private)" value="${esc(ME.email||"")}"></div><textarea class="fin" data-ct="${p.id}" rows="2" placeholder="Write a comment… (links are not allowed)">${esc(CD[p.id]||"")}</textarea><div class="fc-w" data-cw="${p.id}"></div><div class="fc-s"><small data-cc="${p.id}"></small><button class="mini" type="button" data-csend="${p.id}">Send</button></div></div></div>`:"")};
+async function sendComment(btn){
+  const pid=btn.dataset.csend,box=btn.closest(".fc-f"),name=box.querySelector("[data-cn]").value.trim(),mail=box.querySelector("[data-ce]").value.trim(),text=box.querySelector("[data-ct]").value.trim(),w=box.querySelector("[data-cw]");
+  const fail=m=>{w.textContent="⚠️ "+m;toast("⚠️ "+m)};
+  if(name.length<2)return fail("Please enter your name.");
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail))return fail("Please enter your own valid email.");
+  if(!text)return fail("Write something first.");
+  if(hasLink(name)||hasLink(text))return fail(FERR.no_links);
+  if(wc(text)>80)return fail(FERR.too_long_c);
+  if(FEED.mode==="required"&&!vOK())return fail(FERR.verify_c);
+  const post=FEED.items.find(x=>x.id===pid);if(!post)return;
+  btn.disabled=true;btn.textContent="Sending…";
+  try{const r=await gcall(accs()[post.src].url,{action:"comment",pid,token:vOK()?ME.token:"",name,email:mail,text},60000);
+    if(r.ok){(post.cm=post.cm||[]).push(r.comment);CD[pid]="";renderFeed();toast("✅ Comment added");return}
+    fail(FERR[r.error]||"Could not comment ("+r.error+")")}
+  catch(x){fail("Network problem, please try again.")}
+  btn.disabled=false;btn.textContent="Send"}
 const postHtml=(p,i)=>{const t=FT[p.type]||FT.other,tx=p.text||"",long=tx.length>320||tx.split("\n").length>6,im=p.imgs||[];
-  return`<article class="fp"><div class="fp-h"><div class="fav" style="background:${avCol(p.name)}">${esc(initial(p.name))}</div><div class="fp-n"><b>${esc(p.name)}</b>${p.v?' <span title="Verified email" style="color:#10b981">✔</span>':""}<small title="${esc(new Date(p.ts).toLocaleString())}">${ago(p.ts)} · 🌐 Public</small><div class="fp-tag"><span class="tag" style="--c:${t[2]}">${t[0]} ${t[1]}</span>${p.app?`<span class="tag ver">📦 ${esc(p.app)}</span>`:""}</div></div></div><div class="fp-t${long?" clamp":""}">${esc(tx)}</div>${long?'<button class="more-b" data-more type="button">See more</button>':""}${im.length?`<div class="pg pg${Math.min(im.length,4)}">${im.slice(0,4).map((id,k)=>`<button type="button" class="pgi" data-lb="${i}:${k}"><img src="${thumb(id)}" loading="lazy" alt="">${k===3&&im.length>4?`<span class="more">+${im.length-4}</span>`:""}</button>`).join("")}</div>`:""}</article>`};
+  return`<article class="fp"><div class="fp-h"><div class="fav" style="background:${avCol(p.name)}">${esc(initial(p.name))}</div><div class="fp-n"><b>${esc(p.name)}</b>${p.v?' <span title="Verified email" style="color:#10b981">✔</span>':""}<small title="${esc(new Date(p.ts).toLocaleString())}">${ago(p.ts)} · 🌐 Public</small><div class="fp-tag"><span class="tag" style="--c:${t[2]}">${t[0]} ${t[1]}</span>${p.app?`<span class="tag ver">📦 ${esc(p.app)}</span>`:""}</div></div></div><div class="fp-t${long?" clamp":""}">${esc(tx)}</div>${long?'<button class="more-b" data-more type="button">See more</button>':""}${im.length?`<div class="pg pg${Math.min(im.length,4)}">${im.slice(0,4).map((id,k)=>`<button type="button" class="pgi" data-lb="${i}:${k}"><img src="${thumb(id)}" loading="lazy" alt="">${k===3&&im.length>4?`<span class="more">+${im.length-4}</span>`:""}</button>`).join("")}</div>`:""}${cmtHtml(p)}</article>`};
+function lw(){const e=$("fErr"),t=$("fText"),n=$("fName");if(!e||!t)return;if(hasLink(t.value)||hasLink(n?n.value:""))e.textContent=FERR.no_links;else if(e.textContent===FERR.no_links)e.textContent=""}
 function cnt(){const t=$("fText");if(!t)return;const n=wc(t.value),c=$("fCnt");c.textContent=n+"/200 words";c.style.color=n>200?"#ef4444":""}
 function compHtml(){
   const me=ME.name||"",req=FEED.mode==="required";
@@ -1091,7 +1131,12 @@ const lbStep=d=>{const m=FEED.items[LB[0]].imgs.length;LB[1]=(LB[1]+d+m)%m;lbSho
 $("lb").addEventListener("click",e=>{const n=e.target.closest("[data-lbn]");if(n)return lbStep(+n.dataset.lbn);if(e.target.id==="lb"||e.target.closest("[data-lbx]")){LB=null;lbShow()}});
 document.addEventListener("keydown",e=>{if(!LB)return;if(e.key==="Escape"){LB=null;lbShow()}else if(e.key==="ArrowRight")lbStep(1);else if(e.key==="ArrowLeft")lbStep(-1)});
 $("feedView").addEventListener("input",e=>{const i=e.target.id;
-  if(i==="fText")cnt();
+  if(i==="fText"){cnt();lw()}
+  if(i==="fName")lw();
+  const tg=e.target;
+  if(tg.dataset&&tg.dataset.ct!==undefined){CD[tg.dataset.ct]=tg.value;const w=tg.parentNode.querySelector("[data-cw]"),c=tg.parentNode.querySelector("[data-cc]"),n=wc(tg.value);
+    if(w)w.textContent=hasLink(tg.value)?"⚠️ "+FERR.no_links:"";if(c){c.textContent=n+"/80 words";c.style.color=n>80?"#ef4444":""}}
+  if(tg.matches&&tg.matches("[data-cn],[data-ce]")){const bx=tg.closest(".fc-f");ME={...ME,name:bx.querySelector("[data-cn]").value,email:bx.querySelector("[data-ce]").value};try{localStorage.setItem("feed_me",JSON.stringify(ME))}catch(x){}}
   if(i==="fName"||i==="fMail"){ME={...ME,name:$("fName").value,email:$("fMail").value};try{localStorage.setItem("feed_me",JSON.stringify(ME))}catch(x){}}});
 $("feedView").addEventListener("change",async e=>{if(e.target.id!=="fImg")return;
   for(const f of[...e.target.files].slice(0,5-IMGS.length)){try{IMGS.push(await shrink(f))}catch(x){}}renderFeed()});
@@ -1101,6 +1146,8 @@ $("feedView").addEventListener("click",async e=>{
   const tc=e.target.closest("[data-t]");if(tc){DRAFT.type=tc.dataset.t;document.querySelectorAll(".tchip").forEach(b=>b.classList.toggle("on",b===tc));return}
   const mo=e.target.closest("[data-more]");if(mo){const c=mo.previousElementSibling.classList.toggle("clamp");mo.textContent=c?"See more":"See less";return}
   const lk=e.target.closest("[data-lb]");if(lk){LB=lk.dataset.lb.split(":").map(Number);lbShow();return}
+  const ctg=e.target.closest("[data-ctog]");if(ctg){const k=ctg.dataset.ctog;if(OPENC.has(k))OPENC.delete(k);else OPENC.add(k);renderFeed();return}
+  const csb=e.target.closest("[data-csend]");if(csb){await sendComment(csb);return}
   if(e.target.closest("[data-refresh]")){loadFeed(true);return}
   if(e.target.closest("[data-showmore]")){SHOWN+=10;renderFeed();return}
   const x=e.target.closest("[data-fx]");if(x){IMGS.splice(+x.dataset.fx,1);renderFeed();return}
@@ -1123,6 +1170,7 @@ $("feedView").addEventListener("click",async e=>{
   if(name.length<2)return err.textContent="Please enter your name.";
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail))return err.textContent="Please enter your own valid email.";
   if(!text)return err.textContent="Write something first.";
+  if(hasLink(text)||hasLink(name)){toast("🚫 "+FERR.no_links);return err.textContent=FERR.no_links}
   if(wc(text)>200)return err.textContent="Max 200 words please.";
   if(FEED.mode==="required"&&!vOK())return err.textContent=FERR.verify;
   btn.disabled=true;btn.textContent="Posting…";
@@ -1176,7 +1224,7 @@ function feedAdm(){setTimeout(()=>{const m=document.querySelector("[data-m=mode]
   <p class="hint">Notun key banale age deploy kora Drive-gulo-te script abar copy-deploy korte hobe, nahole key mile na.</p></details></div>
   <div class="box2" style="margin-top:14px"><h3>🛡️ Moderation (delete posts / ban users)</h3><div><button class="mini" data-x="fmod">🔄 Load posts</button></div><div class="hint">${esc(MOD.msg)}</div>
   ${MOD.banned.length?`<div class="chips">${MOD.banned.map(b=>`<span class="chip on" style="--c:#ef4444">${esc(b)} <a href="#" data-x="funban" data-e="${esc(b)}" style="color:#fff">✕ unban</a></span>`).join("")}</div>`:""}
-  ${MOD.posts.map((p,i)=>`<div class="ar" style="--a:#ec4899"><div><b>${esc(p.name)}</b> · ${esc(p.email)} ${p.v?"✔":"(unverified)"} · ${ago(p.ts)} · ${esc((A[p.src]||{}).name||"")}</div><div style="white-space:pre-wrap;margin:6px 0">${esc(p.text)}</div>${(p.imgs||[]).map(x=>`<img src="${thumb(x)}" alt="" style="height:60px;border-radius:8px;margin-right:6px">`).join("")}<div style="margin-top:8px;display:flex;gap:8px"><button class="mini red" data-x="fdel" data-i="${i}">🗑 Delete</button><button class="mini red" data-x="fban" data-i="${i}">🚫 Ban user</button></div></div>`).join("")}</div>`;
+  ${MOD.posts.map((p,i)=>`<div class="ar" style="--a:#ec4899"><div><b>${esc(p.name)}</b> · ${esc(p.email)} ${p.v?"✔":"(unverified)"} · ${ago(p.ts)} · ${esc((A[p.src]||{}).name||"")}</div><div style="white-space:pre-wrap;margin:6px 0">${esc(p.text)}</div>${(p.imgs||[]).map(x=>`<img src="${thumb(x)}" alt="" style="height:60px;border-radius:8px;margin-right:6px">`).join("")}${(p.cm||[]).map((c,j)=>`<div style="margin:6px 0 0 14px;padding:6px 8px;border-left:3px solid var(--line);font-size:13px"><b>${esc(c.name)}</b> · ${esc(c.email)} ${c.v?"✔":"(unverified)"} · ${ago(c.ts)}<div style="white-space:pre-wrap;margin:3px 0">${esc(c.text)}</div><button class="mini red" data-x="fcdel" data-i="${i}" data-c="${j}">🗑 Delete comment</button></div>`).join("")}<div style="margin-top:8px;display:flex;gap:8px"><button class="mini red" data-x="fdel" data-i="${i}">🗑 Delete</button><button class="mini red" data-x="fban" data-i="${i}">🚫 Ban user</button></div></div>`).join("")}</div>`;
 }
 async function testAcc(i){
   const A=CFG.feed.accounts;ACC.done=true;
@@ -1204,19 +1252,15 @@ $("adm").addEventListener("input",e=>{const id=e.target.id;
 $("adm").addEventListener("change",async e=>{const m=e.target.dataset.m;if(m){if(!FKEY)return toast("❌ Admin key dao");await modAll({action:"admin_setmode",mode:e.target.value});FEED.mode=e.target.value;toast("✅ Verification: "+e.target.value);return}
   if(e.target.id==="fKey"){FKEY=e.target.value.replace(/[^\w-]/g,"");try{localStorage.setItem("feed_key",FKEY)}catch(_){}}});
 
-/* ===== Upload destination (GitHub or Drive) ===== */
-function pickDest(f){return new Promise(async res=>{
-  const A=CFG.feed.accounts||[];if(A.length&&FKEY&&!ACC.done)await testAcc();
-  const big=f.size>MAXMB*1048576,d=document.createElement("div");d.className="mdl open";d.style.zIndex=70;
-  const opt=(v,l,sub,dis)=>`<label class="fr" style="${dis?"opacity:.5":"cursor:pointer"}"><input type="radio" name="dst" value="${v}" ${dis?"disabled":""}><span>${l}<small style="display:block;color:var(--muted);font-weight:500">${sub}</small></span></label>`;
-  d.innerHTML=`<div class="sheet" style="width:min(30rem,100%)"><div class="sh-b"><h3 style="margin:0 0 6px">Kothay rakhbe?</h3><p class="hint">${esc(f.name)} · ${sz(f.size)}</p>
-  ${opt("gh","🐙 GitHub","Site repo-te · max "+MAXMB+" MB",big)}
-  ${A.map((a,i)=>{const s=ACC.st[i]||{},no=!FKEY||!s.ok||(s.free!=null&&s.free<f.size+1.2e8);return opt(i,"☁️ "+esc(a.name||"Drive "+(i+1)),!FKEY?"Feed tab-e Admin key dao":!s.ok?"not reachable":s.free==null?"free space unknown":"free "+gb(s.free),no)}).join("")}
-  </div><div class="sh-f"><button class="mini ghost" data-c>Cancel</button><button class="mini" data-ok>Upload</button></div></div>`;
-  document.body.appendChild(d);const first=d.querySelector("input:not(:disabled)");if(first)first.checked=true;
-  const done=v=>{d.remove();res(v)};
-  d.onclick=e=>{if(e.target===d||e.target.closest("[data-c]"))done(null);if(e.target.closest("[data-ok]")){const r=d.querySelector("input:checked");if(r)done(r.value)}};
-})}
+/* ===== Software files always go to Google Drive ===== */
+async function driveDest(f){
+  const A=(CFG.feed&&CFG.feed.accounts)||[];
+  if(!A.length)throw new Error("Age Feed tab-e Google Drive account jog koro, tahole file Drive-e jabe.");
+  if(!FKEY)throw new Error("Feed tab-e Admin key dao, tahole file Drive-e upload hobe.");
+  if(!ACC.done)await testAcc();
+  for(let i=0;i<A.length;i++){const st=ACC.st[i]||{};if(st.ok&&(st.free==null||st.free>=f.size+1.2e8))return i}
+  throw new Error("Kono Drive reach kora jacche na ba jayga nai. Feed tab theke check koro.");
+}
 async function driveUp(f,i){const a=CFG.feed.accounts[i],uid=Date.now().toString(36)+Math.random().toString(36).slice(2,7),mime=f.type||"application/octet-stream",CH=3145728;
   let r=await gcall(a.url,{action:"admin_up_start",key:FKEY,uid,name:f.name,mime,size:f.size},60000);if(!r.ok)throw new Error(r.error==="full"?"Drive-e jayga nai":"Drive start failed: "+r.error);
   for(let st=0;st<f.size;st+=CH){toast(`⏳ ${f.name} → Drive ${Math.round(st/f.size*100)}%`);
@@ -1259,6 +1303,9 @@ $("adm").addEventListener("click",async e=>{
     else if(x==="ftest")await testAcc(i);
     else if(x==="fgen"){genKey();renderAdmin()}
     else if(x==="fmod"){if(!FKEY)return toast("❌ Admin key dao");await modLoad()}
+    else if(x==="fcdel"){const p=MOD.posts[i],j=+b.dataset.c,c=(p.cm||[])[j];if(!c||!confirm("Ei comment delete korbe?"))return;
+      const r=await gcall(F.accounts[p.src].url,{action:"admin_delcomment",key:FKEY,pid:p.id,cid:c.id},60000);
+      if(r.ok){p.cm.splice(j,1);renderAdmin()}else toast("❌ "+r.error)}
     else if(x==="fdel"){const p=MOD.posts[i];if(!confirm("Ei post delete korbe?"))return;
       const r=await gcall(F.accounts[p.src].url,{action:"admin_delete",key:FKEY,id:p.id},60000);
       if(r.ok){MOD.posts.splice(i,1);renderAdmin()}else toast("❌ "+r.error)}
