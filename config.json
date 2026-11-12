@@ -78,6 +78,9 @@
     "phone-print": {
       "hide": true
     },
+    "phonekeyboard": {
+      "hide": true
+    },
     "shareHub": {
       "name": "Share Hub",
       "icon": "📡",
