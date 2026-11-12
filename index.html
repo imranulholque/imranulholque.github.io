@@ -280,6 +280,9 @@ body.fm .hero{display:none}body.fm .wrap{margin-top:1rem}
 .lb-x{top:1rem;right:1rem}.lb-n{top:50%;transform:translateY(-50%)}.lb-n.l{left:.75rem}.lb-n.r{right:.75rem}
 .lb-c{position:absolute;bottom:1rem;color:#fff;font-weight:700}
 .box ol{background:var(--bg);border-radius:.9rem;padding:.8rem .8rem .8rem 1.9rem}
+.trk-k{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.625rem}.trk-k div{background:var(--bg);border:1px solid var(--line);border-radius:1rem;padding:.75rem .9rem}.trk-k b{display:block;font-size:1.5rem}.trk-k small{color:var(--muted);font-weight:600}
+.trk-bars{display:flex;align-items:flex-end;gap:2px;height:140px;padding-top:.5rem}.trk-bars i{flex:1;background:linear-gradient(#7c3aed,#3b82f6);border-radius:3px 3px 0 0;min-height:2px}
+.trk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:.75rem}.trk-row{display:grid;grid-template-columns:1fr auto;gap:.25rem .5rem;font-size:.8125rem;font-weight:600}.trk-row u{grid-column:1/-1;height:5px;border-radius:5px;background:var(--line);display:block;overflow:hidden;text-decoration:none}.trk-row u s{display:block;height:100%;background:#7c3aed;text-decoration:none}
 </style>
 <style id="customCss"></style>
 </head>
@@ -333,7 +336,7 @@ body.fm .hero{display:none}body.fm .wrap{margin-top:1rem}
 <div class="mdl" id="mdl"><div class="sheet" role="dialog" aria-modal="true"><div class="sh-h" id="mdlHead"></div><div class="sh-b" id="mdlBody"></div><div class="sh-f" id="mdlFoot"></div></div></div>
 <div class="adm" id="adm">
  <nav class="adm-side" id="admSide"><div class="br">🛠️ Admin</div>
-  <button data-tab="apps">📦 <span>Software</span></button><button data-tab="feed">💬 <span>Feed</span></button><button data-tab="files">🗂️ <span>Files</span></button><button data-tab="code">💻 <span>Code</span></button><button data-tab="domain">🌐 <span>Domain</span></button><button data-tab="site">⚙️ <span>Settings</span></button>
+  <button data-tab="apps">📦 <span>Software</span></button><button data-tab="feed">💬 <span>Feed</span></button><button data-tab="traffic">📈 <span>Traffic</span></button><button data-tab="files">🗂️ <span>Files</span></button><button data-tab="code">💻 <span>Code</span></button><button data-tab="domain">🌐 <span>Domain</span></button><button data-tab="site">⚙️ <span>Settings</span></button>
   <div class="sp"></div><button id="admOut">🚪 <span>Logout</span></button><button id="admClose">✕ <span>Close</span></button></nav>
  <main class="adm-main"><div class="adm-top"><h2 id="admTitle"></h2><input id="admQ" type="search" placeholder="🔍 Search software…"><button id="admSave" disabled>💾 Saved</button></div>
  <div class="adm-b"><div class="adm-in" id="admBody"></div></div></main></div>
@@ -607,6 +610,7 @@ async function load(){
   savedStr=JSON.stringify(cleaned());
   runCustomJs();
   render();
+  track(isFeedPage()&&feedOn()?"feed":"home");
   const detect=visItems().filter(r=>!r.ov.platform&&!ovPlat(r.ov)).map(r=>r.name);
   await Promise.allSettled([...allRepos.filter(r=>!r.archived).map(async r=>{r.summary=readmeSummary(await getReadme(r.name))}),
     ...detect.map(async n=>{const p=platFromFiles(await getFiles(n));if(p)PLAT[n]=p})]);
@@ -665,7 +669,8 @@ async function openDetails(name){
   $("mdlHead").innerHTML=`<div class="ic">${iconHtml(r.icon)}</div><div><h3>${esc(r.dispName)}</h3><div class="tags">${tagsHtml(r)}</div></div><button class="sh-x" data-x aria-label="Close">✕</button>`;
   $("mdlFoot").innerHTML=r.plats.map(p=>dlBtn(r,p)).join("");m.classList.add("open");document.body.style.overflow="hidden";
   const b=$("mdlBody");b.innerHTML='<div class="msg">Loading details…</div>';
-  const src=r.ov.details||featureText(await getReadme(name));
+  track("app/"+name);
+  const src=r.ov.details||featureText(await getReadme(name),raw.description,raw.topics);
   if(location.hash!=="#app/"+encodeURIComponent(name))return;
   b.innerHTML=src?`<div class="md">${md(src,`https://raw.githubusercontent.com/${USERNAME}/${name}/HEAD/`)}</div>`:'<div class="msg">Feature details coming soon.</div>';
   b.scrollTop=0;
@@ -903,11 +908,12 @@ function renderAdmin(){
   const on=!!TOKEN,sb=document.querySelector(".adm-b"),sc=sb?sb.scrollTop:0;
   document.querySelectorAll("#admSide [data-tab]").forEach(b=>{b.style.display=on?"":"none";b.classList.toggle("on",b.dataset.tab===tab)});
   $("admOut").style.display=$("admSave").style.display=on?"":"none";$("admQ").style.display=on&&tab==="apps"?"":"none";
-  $("admTitle").textContent=on?{apps:"📦 Software",feed:"💬 Feed & Storage",files:"🗂️ Files",code:"💻 Code",domain:"🌐 Domain",site:"⚙️ Site settings"}[tab]:"🔐 Admin Login";
-  $("admBody").innerHTML=!on?loginHtml():tab==="apps"?appsHtml():tab==="files"?filesHtml():tab==="code"?codeHtml():tab==="feed"?feedAdm():tab==="domain"?domAdm():siteHtml();
+  $("admTitle").textContent=on?{apps:"📦 Software",feed:"💬 Feed & Storage",traffic:"📈 Traffic",files:"🗂️ Files",code:"💻 Code",domain:"🌐 Domain",site:"⚙️ Site settings"}[tab]:"🔐 Admin Login";
+  $("admBody").innerHTML=!on?loginHtml():tab==="apps"?appsHtml():tab==="files"?filesHtml():tab==="code"?codeHtml():tab==="feed"?feedAdm():tab==="traffic"?trafficAdm():tab==="domain"?domAdm():siteHtml();
   if(on&&tab==="files"&&FILES===null)loadFiles();
   if(on&&tab==="domain"&&!DOM.done)loadDom();
   if(on&&tab==="feed"&&!ACC.done)testAcc();
+  if(on&&tab==="traffic"&&!TR.done)loadTraffic();
   sb.scrollTop=sc;updDirty();
 }
 async function login(tok,remember){
@@ -941,7 +947,9 @@ $("admSave").onclick=async()=>{
 };
 $("adm").addEventListener("click",async e=>{
   const T=e.target,row=T.closest(".ar"),repo=row&&row.dataset.r,q=s=>T.closest(s);
-  if(q("[data-tab]")){tab=q("[data-tab]").dataset.tab;renderAdmin();return}
+  if(q("[data-tab]")){tab=q("[data-tab]").dataset.tab;if(tab==="traffic")TR.done=false;renderAdmin();return}
+  if(q("[data-trr]")){TR.range=+q("[data-trr]").dataset.trr;renderAdmin();return}
+  if(q("[data-trf]")){loadTraffic();return}
   if(q("[data-flt]")){const[k,v]=q("[data-flt]").dataset.flt.split(":");
     if(k==="all"){admStatus="all";admPlat="all"}else if(k==="status")admStatus=admStatus===v?"all":v;else admPlat=admPlat===v?"all":v;
     renderAdmin();return}
@@ -1005,38 +1013,81 @@ $("adm").addEventListener("change",async e=>{
   el.value="";
 });
 
-/* ===== Details: only features & functions (no build / GitHub info) ===== */
-const F_KEEP=/feature|function|usage|\buse\b|using|how|work|what|overview|about|descri|highlight|capabilit|screenshot|demo|preview|option|support|mode|tool|shortcut|setting|menu|interface|\bui\b|\bgui\b|guide|benefit|why|includ|ফিচার|সুবিধা|ব্যবহার|পরিচিতি|বৈশিষ্ট্য/i;
-const F_DROP=/install|build|compil|setup|set up|clone|develop|contribut|licen|tech|stack|built with|made with|github|\bgit\b|changelog|what'?s new|release|credit|acknowledg|author|contact|donat|sponsor|requirement|prerequisite|dependenc|deploy|structure|roadmap|to-?do|\btests?\b|testing|folder|architect|source|\bcode\b|getting started|quick ?start|history|thanks|\bfork|issue|support me|buy me|download|upload|host|server|backend|frontend|database|\bapi\b|config|environment|\benv\b|permission|version|update|platform|package|command|terminal|\bcli\b|script|tools? used|used tools|\bfaq\b|troubleshoot/i;
-const F_JUNK=/github|gitlab|bitbucket|\bgit\b|repo(?:sitory)?\b|\bcommits?\b|\bbranch|pull request|\bfork|\bnpm\b|\byarn\b|\bpip3? |gradle|android studio|apps? script|\bdeploy|hosted (?:on|at)|source code|codebase|shields\.io|badge|\.(?:java|kt|kts|py|js|ts|jsx|tsx|html|css|gs|json|ya?ml|xml|bat|sh)\b|\b(?:src|app|lib|docs?|scripts?)\/[\w.-]+|`[^`]*(?:\/|\\|--|\$ |\.[a-z]{1,4}\b)[^`]*`|upload(?:ed)? (?:to|on|in)|star this|api key/i;
-function featureText(src){
-  if(!src)return"";
-  src=src.replace(/\r/g,"").replace(/<!--[\s\S]*?-->/g,"").replace(/^(```|~~~)[^\n]*\n[\s\S]*?^\1/gm,"").replace(/<\/?(?:br|p|div|center|details|summary|b|i|u|em|strong|sup|sub|a)\b[^>]*>/gi,"").replace(/\[!\[[^\]]*\]\([^)]*\)\]\([^)]*\)/g,"");
-  const S=[];let c={l:0,t:"",b:[]};
-  for(const ln of src.split("\n")){const m=ln.match(/^(#{1,6})\s+(.*?)\s*#*\s*$/);if(m){S.push(c);c={l:m[1].length,t:m[2],b:[]}}else c.b.push(ln)}
-  S.push(c);
-  const clean=a=>a.filter(x=>!F_JUNK.test(x)).join("\n").replace(/!\[[^\]]*\]\([^)]*(?:shields\.io|badge)[^)]*\)/gi,"").replace(/\[([^\]]+)\]\((?:https?:|mailto:)[^)]*\)/gi,"$1").replace(/https?:\/\/\S+/g,"").replace(/\n{3,}/g,"\n\n").trim();
-  const isList=l=>/^\s*(?:[-*+•]|\d+[.)])\s+/.test(l);
-  const intro=[],bullets=[],out=[],st=[];let h1=false;
-  for(const s of S){
-    const t=s.t.replace(/[^\p{L}\p{N}\s'’]/gu,"").trim();
-    while(st.length&&st[st.length-1].l>=s.l)st.pop();
-    const par=st.length?st[st.length-1].k:false;
-    const isIntro=s.l===0||(s.l===1&&!h1);
-    const k=isIntro?false:F_DROP.test(t)?false:F_KEEP.test(t)?true:par;
-    if(s.l===1)h1=true;
-    st.push({l:s.l,k:s.l<=1?false:k});
-    if(isIntro){
-      for(const para of clean(s.b).split(/\n\s*\n/)){const ls=para.split("\n").filter(x=>x.trim());if(!ls.length)continue;
-        if(ls.every(isList)){bullets.push(...ls)}else if(intro.length<2&&!ls.some(isList)){const x=ls.join(" ").trim();if(x.length>=20)intro.push(x.length>600?x.slice(0,597).replace(/\s+\S*$/,"")+"…":x)}}
-      continue}
-    if(!k)continue;
-    const b=clean(s.b);
-    if(b)out.push((s.l>1?"#".repeat(s.l)+" "+s.t+"\n\n":"")+b);
+/* ===== Details: short bullets only — Features + How it works (auto from README, falls back to repo info) ===== */
+const FX_DROP=/install|\bbuild|compil|\bclone\b|contribut|licen[cs]|changelog|what'?s new|\breleases?\b|credit|acknowledg|donat|sponsor|requirement|prerequisite|dependenc|deploy|roadmap|troubleshoot|\bfaq\b|contact|\bauthor|thanks|tech(?:nolog\w*)? stack|built with|made with|getting started|quick ?start|folder|project structure|architecture|to-?do|badge|table of contents|^contents$|support me|buy me|\bissues?\b|\bfork|\bstar\b|download|history|screenshot|সোর্স|ইনস্টল/i;
+const FX_FEAT=/feature|function|capabilit|highlight|what (?:it|this|you|can)|key |why |benefit|includ|\boffers?\b|can do|advantage|special|ফিচার|সুবিধা|বৈশিষ্ট্য|কী কী|কি কি/i;
+const FX_HOW=/how (?:it )?works?|how to use|how it|usage|workflow|\bsteps?\b|guide|\buse\b|using|working|ব্যবহার|কিভাবে|কীভাবে|কাজ করে/i;
+const FX_JUNK=/github|gitlab|bitbucket|\bgit (?:clone|pull|push)|\bnpm\b|\byarn\b|\bpip3? |gradle|android studio|apps? script|\bdeploy|source code|codebase|shields\.io|\.(?:java|kt|kts|py|js|ts|jsx|tsx|html|css|gs|json|ya?ml|xml|bat|sh)\b|\b(?:src|app|lib|docs?|scripts?)\/[\w.-]+|https?:\/\/|www\.|star this|api key|\bmit license\b|copyright|©/i;
+function fxClean(s){
+  s=String(s||"").replace(/!\[[^\]]*\]\([^)]*\)/g,"").replace(/\[([^\]]+)\]\([^)]*\)/g,"$1").replace(/<[^>]+>/g,"")
+   .replace(/\*\*\*?|__|~~/g,"").replace(/`/g,"").replace(/(^|\s)\*(?=\S)|(?<=\S)\*(?=\s|$)/g,"$1").replace(/&nbsp;/g," ").replace(/\s+/g," ").trim();
+  s=s.replace(/^[\p{Extended_Pictographic}\p{Emoji_Presentation}\uFE0F\u200D\s✔✅☑️•▪️▫️➤➜→>*+-]+/u,"").replace(/^\[( |x|X)\]\s*/,"").trim();
+  s=s.replace(/^([^:]{2,40}):\s+(.+)$/,"$1 — $2");
+  return s}
+function fxShort(s,n=110){
+  if(s.length<=n)return s;
+  const m=s.slice(0,n+40).match(/^(.{25,}?[.!?।])(\s|$)/);if(m&&m[1].length<=n+20)return m[1].replace(/[.]$/,"");
+  return s.slice(0,n-1).replace(/\s+\S*$/,"").replace(/[,;:—-]+$/,"")+"…"}
+function fxOk(s){return !/^(?:see|read|visit|check out|click|more info|for more)\b/i.test(s)&&s.length>=4&&s.length<=400&&!FX_JUNK.test(s)&&!/^[-=_|#\s]*$/.test(s)&&!/:$/.test(s)}
+function fxItems(lines,isHow){
+  const out=[];let para=[];const LST=new Set();out.lst=LST;
+  const flush=()=>{if(!para.length)return;const t=fxClean(para.join(" "));para=[];
+    if(!t)return;for(const x of t.split(/(?<=[.!?।])\s+/).slice(0,3)){const y=fxClean(x);if(fxOk(y))out.push(fxShort(y))}};
+  for(let i=0;i<lines.length;i++){
+    const ln=lines[i];if(!ln.trim()){flush();continue}
+    let m=ln.match(/^(\s{0,3})(?:[-*+•]|\d+[.)])\s+(.*)$/);
+    if(m){flush();const t=fxClean(m[2]);if(fxOk(t)){out.push(fxShort(t));LST.add(out.length-1)}continue}
+    if(/^\s{4,}\S/.test(ln)&&out.length)continue;
+    if(ln.includes("|")){flush();
+      if(/^\s*\|?\s*:?-{2,}/.test(ln))continue;
+      if(/^\s*\|?\s*:?-{2,}/.test(lines[i+1]||""))continue;
+      const c=ln.trim().replace(/^\||\|$/g,"").split("|").map(fxClean).filter(Boolean);
+      if(c.length){const t=c.length>1?c[0]+" — "+c[1]:c[0];if(fxOk(t)){out.push(fxShort(t));LST.add(out.length-1)}}continue}
+    para.push(ln)}
+  flush();return out}
+function featureText(src,desc,topics){
+  const feat=[],how=[],intro=[],introL=[],other=[];
+  if(src){
+    src=src.replace(/\r/g,"").replace(/<!--[\s\S]*?-->/g,"").replace(/^(```|~~~)[^\n]*\n[\s\S]*?^\1[ \t]*$/gm,"")
+      .replace(/<\s*h([1-6])[^>]*>([\s\S]*?)<\s*\/\s*h\1\s*>/gi,(m,l,t)=>"\n"+"#".repeat(+l)+" "+t.replace(/<[^>]+>/g,"")+"\n")
+      .replace(/<\s*li[^>]*>/gi,"\n- ").replace(/<\s*(?:br|\/p|\/div|\/ul|\/ol|\/tr)\s*\/?>/gi,"\n").replace(/<\s*\/t[dh]\s*>/gi," | ");
+    const S=[];let c={l:0,t:"",b:[]};
+    for(const ln of src.split("\n")){const m=ln.match(/^(#{1,6})\s+(.*?)\s*#*\s*$/);if(m){S.push(c);c={l:m[1].length,t:fxClean(m[2]),b:[]}}else c.b.push(ln)}
+    S.push(c);
+    const st=[];let seenH1=false;
+    for(const s of S){
+      while(st.length&&st[st.length-1].l>=s.l)st.pop();
+      const par=st.length?st[st.length-1].k:"";
+      let k="";
+      if(s.l===0||(s.l===1&&!seenH1))k="intro";
+      else if(FX_DROP.test(s.t))k="drop";
+      else if(FX_FEAT.test(s.t))k="feat";
+      else if(FX_HOW.test(s.t))k="how";
+      else k=par==="drop"?"drop":(par==="feat"||par==="how")?par:"other";
+      if(s.l===1)seenH1=true;
+      st.push({l:s.l,k});
+      if(k==="drop")continue;
+      let it=fxItems(s.b);
+      const isChild=(par==="feat"||par==="how")&&s.l>1&&k===par;
+      if(isChild&&s.t&&s.t.split(" ").length<=5&&!/^\s*(?:[-*+]|\d+[.)])\s/m.test(s.b.join("\n"))&&it.length){it=[fxShort(fxClean(s.t)+" — "+it[0])]}
+      else if(isChild&&s.t&&s.t.split(" ").length<=5&&it.length===0){it=[fxClean(s.t)]}
+      if(k==="intro"){it.forEach((x,i)=>(it.lst.has(i)?introL:intro).push(x))}else(k==="feat"?feat:k==="how"?how:other).push(...it)}
   }
-  if(!out.length&&bullets.length)out.push("### Features\n\n"+bullets.slice(0,12).join("\n"));
-  return[intro.join("\n\n"),...out].filter(Boolean).join("\n\n").slice(0,6000);
-}
+  const uniq=a=>{const seen=new Set();return a.filter(x=>{const k=x.toLowerCase().replace(/[^\p{L}\p{N}]+/gu,"");if(!k||seen.has(k))return false;seen.add(k);return true})};
+  let F=uniq(feat).slice(0,8),H=uniq(how).slice(0,6),about="";
+  if(!F.length){
+    const bl=uniq(intro.filter(x=>x.length<=140&&x.split(" ").length>=2)).slice(0,2);
+    const oth=uniq([...introL,...other]).filter(x=>x.length<=140).slice(0,8);
+    F=oth.length>=2?oth:[];if(!F.length&&bl.length)about=bl.join(" ");
+  }
+  if(!F.length&&!about){const d=fxClean(desc||"");if(d)about=d}
+  const out=[];
+  if(about)out.push("### 📝 About\n\n"+fxShort(about,260));
+  if(F.length)out.push("### ✨ Features\n\n"+F.map(x=>"- "+x).join("\n"));
+  if(H.length)out.push("### ⚙️ How it works\n\n"+H.map((x,i)=>(i+1)+". "+x).join("\n"));
+  const tp=(topics||[]).filter(t=>t&&!/^(hacktoberfest|github|android|windows|python|java|kotlin|javascript)$/i.test(t)).slice(0,6);
+  if(!out.length&&tp.length)out.push("### 📝 About\n\n"+tp.join(" · "));
+  return out.join("\n\n")}
 
 /* ===== Community feed (data lives in your Google Drive via Apps Script) ===== */
 const FT={request:["🆕","Software request","#3b82f6"],bug:["🐞","Bug fix","#ef4444"],idea:["💡","Idea","#f59e0b"],other:["💬","General","#7c3aed"]};
@@ -1185,6 +1236,74 @@ $("feedView").addEventListener("click",async e=>{
   if(done){$("fText").value="";DRAFT.text="";COMP=false;toast("✅ Posted!")}
   renderFeed();if(!done){const e2=$("fErr");if(e2)e2.textContent=msg||"No storage available right now."}
 });
+
+
+/* ===== Visitor tracking (anonymous: random id, country code, device/browser/OS, referrer host, page — no IP stored) ===== */
+const TRK={sent:{}};
+function trkSkip(){try{if(TOKEN||localStorage.getItem("adm_tok")||sessionStorage.getItem("adm_tok")||localStorage.getItem("no_track")||navigator.doNotTrack==="1"||/[?&]safe\b/.test(location.search)||location.hash==="#admin")return true}catch(e){}return false}
+async function trkCountry(){
+  try{const c=JSON.parse(localStorage.getItem("v_cc")||"null");if(c&&/^[A-Z]{2}$/.test(c.c)&&Date.now()-c.t<6048e5)return c.c}catch(e){}
+  let cc="";
+  for(const u of["https://api.country.is/","https://ipwho.is/?fields=country_code"]){
+    try{const ct=new AbortController(),t=setTimeout(()=>ct.abort(),5000);const r=await fetch(u,{cache:"no-store",signal:ct.signal});clearTimeout(t);const j=await r.json();
+      cc=String(j.country||j.country_code||"").toUpperCase();if(/^[A-Z]{2}$/.test(cc))break;cc=""}catch(e){cc=""}}
+  if(cc)try{localStorage.setItem("v_cc",JSON.stringify({c:cc,t:Date.now()}))}catch(e){}
+  return cc||"XX"}
+function trkInfo(){const u=navigator.userAgent||"";
+  const dev=/iPad|Tablet|Tab\b/i.test(u)||(/Android/i.test(u)&&!/Mobile/i.test(u))?"tablet":/Mobi|iPhone|Android/i.test(u)?"mobile":"desktop";
+  const br=/Edg\//.test(u)?"Edge":/OPR\/|Opera/.test(u)?"Opera":/SamsungBrowser/.test(u)?"Samsung":/Firefox|FxiOS/.test(u)?"Firefox":/Chrome|CriOS/.test(u)?"Chrome":/Safari/.test(u)?"Safari":"Other";
+  const os=/Windows/.test(u)?"Windows":/Android/.test(u)?"Android":/iPhone|iPad|iPod/.test(u)?"iOS":/Mac OS X|Macintosh/.test(u)?"macOS":/Linux|X11/.test(u)?"Linux":"Other";
+  return{dev,br,os}}
+async function track(page){
+  try{
+    if(trkSkip())return;const a=((CFG.feed||{}).accounts||[]).find(x=>x.url);if(!a)return;
+    page=String(page||"home").slice(0,40);const key=page+"|"+new Date().toDateString();if(TRK.sent[key])return;TRK.sent[key]=1;
+    let vid="";try{vid=localStorage.getItem("vid")||"";if(!/^[a-z0-9]{8,24}$/.test(vid)){vid=[...crypto.getRandomValues(new Uint8Array(12))].map(n=>(n%36).toString(36)).join("");localStorage.setItem("vid",vid)}}catch(e){vid="s"+Math.random().toString(36).slice(2,12)}
+    let ref="direct";try{const h=new URL(document.referrer).hostname.replace(/^www\./,"");if(h&&h!==location.hostname)ref=h}catch(e){}
+    const cc=await trkCountry(),i=trkInfo();
+    await gcall(a.url,{action:"hit",vid,cc,page,dev:i.dev,br:i.br,os:i.os,ref},20000)
+  }catch(e){}}
+
+/* ===== Admin: Traffic ===== */
+let TR={done:false,msg:"",days:null,today:"",range:30};
+async function loadTraffic(){
+  TR.done=true;TR.msg="loading";renderAdmin();
+  const a=((CFG.feed||{}).accounts||[]).find(x=>x.url);
+  if(!a){TR.msg="no_acc";renderAdmin();return}
+  if(!FKEY){TR.msg="no_key";renderAdmin();return}
+  try{const r=await gcall(a.url,{action:"admin_stats",key:FKEY},60000);
+    if(r.ok){TR.days=r.days;TR.today=r.today;TR.msg=""}else TR.msg=r.error==="auth"?"auth":r.error==="bad"?"old":"err"}
+  catch(e){TR.msg="err"}
+  renderAdmin()}
+const ccName=c=>{if(!/^[A-Z]{2}$/.test(c)||c==="XX")return"🌐 Unknown";let n=c;try{n=new Intl.DisplayNames(["en"],{type:"region"}).of(c)||c}catch(e){}
+  return String.fromCodePoint(...[...c].map(x=>127397+x.charCodeAt(0)))+" "+n};
+function trafficAdm(){
+  const M={loading:"⏳ Loading…",no_acc:"Feed tab-e age ekta Google Script (Drive) connect koro — stats oikhane joma hoy.",no_key:"Feed tab-e Admin key dao (ba ‘Copy script’ diye script-ta notun kore deploy koro).",
+    auth:"Admin key mile nai. Feed tab-er key-ta Apps Script-er KEY-er shathe milao.",old:"Tomar Google Script ta purono. Feed tab → <b>Copy script</b> chepe notun code paste koro, tarpor <b>Deploy → Manage deployments → ✏️ → New version → Deploy</b>.",err:"Load hoyni. Pore abar chesta koro."};
+  const refresh=`<button class="mini" data-trf>🔄 Refresh</button>`;
+  if(TR.msg)return`<div class="box2"><h3>📈 Visitors</h3><p class="hint" style="margin:0">${M[TR.msg]||M.err}</p>${TR.msg==="loading"?"":refresh}</div>`;
+  const N=TR.range,keys=[];let d=new Date(TR.today+"T00:00:00Z");
+  for(let i=0;i<N;i++){keys.unshift(d.toISOString().slice(0,10));d=new Date(d.getTime()-864e5)}
+  const D=TR.days||{},z={v:0,u:0,c:{},d:{},b:{},o:{},r:{},p:{}};
+  const T=D[TR.today]||z;let views=0,vis=0;const agg={c:{},d:{},b:{},o:{},r:{},p:{}};
+  for(const k of keys){const x=D[k];if(!x)continue;views+=x.v;vis+=x.u;for(const f of["c","d","b","o","r","p"])for(const[a,n]of Object.entries(x[f]||{}))agg[f][a]=(agg[f][a]||0)+n}
+  const mx=Math.max(1,...keys.map(k=>(D[k]||z).v));
+  const bars=keys.map(k=>{const x=D[k]||z;return`<i style="height:${Math.max(2,x.v/mx*100)}%" title="${k}: ${x.u} visitors · ${x.v} views"></i>`}).join("");
+  const list=(o,fmt,lim)=>{const e=Object.entries(o).sort((a,b)=>b[1]-a[1]).slice(0,lim||8),t=e.reduce((s,x)=>s+x[1],0)||1;
+    return e.length?e.map(([k,n])=>`<div class="trk-row"><span>${esc(fmt?fmt(k):k)}</span><span>${n} · ${Math.round(n/t*100)}%</span><u><s style="width:${n/t*100}%"></s></u></div>`).join(""):'<p class="hint" style="margin:0">Ekhono data nai</p>'};
+  const rg=[7,30,90].map(n=>`<button class="mini${N===n?"":" ghost"}" data-trr="${n}">${n} din</button>`).join(" ");
+  return`<div class="box2"><h3>📈 Visitors</h3>
+  <div class="trk-k"><div><b>${T.u}</b><small>Aj visitor</small></div><div><b>${T.v}</b><small>Aj page view</small></div><div><b>${vis}</b><small>Last ${N} din visitor</small></div><div><b>${views}</b><small>Last ${N} din view</small></div><div><b>${(vis/N).toFixed(1)}</b><small>Gor din visitor</small></div></div>
+  <div style="display:flex;gap:.4rem;flex-wrap:wrap;align-items:center">${rg} ${refresh}</div>
+  <div class="trk-bars">${bars}</div><p class="hint" style="margin:0">Protiti bar = ek din (view). Upor mouse/tap korle visitor + view dekhabe. Visitor = oi din-e unique browser.</p></div>
+  <div class="trk-grid">
+   <div class="box2"><h3>🌍 Desh</h3>${list(agg.c,ccName,10)}</div>
+   <div class="box2"><h3>📱 Device</h3>${list(agg.d)}</div>
+   <div class="box2"><h3>🧭 Browser</h3>${list(agg.b)}</div>
+   <div class="box2"><h3>🖥️ OS</h3>${list(agg.o)}</div>
+   <div class="box2"><h3>🔗 Kothay theke ashche</h3>${list(agg.r)}</div>
+   <div class="box2"><h3>📄 Top page</h3>${list(agg.p,x=>x==="home"?"Home":x==="feed"?"Feed":x.replace(/^app\//,"📦 "))}</div></div>
+  <div class="box2"><h3>👤 Male / Female / Age</h3><p class="hint" style="margin:0">Browser visit theke gender ba boyosh jana <b>jay na</b> — keu nijer theke na bolle kono site-i eta sothik bolte pare na (ar guess kora thik-o na). Desh, device, browser, OS, source — egulo ashol data. Gender/age lagle Google Analytics 4 (Google Signals on kore) ekta aproximate report dey, kintu choto site-e shuru-te data thake na.</p></div>`}
 
 /* ===== Admin: Feed & Drive storage ===== */
 let FKEY="";try{FKEY=localStorage.getItem("feed_key")||""}catch(e){}
