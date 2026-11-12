@@ -181,6 +181,26 @@ img,svg,video{max-width:100%}
 .fr span{flex:1;min-width:9.375rem;word-break:break-all;font-weight:700;font-size:.875rem}
 @media(max-width:760px){.adm{flex-direction:column-reverse}.adm-side{width:auto;flex-direction:row;padding:.375rem;gap:2px}.adm-side .br,.adm-side .sp{display:none}
 .adm-side button{flex:1;flex-direction:column;gap:2px;font-size:.6875rem;padding:.5rem .25rem;justify-content:center}.adm-top{padding:.625rem .875rem}#admQ{width:100%;order:3}.adm-b{padding:.875rem}}
+
+/* FEED */
+.vnav{display:flex;gap:.25rem;padding:.25rem;margin-bottom:.75rem;width:max-content;max-width:100%;background:var(--glass);backdrop-filter:blur(.625rem);border:1px solid var(--line);border-radius:1rem}
+.vnav[hidden]{display:none}
+.vnav button{border:0;background:none;color:var(--muted);font:inherit;font-weight:700;font-size:.875rem;padding:.5625rem 1rem;border-radius:.75rem;cursor:pointer}
+.vnav button.on{background:#7c3aed;color:#fff}
+.fc,.fp{background:var(--card);border:1px solid var(--line);border-radius:1.25rem;padding:1.125rem;margin:0 0 .875rem;max-width:46rem}
+.fc{margin-top:1.25rem}.fc h3{margin:0 0 .25rem}.fh{color:var(--muted);font-size:.8125rem;line-height:1.5;margin:0 0 .75rem}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem}
+.fin{font:inherit;font-size:.9rem;padding:.625rem .75rem;border-radius:.75rem;border:1.5px solid var(--line);background:var(--bg);color:var(--text);width:100%;outline:0;min-width:0}
+.fin:focus{border-color:#7c3aed}textarea.fin{resize:vertical}
+.fimgs{display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0}.fimgs div{position:relative}.fimgs img{width:4.5rem;height:4.5rem;object-fit:cover;border-radius:.75rem}
+.fimgs button{position:absolute;top:-6px;right:-6px;border:0;border-radius:50%;width:1.25rem;height:1.25rem;background:#ef4444;color:#fff;cursor:pointer;font-size:.7rem}
+.ffoot{display:flex;align-items:center;gap:.5rem;margin-top:.5rem;flex-wrap:wrap}.ffoot span{flex:1;font-size:.8125rem;color:var(--muted)}
+.fp-h{display:flex;align-items:center;gap:.625rem;flex-wrap:wrap}.fav{width:2.5rem;height:2.5rem;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}
+.fp-n{flex:1;min-width:6rem}.fp-n small{display:block;color:var(--muted);font-size:.75rem}
+.fp-t{margin:.75rem 0 .5rem;white-space:pre-wrap;line-height:1.6;overflow-wrap:anywhere}
+.fp-i{display:grid;grid-template-columns:repeat(auto-fill,minmax(7.5rem,1fr));gap:.5rem}.fp-i img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:.75rem}
+@media(max-width:560px){.fr2{grid-template-columns:1fr}}
+@media(max-width:760px){.adm-side{overflow-x:auto}.adm-side button{flex:1 0 auto;min-width:3.6rem}}
 </style>
 <style id="customCss"></style>
 </head>
@@ -208,12 +228,16 @@ img,svg,video{max-width:100%}
 </header>
 
 <div class="wrap">
+  <div class="vnav" id="vnav" hidden><button data-v="soft" class="on">📦 Software</button><button data-v="feed">💬 Feed</button></div>
+<div id="swView">
   <div class="search"><span>🔍</span><input id="q" placeholder="Search software by name or what it does…" autocomplete="off"></div>
   <div class="bar"><div class="seg" id="seg"></div>
     <select class="sort" id="sort" aria-label="Sort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="az">Name A–Z</option></select></div>
   <div class="chips" id="chips"></div>
   <div class="meta" id="meta"></div>
   <div id="grid"><div class="msg">Loading software…</div></div>
+</div>
+<div id="feedView" hidden></div>
 </div>
 <footer>
   <div id="foot"></div>
@@ -226,7 +250,7 @@ img,svg,video{max-width:100%}
 <div class="mdl" id="mdl"><div class="sheet" role="dialog" aria-modal="true"><div class="sh-h" id="mdlHead"></div><div class="sh-b" id="mdlBody"></div><div class="sh-f" id="mdlFoot"></div></div></div>
 <div class="adm" id="adm">
  <nav class="adm-side" id="admSide"><div class="br">🛠️ Admin</div>
-  <button data-tab="apps">📦 <span>Software</span></button><button data-tab="files">🗂️ <span>Files</span></button><button data-tab="code">💻 <span>Code</span></button><button data-tab="site">⚙️ <span>Settings</span></button>
+  <button data-tab="apps">📦 <span>Software</span></button><button data-tab="feed">💬 <span>Feed</span></button><button data-tab="files">🗂️ <span>Files</span></button><button data-tab="code">💻 <span>Code</span></button><button data-tab="domain">🌐 <span>Domain</span></button><button data-tab="site">⚙️ <span>Settings</span></button>
   <div class="sp"></div><button id="admOut">🚪 <span>Logout</span></button><button id="admClose">✕ <span>Close</span></button></nav>
  <main class="adm-main"><div class="adm-top"><h2 id="admTitle"></h2><input id="admQ" type="search" placeholder="🔍 Search software…"><button id="admSave" disabled>💾 Saved</button></div>
  <div class="adm-b"><div class="adm-in" id="admBody"></div></div></main></div>
@@ -239,7 +263,7 @@ const SITE_REPO="imranulholque.github.io";
 const BRANCH="main";
 const OWNER="Imranul Hoque Sabbir";
 const AVATAR="https://github.com/"+USERNAME+".png?size=400";
-const DEFAULT_CFG={site:{title:"Software Hub",tagline:"Free, handy software made by me. Download the latest build in one click.",owner:"Imranul Hoque Sabbir",facebook:"https://www.facebook.com/imranul.hoque.sabbir1",github:"",telegram:"",email:"",hideForks:true,avatar:"",theme:"auto",palette:"aurora",sort:"new",defPlat:"all",badgeDays:14,showStats:true,banner:"",footer:"",customCss:"",customJs:""},apps:{}};
+const DEFAULT_CFG={site:{title:"Software Hub",tagline:"Free, handy software made by me. Download the latest build in one click.",owner:"Imranul Hoque Sabbir",facebook:"https://www.facebook.com/imranul.hoque.sabbir1",github:"",telegram:"",email:"",hideForks:true,avatar:"",theme:"auto",palette:"aurora",sort:"new",defPlat:"all",badgeDays:14,showStats:true,banner:"",footer:"",customCss:"",customJs:""},apps:{},feed:{enabled:true,accounts:[]}};
 const CATEGORIES={
   game:["Games","🎮"],games:["Games","🎮"],
   ai:["AI & ML","🤖"],ml:["AI & ML","🤖"],"machine-learning":["AI & ML","🤖"],
@@ -363,7 +387,7 @@ function applySite(){
     .filter(x=>x[1]).map(([n,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${n}</a>`).join("");
   $("sort").value=sortBy||s.sort||"new";
   $("stats").style.display=s.showStats===false?"none":"";
-  applyTheme();setAvatar();
+  applyTheme();setAvatar();applyFeedNav();
   $("customCss").textContent=SAFE?"":(s.customCss||"");
 }
 const SAFE=/[?&]safe\b/.test(location.search);
@@ -482,7 +506,7 @@ $("sort").addEventListener("change",e=>{sortBy=e.target.value;render()});
 /* ---------- Loading ---------- */
 async function loadConfig(){
   try{const r=await fetch("config.json?t="+Date.now(),{cache:"no-store"});
-    if(r.ok){const j=await r.json();return{site:{...DEFAULT_CFG.site,...(j.site||{})},apps:j.apps||{}}}}catch(e){}
+    if(r.ok){const j=await r.json();return{site:{...DEFAULT_CFG.site,...(j.site||{})},apps:j.apps||{},feed:{enabled:true,accounts:[],...(j.feed||{})}}}}catch(e){}
   return structuredClone(DEFAULT_CFG);
 }
 async function load(){
@@ -495,7 +519,7 @@ async function load(){
         topics:r.topics,language:r.language,homepage:r.homepage,created_at:r.created_at}));
     }));
   }catch(e){
-    $("grid").innerHTML='<div class="msg">Could not load software right now. Please try again in a few minutes.</div>';$("st1").textContent="";return}
+    $("grid").innerHTML='<div class="msg">Could not load software right now. Please try again in a few minutes.</div>';;return}
   savedStr=JSON.stringify(cleaned());
   runCustomJs();
   render();
@@ -557,16 +581,16 @@ async function openDetails(name){
   $("mdlHead").innerHTML=`<div class="ic">${iconHtml(r.icon)}</div><div><h3>${esc(r.dispName)}</h3><div class="tags">${tagsHtml(r)}</div></div><button class="sh-x" data-x aria-label="Close">✕</button>`;
   $("mdlFoot").innerHTML=r.plats.map(p=>dlBtn(r,p)).join("");m.classList.add("open");document.body.style.overflow="hidden";
   const b=$("mdlBody");b.innerHTML='<div class="msg">Loading details…</div>';
-  const src=r.ov.details||await getReadme(name);
+  const src=r.ov.details||featureText(await getReadme(name));
   if(location.hash!=="#app/"+encodeURIComponent(name))return;
-  b.innerHTML=src?`<div class="md">${md(src,`https://raw.githubusercontent.com/${USERNAME}/${name}/HEAD/`)}</div>`:'<div class="msg">Ei software-er details ekhono lekha hoyni.</div>';
+  b.innerHTML=src?`<div class="md">${md(src,`https://raw.githubusercontent.com/${USERNAME}/${name}/HEAD/`)}</div>`:'<div class="msg">Feature details coming soon.</div>';
   b.scrollTop=0;
 }
 function route(){
   const h=location.hash;
   if(h==="#admin"){openAdmin();return}
   if(h.startsWith("#app/")){openDetails(decodeURIComponent(h.slice(5)));return}
-  closeModal();
+  closeModal();setView(h==="#feed"&&feedOn()?"feed":"soft");
 }
 $("mdl").addEventListener("click",e=>{
   if(e.target.id==="mdl"||e.target.closest("[data-x]"))return shut();
@@ -578,6 +602,7 @@ window.addEventListener("hashchange",route);
 /* ---------- Admin ---------- */
 const FIELDS=["name","icon","category","platform","version","featured","desc","details","file","link","upload","uploadAndroid","uploadPC","hide"],MAXMB=50;
 let FILES=null,admStatus="all",admPlat="all";
+const fnm=p=>p.includes("#")?p.split("#").pop():p.split("/").pop();
 const safe=n=>n.replace(/[^\w.\-]+/g,"_"),sz=n=>n>1048576?(n/1048576).toFixed(1)+" MB":Math.max(1,Math.ceil(n/1024))+" KB";
 const toB64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(f)});
 const resize=(file,S,cover,type,q)=>new Promise((res,rej)=>{const img=new Image(),u=URL.createObjectURL(file);
@@ -592,7 +617,7 @@ function cleaned(){
   }
   const s=CFG.site,site={title:s.title,tagline:s.tagline,owner:s.owner,facebook:s.facebook,hideForks:!!s.hideForks,theme:s.theme,palette:s.palette,sort:s.sort,defPlat:s.defPlat,badgeDays:Number(s.badgeDays)||0,showStats:s.showStats!==false};
   for(const k of["github","telegram","email","banner","footer","avatar","customCss","customJs"])if(s[k])site[k]=s[k];
-  return{site,apps};
+  const fd=CFG.feed||{};return{site,apps,feed:{enabled:fd.enabled!==false,accounts:(fd.accounts||[]).map(a=>({name:a.name,url:a.url}))}};
 }
 const isDirty=()=>TOKEN&&JSON.stringify(cleaned())!==savedStr;
 function updDirty(){const d=isDirty(),b=$("admSave");b.disabled=!d;b.textContent=d?"💾 Save & Publish •":"💾 Saved"}
@@ -630,7 +655,7 @@ function loginHtml(){return`<div class="box"><h3>🔐 Admin Login</h3>
   <p>Shudhu tumi (site owner) save korte parbe. Ekta <b>GitHub Token</b> lagbe — ekbar banale ei browser-e mone rakhbe.</p>
   <ol><li>GitHub → Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b> → Generate new token</li>
   <li>Repository access: <b>Only select repositories</b> → <code>${esc(SITE_REPO)}</code></li>
-  <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li><li>Token-ta niche paste koro</li></ol>
+  <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li><li>(Domain-er jonno) <b>Pages: Read and write</b> permission-o dao</li><li>Token-ta niche paste koro</li></ol>
   <input type="password" id="tokIn" placeholder="github_pat_..." autocomplete="off">
   <label class="sw" style="margin-top:12px"><input type="checkbox" id="tokRem" checked> Ei browser-e mone rakho</label>
   <button class="go" data-act="login">Login</button><div class="err" id="loginErr"></div></div>`}
@@ -645,7 +670,7 @@ function tilesHtml(){
     +T("plat","pc","💻","PC",n("pc"),"#2563eb","#3b82f6",admPlat==="pc")
     +T("plat","web","🌐","Web",n("web"),"#7c3aed","#8b5cf6",admPlat==="web");
 }
-const slot=(o,k,label,acc)=>`<div class="up"><span>${o[k]?"📎 "+esc(o[k].split("/").pop()):label}</span>${o[k]?`<button type="button" class="mini red" data-rmup="${k}">Remove</button>`:""}<button type="button" class="mini" data-appup="${k}">📤 Upload</button><input type="file" ${acc?`accept="${acc}"`:""} hidden data-appfile="${k}"></div>`;
+const slot=(o,k,label,acc)=>`<div class="up"><span>${o[k]?"📎 "+esc(fnm(o[k])):label}</span>${o[k]?`<button type="button" class="mini red" data-rmup="${k}">Remove</button>`:""}<button type="button" class="mini" data-appup="${k}">📤 Upload</button><input type="file" ${acc?`accept="${acc}"`:""} hidden data-appfile="${k}"></div>`;
 function appRow(r){const o=r.ov;
   const opts=[["","Auto ("+platName(r.autoPlat)+")"],["android","📱 Android"],["pc","💻 PC"],["both","📱💻 Android + PC"],["web","🌐 Web"]];
   return`<div class="ar ${r.vis?"":"off"}" data-r="${esc(r.name)}" style="--a:${catColor[r.cat]||"#7c3aed"}">
@@ -664,7 +689,7 @@ function appRow(r){const o=r.ov;
       ${o.upload?`<div class="wide">${slot(o,"upload","📎 Any-platform file","")}</div>`:""}
       <div class="wide" style="color:var(--muted);font-size:12px;font-weight:600">Upload na korle GitHub release theke auto file nibe.</div>
       <label class="wide">Description<textarea data-f="desc" rows="2" placeholder="${esc("Auto (README): "+(r.summary||r.description||"—"))}">${esc(o.desc||"")}</textarea></label>
-      <label class="wide">Details (Markdown) — khali thakle README dekhabe<textarea data-f="details" rows="5" placeholder="# Features&#10;- ...">${esc(o.details||"")}</textarea></label>
+      <label class="wide">Details (Markdown) — khali thakle README theke shudhu feature/function ongsho dekhabe<textarea data-f="details" rows="5" placeholder="# Features&#10;- ...">${esc(o.details||"")}</textarea></label>
       <div class="wide"><button type="button" class="mini" data-mdup>📄 .md file theke load koro</button><input type="file" accept=".md,.markdown,.txt" hidden data-mdfile></div>
       <details class="wide adv"><summary>⚙️ Advanced download options</summary><div class="ar-grid">
         <label>Release file name<input data-f="file" value="${esc(o.file||"")}" placeholder="auto-detect"></label>
@@ -686,7 +711,7 @@ function appFilesHtml(){
   for(const[n,o]of Object.entries(CFG.apps)){const nm=o.name||n;
     if(o.uploadAndroid)g.android.push([nm,o.uploadAndroid]);if(o.uploadPC)g.pc.push([nm,o.uploadPC]);
     if(o.upload)(APK.test(o.upload)?g.android:g.pc).push([nm,o.upload])}
-  const blk=(t,l)=>`<h3 style="margin:24px 0 10px">${t}</h3>`+(l.length?l.map(([n,p])=>`<div class="fr" data-p="${esc(p)}"><span>📎 ${esc(p.split("/").pop())}<small style="display:block;color:var(--muted);font-weight:500">${esc(n)}</small></span><button class="mini" data-copy>🔗 Copy link</button></div>`).join(""):'<div class="msg" style="padding:16px">Kono file nai</div>');
+  const blk=(t,l)=>`<h3 style="margin:24px 0 10px">${t}</h3>`+(l.length?l.map(([n,p])=>`<div class="fr" data-p="${esc(p)}"><span>📎 ${esc(fnm(p))}<small style="display:block;color:var(--muted);font-weight:500">${esc(n)}</small></span><button class="mini" data-copy>🔗 Copy link</button></div>`).join(""):'<div class="msg" style="padding:16px">Kono file nai</div>');
   return blk("📱 Android downloads",g.android)+blk("💻 PC downloads",g.pc);
 }
 function filesHtml(){
@@ -793,9 +818,11 @@ function renderAdmin(){
   const on=!!TOKEN,sb=document.querySelector(".adm-b"),sc=sb?sb.scrollTop:0;
   document.querySelectorAll("#admSide [data-tab]").forEach(b=>{b.style.display=on?"":"none";b.classList.toggle("on",b.dataset.tab===tab)});
   $("admOut").style.display=$("admSave").style.display=on?"":"none";$("admQ").style.display=on&&tab==="apps"?"":"none";
-  $("admTitle").textContent=on?{apps:"📦 Software",files:"🗂️ Files",code:"💻 Code",site:"⚙️ Site settings"}[tab]:"🔐 Admin Login";
-  $("admBody").innerHTML=!on?loginHtml():tab==="apps"?appsHtml():tab==="files"?filesHtml():tab==="code"?codeHtml():siteHtml();
+  $("admTitle").textContent=on?{apps:"📦 Software",feed:"💬 Feed & Storage",files:"🗂️ Files",code:"💻 Code",domain:"🌐 Domain",site:"⚙️ Site settings"}[tab]:"🔐 Admin Login";
+  $("admBody").innerHTML=!on?loginHtml():tab==="apps"?appsHtml():tab==="files"?filesHtml():tab==="code"?codeHtml():tab==="feed"?feedAdm():tab==="domain"?domAdm():siteHtml();
   if(on&&tab==="files"&&FILES===null)loadFiles();
+  if(on&&tab==="domain"&&!DOM.done)loadDom();
+  if(on&&tab==="feed"&&!ACC.done)testAcc();
   sb.scrollTop=sc;updDirty();
 }
 async function login(tok,remember){
@@ -885,6 +912,8 @@ $("adm").addEventListener("change",async e=>{
       await putFile(path,url.split(",")[1],"Add icon for "+repo);pendingIcons[path]=url;setField(repo,"icon",path);
       row.querySelector('[data-f="icon"]').value=path;row.querySelector("[data-prev]").innerHTML=iconHtml(path);updDirty();rr();toast("✅ Icon upload hoyeche. Ekhon Save & Publish chapo.")}
     else if(el.matches("[data-appfile]")){
+      const dest=await pickDest(f);if(dest===null){el.value="";return}
+      if(dest!=="gh"){const u=await driveUp(f,+dest);setField(repo,el.dataset.appfile,u);renderAdmin();toast("✅ Drive-e upload hoyeche. Ekhon Save & Publish chapo.");return}
       if(f.size>MAXMB*1048576)throw new Error(`File khub boro (max ${MAXMB} MB)`);
       toast(`⏳ ${f.name} upload hocche (${sz(f.size)})…`);const k=el.dataset.appfile,sub=k==="uploadAndroid"?"android/":k==="uploadPC"?"pc/":"";
       const path=`files/${repo}/${sub}${safe(f.name)}`;
@@ -893,6 +922,225 @@ $("adm").addEventListener("change",async e=>{
       const t=await f.text();setField(repo,"details",t);row.querySelector('[data-f="details"]').value=t;updDirty();toast("✅ Details load hoyeche. Save & Publish chapo.")}
   }catch(x){toast("❌ "+(x.message||"Upload hoyni"))}
   el.value="";
+});
+
+/* ===== Details: only features & functions (no build / GitHub info) ===== */
+const F_KEEP=/feature|function|usage|\buse\b|using|how|work|what|overview|about|descri|highlight|capabilit|screenshot|demo|preview|option|support|mode|tool|command|shortcut|setting|faq|tips?|workflow|why|benefit|includ|menu|interface|\bui\b|\bgui\b|guide|ফিচার|সুবিধা|ব্যবহার/i;
+const F_DROP=/install|build|compil|setup|set up|clone|develop|contribut|licen|tech|stack|built with|made with|github|\bgit\b|changelog|what'?s new|release|credit|acknowledg|author|contact|donat|sponsor|requirement|prerequisite|dependenc|deploy|structure|roadmap|to-?do|\btests?\b|testing|folder|architect|source|\bcode\b|getting started|quick ?start|history|thanks|\bfork|issue|support me|buy me/i;
+const F_JUNK=/github\.com|git clone|npm (?:i|install|run)|pip install|gradle|android studio|pull request|star this|licensed under|shields\.io|badge/i;
+function featureText(src){
+  if(!src)return"";
+  src=src.replace(/\r/g,"").replace(/<!--[\s\S]*?-->/g,"").replace(/^(```|~~~)[^\n]*\n[\s\S]*?^\1/gm,"");
+  const S=[];let c={l:0,t:"",b:[]};
+  for(const ln of src.split("\n")){const m=ln.match(/^(#{1,6})\s+(.*?)\s*#*\s*$/);if(m){S.push(c);c={l:m[1].length,t:m[2],b:[]}}else c.b.push(ln)}
+  S.push(c);
+  const st=[],out=[];let h1=false;
+  for(const s of S){
+    const t=s.t.replace(/[^\p{L}\p{N}\s'’]/gu,"").trim();
+    while(st.length&&st[st.length-1].l>=s.l)st.pop();
+    const par=st.length?st[st.length-1].k:false;
+    const k=s.l===0||(s.l===1&&!h1)?true:F_DROP.test(t)?false:F_KEEP.test(t)?true:par;
+    if(s.l===1)h1=true;
+    st.push({l:s.l,k:s.l<=1?false:k});
+    if(!k)continue;
+    const b=s.b.filter(x=>!F_JUNK.test(x)).join("\n").replace(/\[!\[[^\]]*\]\([^)]*\)\]\([^)]*\)/g,"").replace(/<img\b[^>]*(?:shields\.io|badge)[^>]*>/gi,"").replace(/\[([^\]]+)\]\(https?:\/\/(?:www\.)?github\.com[^)]*\)/gi,"$1").trim();
+    if(b)out.push((s.l>1?"#".repeat(s.l)+" "+s.t+"\n\n":"")+b);
+  }
+  return out.join("\n\n").slice(0,12000);
+}
+
+/* ===== Community feed (data lives in your Google Drive via Apps Script) ===== */
+const FT={request:["🆕","Software request","#3b82f6"],bug:["🐞","Bug fix","#ef4444"],idea:["💡","Idea","#f59e0b"],other:["💬","General","#7c3aed"]};
+const FERR={verify:"Please verify your email first.",mail_failed:"Couldn't send the email right now.",wrong_code:"Wrong code, try again.",expired:"Code expired. Please resend.",banned:"This email is not allowed to post.",too_many:"Too many posts. Please try again later.",bad_email:"Please enter a valid email.",name:"Please enter your name.",empty:"Write something first.",too_long:"Max 200 words please.",bad_image:"One of the images isn't supported.",img_big:"An image is too large.",not_configured:"Feed is not set up yet."};
+let VSTEP=null,FEED={items:[],full:[],ok:[],loaded:false,busy:false,mode:"optional"},IMGS=[],DRAFT={text:"",type:"request",app:""},ME={};
+try{ME=JSON.parse(localStorage.getItem("feed_me")||"{}")}catch(e){}
+const accs=()=>((CFG.feed||{}).accounts||[]).filter(a=>a.url),feedOn=()=>(CFG.feed||{}).enabled!==false&&accs().length>0;
+const thumb=id=>"https://drive.google.com/thumbnail?id="+id+"&sz=w1200";
+async function gcall(url,body,ms){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms||30000);
+  try{const r=await(body?fetch(url,{method:"POST",body:JSON.stringify(body),signal:c.signal}):fetch(url,{signal:c.signal}));return await r.json()}finally{clearTimeout(t)}}
+const ago=t=>{const s=(Date.now()-t)/1e3;return s<60?"just now":s<3600?Math.floor(s/60)+"m ago":s<86400?Math.floor(s/3600)+"h ago":s<2592e3?Math.floor(s/86400)+"d ago":new Date(t).toLocaleDateString()};
+const vOK=()=>!!ME.token&&ME.vmail===(ME.email||"").trim().toLowerCase()&&ME.exp>Date.now();
+const wc=t=>t.trim().split(/\s+/).filter(Boolean).length;
+const shrink=f=>new Promise((res,rej)=>{const im=new Image(),u=URL.createObjectURL(f);im.onload=()=>{const k=Math.min(1,1280/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL("image/jpeg",.8))};im.onerror=rej;im.src=u});
+function applyFeedNav(){$("vnav").hidden=!feedOn();if(!feedOn()&&!$("feedView").hidden)setView("soft")}
+function setView(v){$("swView").hidden=v==="feed";$("feedView").hidden=v!=="feed";
+  document.querySelectorAll("#vnav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  if(v==="feed"){if(!FEED.loaded)loadFeed();else renderFeed()}}
+$("vnav").addEventListener("click",e=>{const b=e.target.closest("button");if(b)location.hash=b.dataset.v==="feed"?"feed":"soft"});
+async function loadFeed(){
+  FEED.busy=true;renderFeed();const A=accs();
+  const R=await Promise.allSettled(A.map(a=>gcall(a.url+"?action=list")));
+  FEED.items=[];FEED.full=[];FEED.ok=[];
+  R.forEach((r,i)=>{const v=r.value,ok=r.status==="fulfilled"&&v&&v.ok;if(ok&&v.mode&&!FEED.modeSet){FEED.mode=v.mode;FEED.modeSet=1}FEED.ok[i]=!!ok;FEED.full[i]=!!(ok&&v.full);if(ok)v.posts.forEach(p=>FEED.items.push({...p,src:i}))});
+  FEED.items.sort((a,b)=>b.ts-a.ts);FEED.busy=false;FEED.loaded=true;renderFeed();
+}
+const postHtml=p=>{const t=FT[p.type]||FT.other;return`<article class="fp"><div class="fp-h"><div class="fav" style="background:${COLORS[(p.name.charCodeAt(0)||0)%COLORS.length]}">${esc((p.name[0]||"?").toUpperCase())}</div><div class="fp-n"><b>${esc(p.name)}</b>${p.v?' <span title="Verified email" style="color:#10b981">✔</span>':""}<small>${ago(p.ts)}</small></div><div class="tags"><span class="tag" style="--c:${t[2]}">${t[0]} ${t[1]}</span>${p.app?`<span class="tag ver">📦 ${esc(p.app)}</span>`:""}</div></div><div class="fp-t">${esc(p.text)}</div>${p.imgs&&p.imgs.length?`<div class="fp-i">${p.imgs.map(i=>`<a href="${thumb(i)}" target="_blank" rel="noopener"><img src="${thumb(i)}" loading="lazy" alt=""></a>`).join("")}</div>`:""}</article>`};
+function cnt(){const t=$("fText");if(!t)return;const n=wc(t.value),c=$("fCnt");c.textContent=n+"/200 words";c.style.color=n>200?"#ef4444":""}
+function renderFeed(){
+  const v=$("feedView");if(v.hidden)return;
+  const ta=$("fText");if(ta)DRAFT.text=ta.value;const ft=$("fType");if(ft)DRAFT.type=ft.value;const fa=$("fApp");if(fa)DRAFT.app=fa.value;
+  const apps=visItems().map(r=>r.dispName).sort();
+  v.innerHTML=`<div class="fc"><h3>💬 Community Feed</h3><p class="fh">Request new software, report a bug, or share anything — up to 200 words and 5 images. Your email is required but stays private; only the site owner can see it.</p>
+  <div class="fr2"><input class="fin" id="fName" placeholder="Your name" maxlength="40" value="${esc(ME.name||"")}"><input class="fin" id="fMail" type="email" placeholder="Your own email (required)" value="${esc(ME.email||"")}"></div>
+  ${FEED.mode!=="off"?`<div class="ffoot" style="margin:0 0 .5rem">${vOK()?'<span class="tag" style="--c:#10b981">✔ Email verified</span>':`<button class="mini ghost" id="fVer" type="button">✉️ Verify email</button><span>${FEED.mode==="required"?"Required to post.":"Optional — verified posts get a ✔ and higher limits."}</span>`}</div>`:""}${VSTEP&&!vOK()?`<div class="fr2"><input class="fin" id="fCode" inputmode="numeric" maxlength="6" placeholder="6-digit code (check spam too)"><div class="ffoot" style="margin:0"><button class="mini" id="fVok" type="button">Confirm</button><button class="mini ghost" id="fRes" type="button" ${Date.now()-VSTEP.t<3e4?"disabled":""}>Resend</button></div></div>`:""}
+  <div class="fr2"><select class="fin" id="fType">${Object.entries(FT).map(([k,t])=>`<option value="${k}" ${DRAFT.type===k?"selected":""}>${t[0]} ${t[1]}</option>`).join("")}</select>
+  <select class="fin" id="fApp"><option value="">Which software? (optional)</option>${apps.map(a=>`<option ${DRAFT.app===a?"selected":""}>${esc(a)}</option>`).join("")}</select></div>
+  <textarea class="fin" id="fText" rows="4" placeholder="Write here…">${esc(DRAFT.text)}</textarea>
+  <div class="fimgs">${IMGS.map((d,i)=>`<div><img src="${d}" alt=""><button type="button" data-fx="${i}">✕</button></div>`).join("")}</div>
+  <div class="ffoot"><span id="fCnt"></span><label class="mini ghost">🖼 Images ${IMGS.length}/5<input type="file" id="fImg" accept="image/*" multiple hidden></label><button class="mini" id="fPost" type="button">Post</button></div><div class="err" id="fErr"></div></div>`
+  +(FEED.busy?'<div class="msg">Loading…</div>':!FEED.ok.some(Boolean)?'<div class="msg">Feed is not available right now.</div>':FEED.items.length?FEED.items.map(postHtml).join(""):'<div class="msg">No posts yet. Be the first! ✨</div>');
+  cnt();
+}
+$("feedView").addEventListener("input",e=>{const i=e.target.id;
+  if(i==="fText")cnt();
+  if(i==="fName"||i==="fMail"){ME={...ME,name:$("fName").value,email:$("fMail").value};try{localStorage.setItem("feed_me",JSON.stringify(ME))}catch(x){}}});
+$("feedView").addEventListener("change",async e=>{if(e.target.id!=="fImg")return;
+  for(const f of[...e.target.files].slice(0,5-IMGS.length)){try{IMGS.push(await shrink(f))}catch(x){}}renderFeed()});
+$("feedView").addEventListener("click",async e=>{
+  const x=e.target.closest("[data-fx]");if(x){IMGS.splice(+x.dataset.fx,1);renderFeed();return}
+  const id=e.target.id,eb=$("fErr"),mail0=($("fMail")||{value:""}).value.trim().toLowerCase();
+  if(id==="fVer"||id==="fRes"){
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail0))return eb.textContent="Enter your email first.";
+    e.target.disabled=true;e.target.textContent="Sending…";let msg="",A=accs();
+    for(let i=0;i<A.length;i++){if(FEED.ok[i]===false)continue;
+      try{const r=await gcall(A[i].url,{action:"send_code",email:mail0},25000);
+        if(r.ok){VSTEP={acc:i,t:Date.now(),mail:mail0};setTimeout(renderFeed,30500);renderFeed();toast("✉️ Code sent — check inbox/spam");return}
+        if(r.error==="mail_failed")continue;msg=FERR[r.error]||r.error;break}catch(x){}}
+    renderFeed();$("fErr").textContent=(msg||FERR.mail_failed)+(FEED.mode==="required"?" Please try again in a minute.":" You can still post without verifying.");return}
+  if(id==="fVok"){const code=$("fCode").value.trim();if(!code)return;e.target.disabled=true;
+    try{const r=await gcall(accs()[VSTEP.acc].url,{action:"verify",email:VSTEP.mail,code},25000);
+      if(r.ok){ME={...ME,token:r.token,vmail:VSTEP.mail,exp:Date.now()+29*864e5};try{localStorage.setItem("feed_me",JSON.stringify(ME))}catch(_){}VSTEP=null;renderFeed();toast("✔ Email verified");return}
+      e.target.disabled=false;eb.textContent=FERR[r.error]||r.error}catch(x){e.target.disabled=false;eb.textContent="Network problem."}return}
+  if(id!=="fPost")return;
+  const err=$("fErr"),btn=e.target,name=$("fName").value.trim(),mail=$("fMail").value.trim(),text=$("fText").value.trim();
+  err.textContent="";
+  if(name.length<2)return err.textContent="Please enter your name.";
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail))return err.textContent="Please enter your own valid email.";
+  if(!text)return err.textContent="Write something first.";
+  if(wc(text)>200)return err.textContent="Max 200 words please.";
+  if(FEED.mode==="required"&&!vOK())return err.textContent=FERR.verify;
+  btn.disabled=true;btn.textContent="Posting…";
+  const body={action:"post",token:vOK()?ME.token:"",name,email:mail,type:$("fType").value,app:$("fApp").value,text,images:IMGS},A=accs();
+  let done=false,msg="";
+  for(let i=0;i<A.length;i++){if(FEED.ok[i]===false||FEED.full[i])continue;
+    try{const r=await gcall(A[i].url,body,90000);
+      if(r.ok){done=true;IMGS=[];FEED.items.unshift({...r.post,src:i});break}
+      if(r.error==="full"){FEED.full[i]=true;continue}
+      msg=FERR[r.error]||"Could not post ("+r.error+")";break}
+    catch(x){msg="Network problem, please try again."}}
+  if(done){$("fText").value="";DRAFT.text="";toast("✅ Posted!")}
+  renderFeed();if(!done){const e2=$("fErr");if(e2)e2.textContent=msg||"No storage available right now."}
+});
+
+/* ===== Admin: Feed & Drive storage ===== */
+let FKEY="";try{FKEY=localStorage.getItem("feed_key")||""}catch(e){}
+let ACC={done:false,st:{}},MOD={posts:[],banned:[],msg:""};
+const gb=n=>n==null?"?":(n/1073741824).toFixed(1)+" GB";
+function feedAdm(){setTimeout(()=>{const m=document.querySelector("[data-m=mode]"),s=Object.values(ACC.st).find(x=>x&&x.mode);if(m)m.value=(s&&s.mode)||"optional"},0);
+  const F=CFG.feed,A=F.accounts||[];
+  const st=i=>{const s=ACC.st[i];return!s?"checking…":!s.ok?"❌ not reachable / not deployed":`${gb(s.used)} used of ${s.limit?gb(s.limit):"?"} · ${s.full?'<b style="color:#ef4444">FULL</b>':"free "+gb(s.free)}`};
+  return`<div class="box2"><label class="sw"><input type="checkbox" data-x="fen" ${F.enabled!==false?"checked":""}> Show Community Feed on the site</label>
+  <label>✉️ Email verification (feed)<select data-m="mode"><option value="off">Off</option><option value="optional">Optional — ✔ badge, unverified: 2 posts/hour</option><option value="required">Required</option></select></label>
+  <h3>☁️ Google Drive storage (one Apps Script per Gmail)</h3>
+  <p class="hint">Posts &amp; images ei Drive-gulote save hoy. Order = priority: ekta full hole post automatic porer Drive-e jabe. Add/remove korle <b>Save &amp; Publish</b> chapo.</p>
+  ${A.map((a,i)=>`<div class="fr"><span>${esc(a.name||"Drive "+(i+1))}<small style="display:block;color:var(--muted);font-weight:500">${st(i)}</small></span><button class="mini" data-x="ftest" data-i="${i}">🔄</button><button class="mini red" data-x="frm" data-i="${i}">🗑</button></div>`).join("")||'<div class="msg" style="padding:12px">No Drive added yet.</div>'}
+  <div class="ar-grid"><label>Name<input id="faName" placeholder="Gmail 1"></label><label>Web app URL<input id="faUrl" placeholder="https://script.google.com/macros/s/…/exec"></label></div>
+  <div><button class="mini" data-x="fadd">➕ Add Drive</button></div></div>
+  <div class="box2" style="margin-top:14px"><h3>🔑 Setup (each Gmail, one time)</h3>
+  <label>Admin key (same key in every Drive)<div class="ic-in"><input id="fKey" value="${esc(FKEY)}" placeholder="Generate a secret key"><button class="mini" data-x="fgen">🎲 Generate</button></div></label>
+  <ol class="hint"><li><b>Copy script</b> chapo.</li><li>Oi Gmail-e <b>script.google.com</b> → New project → paste → Save → <code>setup</code> run kore Allow koro.</li><li><b>Deploy → New deployment → Web app</b> → Execute as <b>Me</b>, Access <b>Anyone</b> → <code>/exec</code> URL copy koro.</li><li>(Script update korle: Deploy → Manage deployments → ✏️ → New version, ar <code>setup</code> abar run kore Allow.)</li><li>Upore URL paste kore Add Drive → Save &amp; Publish.</li></ol>
+  <div><button class="mini" data-x="fcode">📋 Copy script</button></div><textarea class="code" id="fCode" hidden style="min-height:140px"></textarea></div>
+  <div class="box2" style="margin-top:14px"><h3>🛡️ Moderation (delete posts / ban users)</h3><div><button class="mini" data-x="fmod">🔄 Load posts</button></div><div class="hint">${esc(MOD.msg)}</div>
+  ${MOD.banned.length?`<div class="chips">${MOD.banned.map(b=>`<span class="chip on" style="--c:#ef4444">${esc(b)} <a href="#" data-x="funban" data-e="${esc(b)}" style="color:#fff">✕ unban</a></span>`).join("")}</div>`:""}
+  ${MOD.posts.map((p,i)=>`<div class="ar" style="--a:#ec4899"><div><b>${esc(p.name)}</b> · ${esc(p.email)} ${p.v?"✔":"(unverified)"} · ${ago(p.ts)} · ${esc((A[p.src]||{}).name||"")}</div><div style="white-space:pre-wrap;margin:6px 0">${esc(p.text)}</div>${(p.imgs||[]).map(x=>`<img src="${thumb(x)}" alt="" style="height:60px;border-radius:8px;margin-right:6px">`).join("")}<div style="margin-top:8px;display:flex;gap:8px"><button class="mini red" data-x="fdel" data-i="${i}">🗑 Delete</button><button class="mini red" data-x="fban" data-i="${i}">🚫 Ban user</button></div></div>`).join("")}</div>`;
+}
+async function testAcc(i){
+  const A=CFG.feed.accounts;ACC.done=true;
+  await Promise.all(A.map(async(a,k)=>{if(i!=null&&i!==k)return;try{ACC.st[k]=await gcall(a.url+"?action=status",null,20000)}catch(e){ACC.st[k]={ok:false}}}));
+  if(tab==="feed")renderAdmin();
+}
+const modAll=b=>Promise.all(CFG.feed.accounts.map(a=>gcall(a.url,{...b,key:FKEY},60000).catch(()=>({ok:false}))));
+async function modLoad(){
+  MOD.msg="Loading…";renderAdmin();
+  const R=await modAll({action:"admin_list"}),ban=new Set();let bad=0;MOD.posts=[];
+  R.forEach((r,i)=>{if(!r.ok){bad++;return}(r.banned||[]).forEach(b=>ban.add(b));r.posts.forEach(p=>MOD.posts.push({...p,src:i}))});
+  MOD.posts.sort((a,b)=>b.ts-a.ts);MOD.banned=[...ban];
+  MOD.msg=(bad?`⚠️ ${bad} Drive failed (admin key mismatch?). `:"")+MOD.posts.length+" posts";renderAdmin();
+}
+$("adm").addEventListener("change",async e=>{const m=e.target.dataset.m;if(m){if(!FKEY)return toast("❌ Admin key dao");await modAll({action:"admin_setmode",mode:e.target.value});FEED.mode=e.target.value;toast("✅ Verification: "+e.target.value);return}
+  if(e.target.id==="fKey"){FKEY=e.target.value.replace(/[^\w-]/g,"");try{localStorage.setItem("feed_key",FKEY)}catch(_){}}});
+
+/* ===== Upload destination (GitHub or Drive) ===== */
+function pickDest(f){return new Promise(async res=>{
+  const A=CFG.feed.accounts||[];if(A.length&&FKEY&&!ACC.done)await testAcc();
+  const big=f.size>MAXMB*1048576,d=document.createElement("div");d.className="mdl open";d.style.zIndex=70;
+  const opt=(v,l,sub,dis)=>`<label class="fr" style="${dis?"opacity:.5":"cursor:pointer"}"><input type="radio" name="dst" value="${v}" ${dis?"disabled":""}><span>${l}<small style="display:block;color:var(--muted);font-weight:500">${sub}</small></span></label>`;
+  d.innerHTML=`<div class="sheet" style="width:min(30rem,100%)"><div class="sh-b"><h3 style="margin:0 0 6px">Kothay rakhbe?</h3><p class="hint">${esc(f.name)} · ${sz(f.size)}</p>
+  ${opt("gh","🐙 GitHub","Site repo-te · max "+MAXMB+" MB",big)}
+  ${A.map((a,i)=>{const s=ACC.st[i]||{},no=!FKEY||!s.ok||(s.free!=null&&s.free<f.size+1.2e8);return opt(i,"☁️ "+esc(a.name||"Drive "+(i+1)),!FKEY?"Feed tab-e Admin key dao":!s.ok?"not reachable":s.free==null?"free space unknown":"free "+gb(s.free),no)}).join("")}
+  </div><div class="sh-f"><button class="mini ghost" data-c>Cancel</button><button class="mini" data-ok>Upload</button></div></div>`;
+  document.body.appendChild(d);const first=d.querySelector("input:not(:disabled)");if(first)first.checked=true;
+  const done=v=>{d.remove();res(v)};
+  d.onclick=e=>{if(e.target===d||e.target.closest("[data-c]"))done(null);if(e.target.closest("[data-ok]")){const r=d.querySelector("input:checked");if(r)done(r.value)}};
+})}
+async function driveUp(f,i){const a=CFG.feed.accounts[i],uid=Date.now().toString(36)+Math.random().toString(36).slice(2,7),mime=f.type||"application/octet-stream",CH=3145728;
+  let r=await gcall(a.url,{action:"admin_up_start",key:FKEY,uid,name:f.name,mime,size:f.size},60000);if(!r.ok)throw new Error(r.error==="full"?"Drive-e jayga nai":"Drive start failed: "+r.error);
+  for(let st=0;st<f.size;st+=CH){toast(`⏳ ${f.name} → Drive ${Math.round(st/f.size*100)}%`);
+    r=await gcall(a.url,{action:"admin_up_chunk",key:FKEY,uid,start:st,size:f.size,mime,data:await toB64(f.slice(st,st+CH))},120000);if(!r.ok)throw new Error("Drive: "+r.error)}
+  if(!r.done)throw new Error("Upload incomplete");
+  return"https://drive.google.com/uc?export=download&id="+r.id+"#"+safe(f.name)}
+
+/* ===== Admin: Domain ===== */
+let DOM={done:false,cname:"",pg:null,msg:""};
+const GHIP=["185.199.108.153","185.199.109.153","185.199.110.153","185.199.111.153"];
+const cleanDom=v=>{v=v.trim().toLowerCase().replace(/^https?:\/\//,"").replace(/[\/:?#].*$/,"").replace(/\.$/,"");return/^(?!-)([a-z0-9-]{1,63}\.)+[a-z0-9-]{2,63}$/.test(v)&&!/github\.io$/.test(v)?v:""};
+const PG=`/repos/${USERNAME}/${SITE_REPO}/pages`;
+async function loadDom(){DOM.done=true;
+  try{const r=await ghApi(`/repos/${USERNAME}/${SITE_REPO}/contents/CNAME?ref=${BRANCH}&t=${Date.now()}`);DOM.cname=r.ok?bdec((await r.json()).content).trim():"";
+    const p=await ghApi(PG);DOM.pg=p.ok?await p.json():null;if(DOM.pg&&DOM.pg.cname)DOM.cname=DOM.pg.cname}catch(e){}
+  if(tab==="domain")renderAdmin()}
+function domAdm(){return`<div class="box2"><h3>🌐 Website domain</h3>
+  <p class="hint">Ekhon: <b>${esc(location.host)}</b>${DOM.cname?` · Custom domain: <b>${esc(DOM.cname)}</b>`:" (free github.io)"}${DOM.pg&&DOM.pg.https_enforced?" · 🔒 HTTPS on":""}</p>
+  <label>Custom / free domain<input id="dIn" value="${esc(DOM.cname)}" placeholder="example.com ba app.example.com"></label>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="mini" data-x="dset">🔗 Connect domain</button><button class="mini" data-x="dhttps">🔒 Enable HTTPS</button>${DOM.cname?'<button class="mini red" data-x="drm">✕ Remove</button>':""}</div>
+  <div class="hint">${esc(DOM.msg)}</div></div>
+  <div class="box2" style="margin-top:14px"><h3>DNS records (domain provider-er DNS panel-e)</h3>
+  <p class="hint"><b>Root domain</b> (example.com) → 4 ta <b>A</b> record: ${GHIP.join(", ")}<br><b>Subdomain</b> (www / app …) → <b>CNAME</b> → <code>${USERNAME}.github.io</code><br>DNS change hote kichu minute–ghonta lagte pare, tarpor <b>Enable HTTPS</b> chapo.</p>
+  <p class="hint"><b>Free:</b> <code>${USERNAME}.github.io</code> already free. Free subdomain: is-a.dev, js.org, eu.org, DigitalPlat FreeDomain, FreeDNS (afraid.org) — terms bodlate pare, check kore nio. Domain bodle notun address-e browser data alada, tai ei admin-e abar GitHub token diye login korte hobe.</p></div>`}
+$("adm").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-x]");if(!b)return;if(b.type!=="checkbox")e.preventDefault();
+  const x=b.dataset.x,i=+b.dataset.i,F=CFG.feed,gh=PG;
+  try{
+    if(x==="fen"){F.enabled=b.checked;applyFeedNav();updDirty()}
+    else if(x==="fadd"){const n=$("faName").value.trim(),u=$("faUrl").value.trim();
+      if(!/^https:\/\/script\.google\.com\/.+\/exec$/.test(u))return toast("❌ Valid Web app URL (…/exec) dao");
+      F.accounts.push({name:n||"Drive "+(F.accounts.length+1),url:u});ACC={done:false,st:{}};updDirty();renderAdmin()}
+    else if(x==="frm"){if(confirm("Ei Drive list theke soriye felbe? (Drive-er data thakbe)")){F.accounts.splice(i,1);ACC={done:false,st:{}};updDirty();renderAdmin()}}
+    else if(x==="ftest")await testAcc(i);
+    else if(x==="fgen"){FKEY=[...crypto.getRandomValues(new Uint8Array(18))].map(n=>n.toString(36).padStart(2,"0")).join("").slice(0,24);try{localStorage.setItem("feed_key",FKEY)}catch(_){}renderAdmin()}
+    else if(x==="fcode"){if(!FKEY)return toast("❌ Age Admin key generate koro");
+      const t=(await(await fetch("apps-script/Code.gs?t="+Date.now())).text()).replace("PASTE_YOUR_ADMIN_KEY_HERE",FKEY);
+      try{await navigator.clipboard.writeText(t);toast("📋 Script copy hoyeche")}catch(_){const ta=$("fCode");ta.hidden=false;ta.value=t;ta.select();toast("Select all & copy koro")}}
+    else if(x==="fmod"){if(!FKEY)return toast("❌ Admin key dao");await modLoad()}
+    else if(x==="fdel"){const p=MOD.posts[i];if(!confirm("Ei post delete korbe?"))return;
+      const r=await gcall(F.accounts[p.src].url,{action:"admin_delete",key:FKEY,id:p.id},60000);
+      if(r.ok){MOD.posts.splice(i,1);renderAdmin()}else toast("❌ "+r.error)}
+    else if(x==="fban"){const p=MOD.posts[i];if(!confirm("Ban "+p.email+" ?"))return;
+      const purge=confirm("Tar sob post-o delete korbo? (OK = delete, Cancel = rekhe dao)");
+      await modAll({action:"admin_ban",email:p.email,purge});await modLoad()}
+    else if(x==="funban"){await modAll({action:"admin_unban",email:b.dataset.e});await modLoad()}
+    else if(x==="dset"){const d=cleanDom($("dIn").value);if(!d)return toast("❌ Valid domain dao (e.g. example.com)");
+      await putFile("CNAME",b64(d+"\n"),"Set custom domain");
+      const r=await ghApi(gh,{method:"PUT",body:JSON.stringify({cname:d})});
+      DOM.msg=r.ok?"✅ Connected. DNS thik thakle kichukkhon-e cholbe, tarpor Enable HTTPS chapo.":"✅ CNAME file save hoyeche. (Pages API "+r.status+": token-e Pages permission dile auto hobe, na hole GitHub → Settings → Pages-e domain-ta dao.)";
+      DOM.done=false;renderAdmin()}
+    else if(x==="drm"){if(!confirm("Custom domain soriye felbe?"))return;
+      const g=await ghApi(`/repos/${USERNAME}/${SITE_REPO}/contents/CNAME?ref=${BRANCH}&t=${Date.now()}`);
+      if(g.ok)await ghApi(`/repos/${USERNAME}/${SITE_REPO}/contents/CNAME`,{method:"DELETE",body:JSON.stringify({message:"Remove custom domain",sha:(await g.json()).sha,branch:BRANCH})});
+      await ghApi(gh,{method:"PUT",body:JSON.stringify({cname:null})});DOM.msg="Domain remove hoyeche.";DOM.cname="";DOM.done=false;renderAdmin()}
+    else if(x==="dhttps"){const r=await ghApi(gh,{method:"PUT",body:JSON.stringify({https_enforced:true})});
+      DOM.msg=r.ok?"🔒 HTTPS enabled.":"HTTPS ekhono hoyni ("+r.status+"). DNS thik hole certificate toiri hote kichu minute lage — pore abar chapo.";DOM.done=false;renderAdmin()}
+  }catch(err){toast("❌ "+(err.message||"Failed"))}
 });
 
 load();

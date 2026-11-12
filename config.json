@@ -83,5 +83,9 @@
       "icon": "📡",
       "category": "Sharing"
     }
+  },
+  "feed": {
+    "enabled": true,
+    "accounts": []
   }
 }
