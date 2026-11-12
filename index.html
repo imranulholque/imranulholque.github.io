@@ -283,6 +283,26 @@ body.fm .hero{display:none}body.fm .wrap{margin-top:1rem}
 .trk-k{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.625rem}.trk-k div{background:var(--bg);border:1px solid var(--line);border-radius:1rem;padding:.75rem .9rem}.trk-k b{display:block;font-size:1.5rem}.trk-k small{color:var(--muted);font-weight:600}
 .trk-bars{display:flex;align-items:flex-end;gap:2px;height:140px;padding-top:.5rem}.trk-bars i{flex:1;background:linear-gradient(#7c3aed,#3b82f6);border-radius:3px 3px 0 0;min-height:2px}
 .trk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:.75rem}.trk-row{display:grid;grid-template-columns:1fr auto;gap:.25rem .5rem;font-size:.8125rem;font-weight:600}.trk-row u{grid-column:1/-1;height:5px;border-radius:5px;background:var(--line);display:block;overflow:hidden;text-decoration:none}.trk-row u s{display:block;height:100%;background:#7c3aed;text-decoration:none}
+
+/* --- accounts / profile / details features --- */
+.fav{position:relative;overflow:hidden}.fav img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#authM .sheet{width:min(26rem,100%)}
+.au-b{padding:1.25rem 1.4rem 1.4rem;display:grid;gap:.7rem}.au-h{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.au-b h3{margin:0;font-size:1.3rem}.au-b .sub{margin:0;color:var(--muted);font-size:.875rem}
+.au-l{display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.au-l button{border:0;background:none;color:#7c3aed;font:inherit;font-weight:700;cursor:pointer;padding:0}
+.pwr{position:relative}.pwr .fin{padding-right:2.6rem}.pwt{position:absolute;right:.3rem;top:50%;transform:translateY(-50%);border:0;background:none;cursor:pointer;font-size:1rem}
+.au-av{display:flex;align-items:center;gap:.9rem}.au-av .fav{width:4.5rem;height:4.5rem;font-size:1.6rem}.au-av div{display:flex;gap:.4rem;flex-wrap:wrap}
+.mebar{display:flex;align-items:center;gap:.65rem;margin-bottom:.75rem}.mebar>div{flex:1;min-width:0}.mebar small{display:block;color:var(--muted);font-size:.75rem}
+.join{text-align:center;padding:1.25rem}.join .jn-t{font-weight:800;font-size:1.15rem}.join p{color:var(--muted);margin:.4rem 0 .9rem;font-size:.9rem}
+.jn-b{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap}.jn-b .go2{width:auto;padding:.7rem 1.4rem}.jn-b .mini{padding:.8rem 1.2rem;font-size:.9rem}
+.fc-login{background:var(--bg);border-radius:.9rem;padding:.6rem .8rem;font-size:.85rem;color:var(--muted)}
+.fc-login button{border:0;background:none;color:#7c3aed;font:inherit;font-weight:700;cursor:pointer;padding:0}
+.fxw h4{margin:0 0 .8rem;font-size:1.05rem}
+.fx{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.6rem}
+.fx li{display:flex;gap:.6rem;align-items:flex-start;padding:.7rem .85rem;border-radius:.9rem;background:color-mix(in srgb,var(--c) 8%,var(--bg));border:1px solid color-mix(in srgb,var(--c) 20%,transparent);line-height:1.45;font-size:.93rem}
+.fx i{flex:none;width:1.25rem;height:1.25rem;border-radius:50%;background:var(--c);color:#fff;display:grid;place-items:center;font-size:.7rem;font-style:normal;margin-top:.1rem}
+.fx b{display:block}
 </style>
 <style id="customCss"></style>
 </head>
@@ -334,6 +354,7 @@ body.fm .hero{display:none}body.fm .wrap{margin-top:1rem}
 <div class="lb" id="lb" hidden></div>
 
 <div class="mdl" id="mdl"><div class="sheet" role="dialog" aria-modal="true"><div class="sh-h" id="mdlHead"></div><div class="sh-b" id="mdlBody"></div><div class="sh-f" id="mdlFoot"></div></div></div>
+<div class="mdl" id="authM"><div class="sheet" role="dialog" aria-modal="true"><div id="authBox"></div></div></div>
 <div class="adm" id="adm">
  <nav class="adm-side" id="admSide"><div class="br">🛠️ Admin</div>
   <button data-tab="apps">📦 <span>Software</span></button><button data-tab="feed">💬 <span>Feed</span></button><button data-tab="traffic">📈 <span>Traffic</span></button><button data-tab="files">🗂️ <span>Files</span></button><button data-tab="code">💻 <span>Code</span></button><button data-tab="domain">🌐 <span>Domain</span></button><button data-tab="site">⚙️ <span>Settings</span></button>
@@ -668,11 +689,14 @@ async function openDetails(name){
   m.style.setProperty("--c",catColor[r.cat]||"#7c3aed");
   $("mdlHead").innerHTML=`<div class="ic">${iconHtml(r.icon)}</div><div><h3>${esc(r.dispName)}</h3><div class="tags">${tagsHtml(r)}</div></div><button class="sh-x" data-x aria-label="Close">✕</button>`;
   $("mdlFoot").innerHTML=r.plats.map(p=>dlBtn(r,p)).join("");m.classList.add("open");document.body.style.overflow="hidden";
-  const b=$("mdlBody");b.innerHTML='<div class="msg">Loading details…</div>';
+  const b=$("mdlBody");b.hidden=false;b.innerHTML='<div class="msg">Loading details…</div>';
   track("app/"+name);
-  const src=r.ov.details||featureText(await getReadme(name),raw.description,raw.topics);
+  let html="";
+  if(r.ov.details)html=`<div class="md">${md(r.ov.details,`https://raw.githubusercontent.com/${USERNAME}/${name}/HEAD/`)}</div>`;
+  else{let F=[];try{F=featureList(await getReadme(name))}catch(e){}
+    html=F.length?`<div class="fxw"><h4>✨ Features</h4><ul class="fx">${F.map(x=>{const k=x.indexOf(" — "),t=k>2&&k<=40?`<b>${esc(x.slice(0,k))}</b>${esc(x.slice(k+3))}`:esc(x);return`<li><i>✓</i><span>${t}</span></li>`}).join("")}</ul></div>`:""}
   if(location.hash!=="#app/"+encodeURIComponent(name))return;
-  b.innerHTML=src?`<div class="md">${md(src,`https://raw.githubusercontent.com/${USERNAME}/${name}/HEAD/`)}</div>`:'<div class="msg">Feature details coming soon.</div>';
+  b.hidden=!html;b.innerHTML=html;
   b.scrollTop=0;
 }
 function route(){
@@ -1045,68 +1069,65 @@ function fxItems(lines,isHow){
       if(c.length){const t=c.length>1?c[0]+" — "+c[1]:c[0];if(fxOk(t)){out.push(fxShort(t));LST.add(out.length-1)}}continue}
     para.push(ln)}
   flush();return out}
-function featureText(src,desc,topics){
-  const feat=[],how=[],intro=[],introL=[],other=[];
-  if(src){
-    src=src.replace(/\r/g,"").replace(/<!--[\s\S]*?-->/g,"").replace(/^(```|~~~)[^\n]*\n[\s\S]*?^\1[ \t]*$/gm,"")
-      .replace(/<\s*h([1-6])[^>]*>([\s\S]*?)<\s*\/\s*h\1\s*>/gi,(m,l,t)=>"\n"+"#".repeat(+l)+" "+t.replace(/<[^>]+>/g,"")+"\n")
-      .replace(/<\s*li[^>]*>/gi,"\n- ").replace(/<\s*(?:br|\/p|\/div|\/ul|\/ol|\/tr)\s*\/?>/gi,"\n").replace(/<\s*\/t[dh]\s*>/gi," | ");
-    const S=[];let c={l:0,t:"",b:[]};
-    for(const ln of src.split("\n")){const m=ln.match(/^(#{1,6})\s+(.*?)\s*#*\s*$/);if(m){S.push(c);c={l:m[1].length,t:fxClean(m[2]),b:[]}}else c.b.push(ln)}
-    S.push(c);
-    const st=[];let seenH1=false;
-    for(const s of S){
-      while(st.length&&st[st.length-1].l>=s.l)st.pop();
-      const par=st.length?st[st.length-1].k:"";
-      let k="";
-      if(s.l===0||(s.l===1&&!seenH1))k="intro";
-      else if(FX_DROP.test(s.t))k="drop";
-      else if(FX_FEAT.test(s.t))k="feat";
-      else if(FX_HOW.test(s.t))k="how";
-      else k=par==="drop"?"drop":(par==="feat"||par==="how")?par:"other";
-      if(s.l===1)seenH1=true;
-      st.push({l:s.l,k});
-      if(k==="drop")continue;
-      let it=fxItems(s.b);
-      const isChild=(par==="feat"||par==="how")&&s.l>1&&k===par;
-      if(isChild&&s.t&&s.t.split(" ").length<=5&&!/^\s*(?:[-*+]|\d+[.)])\s/m.test(s.b.join("\n"))&&it.length){it=[fxShort(fxClean(s.t)+" — "+it[0])]}
-      else if(isChild&&s.t&&s.t.split(" ").length<=5&&it.length===0){it=[fxClean(s.t)]}
-      if(k==="intro"){it.forEach((x,i)=>(it.lst.has(i)?introL:intro).push(x))}else(k==="feat"?feat:k==="how"?how:other).push(...it)}
+function featureList(src){
+  if(!src)return[];
+  const feat=[],introL=[],otherL=[];
+  src=src.replace(/\r/g,"").replace(/<!--[\s\S]*?-->/g,"").replace(/^(```|~~~)[^\n]*\n[\s\S]*?^\1[ \t]*$/gm,"")
+    .replace(/<\s*h([1-6])[^>]*>([\s\S]*?)<\s*\/\s*h\1\s*>/gi,(m,l,t)=>"\n"+"#".repeat(+l)+" "+t.replace(/<[^>]+>/g,"")+"\n")
+    .replace(/<\s*li[^>]*>/gi,"\n- ").replace(/<\s*(?:br|\/p|\/div|\/ul|\/ol|\/tr)\s*\/?>/gi,"\n").replace(/<\s*\/t[dh]\s*>/gi," | ");
+  const S=[];let c={l:0,t:"",b:[]};
+  for(const ln of src.split("\n")){const m=ln.match(/^(#{1,6})\s+(.*?)\s*#*\s*$/);if(m){S.push(c);c={l:m[1].length,t:fxClean(m[2]),b:[]}}else c.b.push(ln)}
+  S.push(c);
+  const st=[];let seenH1=false;
+  for(const s of S){
+    while(st.length&&st[st.length-1].l>=s.l)st.pop();
+    const par=st.length?st[st.length-1].k:"";
+    let k="";
+    if(s.l===0||(s.l===1&&!seenH1))k="intro";
+    else if(FX_DROP.test(s.t))k="drop";
+    else if(FX_FEAT.test(s.t))k="feat";
+    else if(FX_HOW.test(s.t))k="how";
+    else k=par==="drop"?"drop":(par==="feat"||par==="how")?par:"other";
+    if(s.l===1)seenH1=true;
+    st.push({l:s.l,k});
+    if(k==="drop"||k==="how")continue;
+    let it=fxItems(s.b);
+    if(k==="feat"){
+      const isChild=par==="feat"&&s.l>1;
+      if(isChild&&s.t&&s.t.split(" ").length<=5&&!/^\s*(?:[-*+]|\d+[.)])\s/m.test(s.b.join("\n"))&&it.length)it=[fxShort(fxClean(s.t)+" — "+it[0])];
+      else if(isChild&&s.t&&s.t.split(" ").length<=5&&it.length===0)it=[fxClean(s.t)];
+      feat.push(...it)}
+    else{const L=it.filter((x,i)=>it.lst.has(i));(k==="intro"?introL:otherL).push(...L)}
   }
-  const uniq=a=>{const seen=new Set();return a.filter(x=>{const k=x.toLowerCase().replace(/[^\p{L}\p{N}]+/gu,"");if(!k||seen.has(k))return false;seen.add(k);return true})};
-  let F=uniq(feat).slice(0,8),H=uniq(how).slice(0,6),about="";
-  if(!F.length){
-    const bl=uniq(intro.filter(x=>x.length<=140&&x.split(" ").length>=2)).slice(0,2);
-    const oth=uniq([...introL,...other]).filter(x=>x.length<=140).slice(0,8);
-    F=oth.length>=2?oth:[];if(!F.length&&bl.length)about=bl.join(" ");
-  }
-  if(!F.length&&!about){const d=fxClean(desc||"");if(d)about=d}
-  const out=[];
-  if(about)out.push("### 📝 About\n\n"+fxShort(about,260));
-  if(F.length)out.push("### ✨ Features\n\n"+F.map(x=>"- "+x).join("\n"));
-  if(H.length)out.push("### ⚙️ How it works\n\n"+H.map((x,i)=>(i+1)+". "+x).join("\n"));
-  const tp=(topics||[]).filter(t=>t&&!/^(hacktoberfest|github|android|windows|python|java|kotlin|javascript)$/i.test(t)).slice(0,6);
-  if(!out.length&&tp.length)out.push("### 📝 About\n\n"+tp.join(" · "));
-  return out.join("\n\n")}
+  const uniq=a=>{const seen=new Set();return a.filter(x=>{const q=x.toLowerCase().replace(/[^\p{L}\p{N}]+/gu,"");if(!q||seen.has(q))return false;seen.add(q);return true})};
+  const good=a=>uniq(a).filter(x=>x.length>=8&&x.length<=140&&x.split(" ").length>=2);
+  let F=good(feat);
+  if(F.length<2){const alt=good([...introL,...otherL]);F=alt.length>=3?alt:F}
+  return F.slice(0,6).map(x=>fxShort(x,90))}
 
 /* ===== Community feed (data lives in your Google Drive via Apps Script) ===== */
 const FT={request:["🆕","Software request","#3b82f6"],bug:["🐞","Bug fix","#ef4444"],idea:["💡","Idea","#f59e0b"],other:["💬","General","#7c3aed"]};
-const FERR={verify:"Please verify your email first.",mail_failed:"Couldn't send the email right now.",wrong_code:"Wrong code, try again.",expired:"Code expired. Please resend.",banned:"This email is not allowed to post.",too_many:"Too many posts. Please try again later.",bad_email:"Please enter a valid email.",name:"Please enter your name.",empty:"Write something first.",too_long:"Max 200 words please.",bad_image:"One of the images isn't supported.",img_big:"An image is too large.",not_configured:"Feed is not set up yet.",no_links:"Links can't be shared in posts or comments. Please remove the link and try again.",too_long_c:"Max 80 words per comment please.",cfull:"This post has reached its comment limit.",gone:"This post is no longer available.",verify_c:"Please verify your email first (open Create post → Send code).",bad:"Comments aren't available right now."};
+const FERR={exists:"This email is already registered — please log in.",bad_login:"Wrong email or password.",no_user:"No account found with this email. Please register.",weak:"Password must be at least 6 characters.",auth_user:"Please log in to continue.",net:"Network problem, please try again.",verify:"Please verify your email first.",mail_failed:"Couldn't send the email right now.",wrong_code:"Wrong code, try again.",expired:"Code expired. Please resend.",banned:"This account is not allowed.",too_many:"Too many posts. Please try again later.",bad_email:"Please enter a valid email.",name:"Please enter your name.",empty:"Write something first.",too_long:"Max 200 words please.",bad_image:"One of the images isn't supported.",img_big:"An image is too large.",not_configured:"Feed is not set up yet.",no_links:"Links can't be shared in posts or comments. Please remove the link and try again.",too_long_c:"Max 80 words per comment please.",cfull:"This post has reached its comment limit.",gone:"This post is no longer available.",verify_c:"Please verify your email first (open Create post → Send code).",bad:"Comments aren't available right now."};
 const TLD_RE="com|net|org|io|me|co|app|dev|xyz|info|biz|link|ly|gl|be|tv|bd|in|us|uk|site|online|store|tech|ai|gg|cc|ws|to|fm|page|live|shop|top|click|cloud|pro|club|vip|fun|icu|one|bio|ink|wiki|edu|gov|mil|int|asia|news|blog|world|space|website|download|zip|mov|so|sh|im|ru|cn|de|fr|jp|kr|pk|np|lk|ae|sa|ca|au|nz|za|ng|ke|br|mx|ar|es|it|nl|se|no|fi|pl|ua|tr|ir|id|my|sg|ph|vn|th|tw|hk";
 function hasLink(t){let s=String(t||"");try{s=s.normalize("NFKC")}catch(e){}
   s=s.replace(/[\u200B-\u200F\u2060\uFEFF\u00AD]/g,"").toLowerCase();
   s=s.replace(/\s*[\[\(\{]\s*(?:dot|\.)\s*[\]\)\}]\s*/g,".").replace(new RegExp("\\s+(?:dot|\u09a1\u099f)\\s+(?=(?:"+TLD_RE+")\\b)","g"),".").replace(new RegExp("([a-z0-9])\\s+\\.\\s*(?=(?:"+TLD_RE+")\\b)","g"),"$1.").replace(/\bh\s*t\s*t\s*p\s*s?\s*:\s*\/\s*\//g,"http://");
   if(/(?:https?|ftp|ftps|file):\/\/|\/\/[a-z0-9-]+\.|\bwww\s*\.|\bmailto:|\b(?:t\.me|wa\.me|bit\.ly|tinyurl|youtu\.be|goo\.gl|fb\.me|m\.me|discord\.gg|linktr\.ee)\b/.test(s))return true;
   return new RegExp("[a-z0-9][a-z0-9-]*(?:\\.[a-z0-9-]+)*\\.(?:"+TLD_RE+")(?![a-z0-9-])(?:[\\/:?#]|\\b)").test(s)}
-let VSTEP=null,FEED={items:[],full:[],ok:[],loaded:false,busy:false,mode:"optional"},IMGS=[],DRAFT={text:"",type:"request",app:""},ME={};
-try{ME=JSON.parse(localStorage.getItem("feed_me")||"{}")}catch(e){}
+let FEED={items:[],full:[],ok:[],loaded:false,busy:false},IMGS=[],DRAFT={text:"",type:"request",app:""},ME={};
+try{ME=JSON.parse(localStorage.getItem("feed_ses")||"{}")||{};localStorage.removeItem("feed_me")}catch(e){}
+const saveMe=()=>{try{localStorage.setItem("feed_ses",JSON.stringify(ME))}catch(e){}};
+const logged=()=>!!(ME.tk&&ME.tk.some(Boolean));
+const thumbS=id=>"https://drive.google.com/thumbnail?id="+id+"&sz=w160";
+const myAv=()=>ME.avd||(ME.av?thumbS(ME.av):"");
+const mine=p=>!!(ME.ids&&ME.ids[p.src]&&ME.ids[p.src]===p.uid);
+const avHtml=(name,src,cls)=>`<div class="fav ${cls||""}" style="background:${avCol(name)}">${src?`<img src="${esc(src)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`:""}<span>${esc(initial(name))}</span></div>`;
 function isFeedPage(){return /[?&]feed\b/.test(location.search)}
 const accs=()=>((CFG.feed||{}).accounts||[]).filter(a=>a.url),feedOn=()=>(CFG.feed||{}).enabled!==false&&accs().length>0;
 const thumb=id=>"https://drive.google.com/thumbnail?id="+id+"&sz=w1200";
 async function gcall(url,body,ms){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms||30000);
   try{const r=await(body?fetch(url,{method:"POST",body:JSON.stringify(body),signal:c.signal}):fetch(url,{signal:c.signal}));return await r.json()}finally{clearTimeout(t)}}
 const ago=t=>{const s=(Date.now()-t)/1e3;return s<60?"just now":s<3600?Math.floor(s/60)+"m ago":s<86400?Math.floor(s/3600)+"h ago":s<2592e3?Math.floor(s/86400)+"d ago":new Date(t).toLocaleDateString()};
-const vOK=()=>!!ME.token&&ME.vmail===(ME.email||"").trim().toLowerCase()&&ME.exp>Date.now();
 const wc=t=>t.trim().split(/\s+/).filter(Boolean).length;
 const shrink=f=>new Promise((res,rej)=>{const im=new Image(),u=URL.createObjectURL(f);im.onload=()=>{const k=Math.min(1,1280/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL("image/jpeg",.8))};im.onerror=rej;im.src=u});
 function applyFeedNav(){const on=feedOn();$("vnav").hidden=!on;$("btab").hidden=!on;document.body.classList.toggle("hasnav",on);$("navTitle").textContent=CFG.site.title||"Software Hub";if(!on&&!$("feedView").hidden)setView("soft")}
@@ -1125,46 +1146,45 @@ async function loadFeed(silent){
   const items=[];FEED.full=[];FEED.ok=[];
   R.forEach((r,i)=>{const v=r.value,ok=r.status==="fulfilled"&&v&&v.ok;if(ok&&v.mode&&!FEED.modeSet){FEED.mode=v.mode;FEED.modeSet=1}FEED.ok[i]=!!ok;FEED.full[i]=!!(ok&&v.full);if(ok)v.posts.forEach(p=>items.push({...p,src:i}))});
   if(FEED.ok.some(Boolean)||!silent)FEED.items=items.sort((a,b)=>b.ts-a.ts);
-  FEED.busy=false;FEED.loaded=true;FEED.t=Date.now();renderFeed();
+  FEED.busy=false;FEED.loaded=true;FEED.t=Date.now();renderFeed();syncMe();
 }
 let COMP=false,SHOWN=10,LB=null;
 const initial=n=>((n||"?").trim()[0]||"?").toUpperCase(),avCol=n=>COLORS[((n||"").charCodeAt(0)||0)%COLORS.length];
 const OPENC=new Set(),CD={};
 const cmtHtml=p=>{const cm=p.cm||[],open=OPENC.has(p.id);
-  return`<div class="fc-bar"><button type="button" class="fc-t" data-ctog="${p.id}">💬 ${cm.length} comment${cm.length===1?"":"s"} ${open?"▴":"▾"}</button></div>`+(open?`<div class="fc-box">${cm.map(c=>`<div class="fc-i"><div class="fav fc-av" style="background:${avCol(c.name)}">${esc(initial(c.name))}</div><div class="fc-b"><div class="fc-n"><b>${esc(c.name)}</b>${c.v?' <span style="color:#10b981" title="Verified email">✔</span>':""} <small>${ago(c.ts)}</small></div><div class="fc-x">${esc(c.text)}</div></div></div>`).join("")}<div class="fc-f"><div class="fr2"><input class="fin" data-cn maxlength="40" placeholder="Your name" value="${esc(ME.name||"")}"><input class="fin" data-ce type="email" placeholder="Your email (stays private)" value="${esc(ME.email||"")}"></div><textarea class="fin" data-ct="${p.id}" rows="2" placeholder="Write a comment… (links are not allowed)">${esc(CD[p.id]||"")}</textarea><div class="fc-w" data-cw="${p.id}"></div><div class="fc-s"><small data-cc="${p.id}"></small><button class="mini" type="button" data-csend="${p.id}">Send</button></div></div></div>`:"")};
+  const form=logged()?`<div class="fc-f"><div class="fc-i">${avHtml(ME.name,myAv(),"fc-av")}<textarea class="fin" data-ct="${p.id}" rows="2" placeholder="Write a comment… (links are not allowed)">${esc(CD[p.id]||"")}</textarea></div><div class="fc-w" data-cw="${p.id}"></div><div class="fc-s"><small data-cc="${p.id}"></small><button class="mini" type="button" data-csend="${p.id}">Send</button></div></div>`
+    :`<div class="fc-login">🔒 <button type="button" data-auth="login">Log in</button> or <button type="button" data-auth="reg">register</button> to write a comment.</div>`;
+  return`<div class="fc-bar"><button type="button" class="fc-t" data-ctog="${p.id}">💬 ${cm.length} comment${cm.length===1?"":"s"} ${open?"▴":"▾"}</button></div>`+(open?`<div class="fc-box">${cm.map(c=>{const own=ME.ids&&ME.ids[p.src]&&ME.ids[p.src]===c.uid,av=own?myAv():(c.av?thumbS(c.av):"");return`<div class="fc-i">${avHtml(c.name,av,"fc-av")}<div class="fc-b"><div class="fc-n"><b>${esc(c.name)}</b> <small>${ago(c.ts)}</small></div><div class="fc-x">${esc(c.text)}</div></div></div>`}).join("")}${form}</div>`:"")};
 async function sendComment(btn){
-  const pid=btn.dataset.csend,box=btn.closest(".fc-f"),name=box.querySelector("[data-cn]").value.trim(),mail=box.querySelector("[data-ce]").value.trim(),text=box.querySelector("[data-ct]").value.trim(),w=box.querySelector("[data-cw]");
+  const pid=btn.dataset.csend,box=btn.closest(".fc-f"),text=box.querySelector("[data-ct]").value.trim(),w=box.querySelector("[data-cw]");
   const fail=m=>{w.textContent="⚠️ "+m;toast("⚠️ "+m)};
-  if(name.length<2)return fail("Please enter your name.");
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail))return fail("Please enter your own valid email.");
   if(!text)return fail("Write something first.");
-  if(hasLink(name)||hasLink(text))return fail(FERR.no_links);
+  if(hasLink(text))return fail(FERR.no_links);
   if(wc(text)>80)return fail(FERR.too_long_c);
-  if(FEED.mode==="required"&&!vOK())return fail(FERR.verify_c);
   const post=FEED.items.find(x=>x.id===pid);if(!post)return;
+  const tok=(ME.tk||[])[post.src];if(!tok)return fail("Please log out and log in again.");
   btn.disabled=true;btn.textContent="Sending…";
-  try{const r=await gcall(accs()[post.src].url,{action:"comment",pid,token:vOK()?ME.token:"",name,email:mail,text},60000);
+  try{const r=await gcall(accs()[post.src].url,{action:"comment",pid,token:tok,text},60000);
     if(r.ok){(post.cm=post.cm||[]).push(r.comment);CD[pid]="";renderFeed();toast("✅ Comment added");return}
+    if(r.error==="auth_user"){doLogout(true);renderFeed();openAuth("login");return}
     fail(FERR[r.error]||"Could not comment ("+r.error+")")}
-  catch(x){fail("Network problem, please try again.")}
+  catch(x){fail(FERR.net)}
   btn.disabled=false;btn.textContent="Send"}
-const postHtml=(p,i)=>{const t=FT[p.type]||FT.other,tx=p.text||"",long=tx.length>320||tx.split("\n").length>6,im=p.imgs||[];
-  return`<article class="fp"><div class="fp-h"><div class="fav" style="background:${avCol(p.name)}">${esc(initial(p.name))}</div><div class="fp-n"><b>${esc(p.name)}</b>${p.v?' <span title="Verified email" style="color:#10b981">✔</span>':""}<small title="${esc(new Date(p.ts).toLocaleString())}">${ago(p.ts)} · 🌐 Public</small><div class="fp-tag"><span class="tag" style="--c:${t[2]}">${t[0]} ${t[1]}</span>${p.app?`<span class="tag ver">📦 ${esc(p.app)}</span>`:""}</div></div></div><div class="fp-t${long?" clamp":""}">${esc(tx)}</div>${long?'<button class="more-b" data-more type="button">See more</button>':""}${im.length?`<div class="pg pg${Math.min(im.length,4)}">${im.slice(0,4).map((id,k)=>`<button type="button" class="pgi" data-lb="${i}:${k}"><img src="${thumb(id)}" loading="lazy" alt="">${k===3&&im.length>4?`<span class="more">+${im.length-4}</span>`:""}</button>`).join("")}</div>`:""}${cmtHtml(p)}</article>`};
+const postHtml=(p,i)=>{const t=FT[p.type]||FT.other,tx=p.text||"",long=tx.length>320||tx.split("\n").length>6,im=p.imgs||[],av=mine(p)?myAv():(p.av?thumbS(p.av):"");
+  return`<article class="fp"><div class="fp-h">${avHtml(p.name,av)}<div class="fp-n"><b>${esc(p.name)}</b><small title="${esc(new Date(p.ts).toLocaleString())}">${ago(p.ts)} · 🌐 Public</small><div class="fp-tag"><span class="tag" style="--c:${t[2]}">${t[0]} ${t[1]}</span>${p.app?`<span class="tag ver">📦 ${esc(p.app)}</span>`:""}</div></div></div><div class="fp-t${long?" clamp":""}">${esc(tx)}</div>${long?'<button class="more-b" data-more type="button">See more</button>':""}${im.length?`<div class="pg pg${Math.min(im.length,4)}">${im.slice(0,4).map((id,k)=>`<button type="button" class="pgi" data-lb="${i}:${k}"><img src="${thumb(id)}" loading="lazy" alt="">${k===3&&im.length>4?`<span class="more">+${im.length-4}</span>`:""}</button>`).join("")}</div>`:""}${cmtHtml(p)}</article>`};
 function lw(){const e=$("fErr"),t=$("fText"),n=$("fName");if(!e||!t)return;if(hasLink(t.value)||hasLink(n?n.value:""))e.textContent=FERR.no_links;else if(e.textContent===FERR.no_links)e.textContent=""}
 function cnt(){const t=$("fText");if(!t)return;const n=wc(t.value),c=$("fCnt");c.textContent=n+"/200 words";c.style.color=n>200?"#ef4444":""}
 function compHtml(){
-  const me=ME.name||"",req=FEED.mode==="required";
-  if(!COMP)return`<div class="cmp"><div class="cmp-row"><div class="fav" style="background:${avCol(me||"?")}">${me?esc(initial(me)):"👤"}</div><button class="cmp-pill" type="button" data-open="">What's on your mind${me?", "+esc(me.split(" ")[0]):""}?</button></div><div class="cmp-q"><button type="button" data-open="request">🆕 Request software</button><button type="button" data-open="bug">🐞 Report a bug</button><button type="button" data-open="idea">💡 Share an idea</button></div></div>`;
+  if(!logged())return`<div class="cmp join"><div class="jn-t">👋 Join the community</div><p>Everyone can read posts and comments. To post or comment, create a free account — it takes about 10 seconds.</p><div class="jn-b"><button class="go2" type="button" data-auth="reg">✨ Register</button><button class="mini ghost" type="button" data-auth="login">Log in</button></div></div>`;
+  const me=ME.name||"",bar=`<div class="mebar">${avHtml(me,myAv())}<div><b>${esc(me)}</b><small>Logged in</small></div><button class="mini ghost" type="button" data-auth="profile">✏️ Profile</button></div>`;
+  if(!COMP)return`<div class="cmp">${bar}<div class="cmp-row"><button class="cmp-pill" type="button" data-open="">What's on your mind, ${esc(me.split(" ")[0])}?</button></div><div class="cmp-q"><button type="button" data-open="request">🆕 Request software</button><button type="button" data-open="bug">🐞 Report a bug</button><button type="button" data-open="idea">💡 Share an idea</button></div></div>`;
   const apps=visItems().map(r=>r.dispName).sort();
-  const ver=FEED.mode==="off"?"":vOK()?'<div class="vrow ok">✔ Email verified — your posts get a ✔ badge</div>':`<div class="vrow"><div><b>Verify your email</b><small>${req?"Required to post.":"Optional — verified posts get a ✔ and higher limits."}</small></div><button class="mini" id="fVer" type="button">✉️ Send code</button></div>`+(VSTEP?`<div class="vcode"><input class="fin" id="fCode" inputmode="numeric" maxlength="6" placeholder="6-digit code (check spam too)"><button class="mini" id="fVok" type="button">Confirm</button><button class="mini ghost" id="fRes" type="button" ${Date.now()-VSTEP.t<3e4?"disabled":""}>Resend</button></div>`:"");
-  return`<div class="cmp open"><div class="cmp-h"><b>Create post</b><button class="sh-x" data-close type="button" aria-label="Close">✕</button></div>
+  return`<div class="cmp open"><div class="cmp-h"><b>Create post</b><button class="sh-x" data-close type="button" aria-label="Close">✕</button></div>${bar}
   <div class="tchips">${Object.entries(FT).map(([k,x])=>`<button type="button" class="tchip${DRAFT.type===k?" on":""}" style="--c:${x[2]}" data-t="${k}">${x[0]} ${x[1]}</button>`).join("")}</div>
   <textarea class="cmp-t" id="fText" rows="4" placeholder="Write here… (max 200 words)">${esc(DRAFT.text)}</textarea>
   <div class="fimgs">${IMGS.map((d,i)=>`<div><img src="${d}" alt=""><button type="button" data-fx="${i}">✕</button></div>`).join("")}</div>
   <div class="ffoot"><span id="fCnt"></span><label class="mini ghost">🖼 Photos ${IMGS.length}/5<input type="file" id="fImg" accept="image/*" multiple hidden></label></div>
   <select class="fin" id="fApp"><option value="">📦 Which software? (optional)</option>${apps.map(a=>`<option ${DRAFT.app===a?"selected":""}>${esc(a)}</option>`).join("")}</select>
-  <div class="cmp-who"><div class="cw-h">👤 About you <small>🔒 Your email stays private</small></div>
-  <div class="fr2"><input class="fin" id="fName" placeholder="Your name" maxlength="40" value="${esc(me)}"><input class="fin" id="fMail" type="email" placeholder="Your email (required)" value="${esc(ME.email||"")}"></div>${ver}</div>
   <button class="go2" id="fPost" type="button">Post</button><div class="err" id="fErr"></div></div>`}
 function renderFeed(){
   const v=$("feedView");if(v.hidden)return;
@@ -1187,8 +1207,7 @@ $("feedView").addEventListener("input",e=>{const i=e.target.id;
   const tg=e.target;
   if(tg.dataset&&tg.dataset.ct!==undefined){CD[tg.dataset.ct]=tg.value;const w=tg.parentNode.querySelector("[data-cw]"),c=tg.parentNode.querySelector("[data-cc]"),n=wc(tg.value);
     if(w)w.textContent=hasLink(tg.value)?"⚠️ "+FERR.no_links:"";if(c){c.textContent=n+"/80 words";c.style.color=n>80?"#ef4444":""}}
-  if(tg.matches&&tg.matches("[data-cn],[data-ce]")){const bx=tg.closest(".fc-f");ME={...ME,name:bx.querySelector("[data-cn]").value,email:bx.querySelector("[data-ce]").value};try{localStorage.setItem("feed_me",JSON.stringify(ME))}catch(x){}}
-  if(i==="fName"||i==="fMail"){ME={...ME,name:$("fName").value,email:$("fMail").value};try{localStorage.setItem("feed_me",JSON.stringify(ME))}catch(x){}}});
+});
 $("feedView").addEventListener("change",async e=>{if(e.target.id!=="fImg")return;
   for(const f of[...e.target.files].slice(0,5-IMGS.length)){try{IMGS.push(await shrink(f))}catch(x){}}renderFeed()});
 $("feedView").addEventListener("click",async e=>{
@@ -1202,41 +1221,116 @@ $("feedView").addEventListener("click",async e=>{
   if(e.target.closest("[data-refresh]")){loadFeed(true);return}
   if(e.target.closest("[data-showmore]")){SHOWN+=10;renderFeed();return}
   const x=e.target.closest("[data-fx]");if(x){IMGS.splice(+x.dataset.fx,1);renderFeed();return}
-  const id=e.target.id,eb=$("fErr"),mail0=($("fMail")||{value:""}).value.trim().toLowerCase();
-  if(id==="fVer"||id==="fRes"){
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail0))return eb.textContent="Enter your email first.";
-    e.target.disabled=true;e.target.textContent="Sending…";let msg="",A=accs();
-    for(let i=0;i<A.length;i++){if(FEED.ok[i]===false)continue;
-      try{const r=await gcall(A[i].url,{action:"send_code",email:mail0},25000);
-        if(r.ok){VSTEP={acc:i,t:Date.now(),mail:mail0};setTimeout(renderFeed,30500);renderFeed();toast("✉️ Code sent — check inbox/spam");return}
-        if(r.error==="mail_failed")continue;msg=FERR[r.error]||r.error;break}catch(x){}}
-    renderFeed();$("fErr").textContent=(msg||FERR.mail_failed)+(FEED.mode==="required"?" Please try again in a minute.":" You can still post without verifying.");return}
-  if(id==="fVok"){const code=$("fCode").value.trim();if(!code)return;e.target.disabled=true;
-    try{const r=await gcall(accs()[VSTEP.acc].url,{action:"verify",email:VSTEP.mail,code},25000);
-      if(r.ok){ME={...ME,token:r.token,vmail:VSTEP.mail,exp:Date.now()+29*864e5};try{localStorage.setItem("feed_me",JSON.stringify(ME))}catch(_){}VSTEP=null;renderFeed();toast("✔ Email verified");return}
-      e.target.disabled=false;eb.textContent=FERR[r.error]||r.error}catch(x){e.target.disabled=false;eb.textContent="Network problem."}return}
-  if(id!=="fPost")return;
-  const err=$("fErr"),btn=e.target,name=$("fName").value.trim(),mail=$("fMail").value.trim(),text=$("fText").value.trim();
+  const au=e.target.closest("[data-auth]");if(au){openAuth(au.dataset.auth);return}
+  if(e.target.id!=="fPost")return;
+  const err=$("fErr"),btn=e.target,text=$("fText").value.trim();
   err.textContent="";
-  if(name.length<2)return err.textContent="Please enter your name.";
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail))return err.textContent="Please enter your own valid email.";
   if(!text)return err.textContent="Write something first.";
-  if(hasLink(text)||hasLink(name)){toast("🚫 "+FERR.no_links);return err.textContent=FERR.no_links}
+  if(hasLink(text)){toast("🚫 "+FERR.no_links);return err.textContent=FERR.no_links}
   if(wc(text)>200)return err.textContent="Max 200 words please.";
-  if(FEED.mode==="required"&&!vOK())return err.textContent=FERR.verify;
   btn.disabled=true;btn.textContent="Posting…";
-  const body={action:"post",token:vOK()?ME.token:"",name,email:mail,type:DRAFT.type,app:$("fApp").value,text,images:IMGS},A=accs();
-  let done=false,msg="";
-  for(let i=0;i<A.length;i++){if(FEED.ok[i]===false||FEED.full[i])continue;
-    try{const r=await gcall(A[i].url,body,90000);
+  const body={action:"post",type:DRAFT.type,app:$("fApp").value,text,images:IMGS},A=accs();
+  let done=false,msg="",relog=false;
+  for(let i=0;i<A.length;i++){const tok=(ME.tk||[])[i];if(!tok||FEED.ok[i]===false||FEED.full[i])continue;
+    try{const r=await gcall(A[i].url,{...body,token:tok},90000);
       if(r.ok){done=true;IMGS=[];FEED.items.unshift({...r.post,src:i});break}
       if(r.error==="full"){FEED.full[i]=true;continue}
+      if(r.error==="auth_user"){relog=true;break}
       msg=FERR[r.error]||"Could not post ("+r.error+")";break}
-    catch(x){msg="Network problem, please try again."}}
+    catch(x){msg=FERR.net}}
+  if(relog){doLogout(true);renderFeed();openAuth("login");return}
   if(done){$("fText").value="";DRAFT.text="";COMP=false;toast("✅ Posted!")}
   renderFeed();if(!done){const e2=$("fErr");if(e2)e2.textContent=msg||"No storage available right now."}
 });
 
+/* ===== Accounts: register / login / forgot password / profile ===== */
+let AUTH={mode:"login",step:0,newAv:"",rmAv:false,racc:0};
+const $v=id=>{const e=$(id);return e?e.value.trim():""},EMRE=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+function setMsg(t,ok){const e=$("authMsg");if(e){e.textContent=t||"";e.style.color=ok?"#10b981":""}}
+function setBusy(on,label){const b=document.querySelector("#authBox [data-ax=go]");if(!b)return;if(on){b.dataset.l=b.textContent;b.textContent=label}else if(b.dataset.l)b.textContent=b.dataset.l;b.disabled=on}
+function openAuth(mode){AUTH={mode:mode||"login",step:0,newAv:"",rmAv:false,racc:0};if(AUTH.mode==="profile"&&!logged())AUTH.mode="login";drawAuth();$("authM").classList.add("open");document.body.style.overflow="hidden";setTimeout(()=>{const f=document.querySelector("#authBox input:not([type=file]):not([readonly])");if(f)f.focus()},50)}
+function closeAuth(){$("authM").classList.remove("open");document.body.style.overflow=""}
+function drawAuth(){
+  const m=AUTH.mode,x=`<button class="sh-x" data-ax="close" type="button" aria-label="Close">✕</button>`,msg=`<div class="err" id="authMsg"></div>`;
+  const pw=(id,ph,ac)=>`<div class="pwr"><input class="fin" id="${id}" type="password" placeholder="${ph}" autocomplete="${ac}" maxlength="64"><button class="pwt" type="button" data-ax="eye" data-for="${id}" aria-label="Show password">👁</button></div>`;
+  let h="";
+  if(m==="reg")h=`<div class="au-h"><h3>✨ Create account</h3>${x}</div><p class="sub">Free and quick — just 3 fields. Your email stays private.</p>
+    <input class="fin" id="aName" placeholder="Your name" maxlength="40" autocomplete="name"><input class="fin" id="aEmail" type="email" placeholder="Email" autocomplete="email">${pw("aPw","Password (min 6 characters)","new-password")}
+    <button class="go2" type="button" data-ax="go">Create account</button>${msg}<div class="au-l"><span>Already registered?</span><button type="button" data-ax="login">Log in</button></div>`;
+  else if(m==="login")h=`<div class="au-h"><h3>👋 Log in</h3>${x}</div><p class="sub">Log in to post and comment.</p>
+    <input class="fin" id="aEmail" type="email" placeholder="Email" autocomplete="email">${pw("aPw","Password","current-password")}
+    <button class="go2" type="button" data-ax="go">Log in</button>${msg}<div class="au-l"><button type="button" data-ax="forgot">Forgot password?</button><span>New here? <button type="button" data-ax="reg">Register</button></span></div>`;
+  else if(m==="forgot")h=`<div class="au-h"><h3>🔑 Reset password</h3>${x}</div>`+(AUTH.step===0?`<p class="sub">Enter your email and we'll send a 6-digit code.</p><input class="fin" id="aEmail" type="email" placeholder="Email" autocomplete="email"><button class="go2" type="button" data-ax="go">Send code</button>`
+    :`<p class="sub">Code sent to <b>${esc(AUTH.email)}</b> (check spam too).</p><input class="fin" id="aCode" inputmode="numeric" maxlength="6" placeholder="6-digit code">${pw("aPw","New password (min 6 characters)","new-password")}<button class="go2" type="button" data-ax="go">Set new password</button>`)+`${msg}<div class="au-l"><button type="button" data-ax="login">← Back to log in</button></div>`;
+  else h=`<div class="au-h"><h3>👤 My profile</h3>${x}</div><div class="au-av" id="pAv">${avHtml($v("pName")||ME.name,AUTH.rmAv?"":(AUTH.newAv||myAv()))}<div><label class="mini">📷 Change photo<input type="file" id="pFile" accept="image/*" hidden></label>${(AUTH.newAv||myAv())&&!AUTH.rmAv?`<button class="mini ghost" type="button" data-ax="rmav">Remove</button>`:""}</div></div>
+    <label class="sub">Name<input class="fin" id="pName" maxlength="40" value="${esc(ME.name||"")}"></label><label class="sub">Email<input class="fin" value="${esc(ME.email||"")}" readonly></label>
+    <button class="go2" type="button" data-ax="go">Save profile</button>${msg}<div class="au-l"><button type="button" data-ax="logout">🚪 Log out</button></div>`;
+  $("authBox").innerHTML=`<div class="au-b">${h}</div>`}
+function doLogout(silent){ME={};saveMe();if(!silent){closeAuth();renderFeed();toast("Logged out")}}
+async function runAuth(kind){
+  const A=accs(),email=$v("aEmail").toLowerCase(),pw=($("aPw")||{}).value||"",name=$v("aName");
+  if(kind==="reg"){if(name.length<2)return setMsg(FERR.name);if(hasLink(name))return setMsg(FERR.no_links)}
+  if(!EMRE.test(email))return setMsg(FERR.bad_email);
+  if(kind==="reg"&&pw.length<6)return setMsg(FERR.weak);if(!pw)return setMsg("Enter your password.");
+  setMsg("");setBusy(true,kind==="reg"?"Creating…":"Logging in…");
+  const tk=[],ids=[];let user=null,err="";
+  const one=async i=>{try{
+    const reg=n=>gcall(A[i].url,{action:"register",name:n,email,password:pw},60000),log=()=>gcall(A[i].url,{action:"login",email,password:pw},60000);
+    let r=kind==="reg"?await reg(name):await log();
+    if(!r.ok&&kind==="reg"&&r.error==="exists"&&i>0)r=await log();
+    if(!r.ok&&kind==="login"&&r.error==="no_user"&&user)r=await reg(user.name);
+    return r}catch(e){return{ok:false,error:"net"}}};
+  for(let i=0;i<A.length;i++){if(FEED.ok[i]===false&&i>0)continue;
+    const r=await one(i);
+    if(r.ok){tk[i]=r.token;ids[i]=r.user.id;if(!user)user=r.user}
+    else if(!user){err=r.error;if(err!=="net")break}}
+  setBusy(false);
+  if(!user)return setMsg(FERR[err]||(err==="not_configured"?FERR.not_configured:FERR.net));
+  ME={name:user.name,email:user.email,av:user.av||"",avd:"",tk,ids};saveMe();closeAuth();renderFeed();
+  toast(kind==="reg"?"🎉 Welcome, "+user.name.split(" ")[0]+"!":"✅ Logged in")}
+async function runForgot(){
+  const A=accs();
+  if(AUTH.step===0){const email=$v("aEmail").toLowerCase();if(!EMRE.test(email))return setMsg(FERR.bad_email);
+    setMsg("");setBusy(true,"Sending…");let msg="";
+    for(let i=0;i<A.length;i++){if(FEED.ok[i]===false)continue;
+      try{const r=await gcall(A[i].url,{action:"reset_code",email},30000);if(r.ok){AUTH.step=1;AUTH.email=email;AUTH.racc=i;drawAuth();setMsg("✉️ Code sent",true);return}msg=FERR[r.error]||r.error;break}catch(e){msg=FERR.net}}
+    setBusy(false);return setMsg(msg||FERR.mail_failed)}
+  const code=$v("aCode"),pw=($("aPw")||{}).value||"";
+  if(!/^\d{6}$/.test(code))return setMsg("Enter the 6-digit code.");if(pw.length<6)return setMsg(FERR.weak);
+  setMsg("");setBusy(true,"Saving…");
+  try{const r=await gcall(A[AUTH.racc].url,{action:"reset",email:AUTH.email,code,password:pw},30000);
+    if(!r.ok){setBusy(false);return setMsg(FERR[r.error]||r.error)}
+    AUTH.mode="login";drawAuth();$("aEmail").value=AUTH.email;$("aPw").value=pw;await runAuth("login")}
+  catch(e){setBusy(false);setMsg(FERR.net)}}
+async function saveProfile(){
+  const name=$v("pName");if(name.length<2)return setMsg(FERR.name);if(hasLink(name))return setMsg(FERR.no_links);
+  setMsg("");setBusy(true,"Saving…");const A=accs();let user=null,err="";
+  for(let i=0;i<A.length;i++){const tok=(ME.tk||[])[i];if(!tok)continue;
+    try{const r=await gcall(A[i].url,{action:"profile",token:tok,name,avatar:AUTH.newAv||undefined,remove_av:AUTH.rmAv||undefined},90000);
+      if(r.ok){if(!user)user=r.user}else if(!user){err=r.error;break}}catch(e){if(!user)err="net"}}
+  setBusy(false);
+  if(!user){if(err==="auth_user"){doLogout(true);renderFeed();openAuth("login");return}return setMsg(FERR[err]||"Could not save ("+err+")")}
+  ME.name=user.name;ME.av=user.av||"";if(AUTH.rmAv)ME.avd="";else if(AUTH.newAv)ME.avd=AUTH.newAv;saveMe();
+  FEED.items.forEach(p=>{if(mine(p))p.name=ME.name;(p.cm||[]).forEach(c=>{if(ME.ids&&ME.ids[p.src]===c.uid)c.name=ME.name})});
+  closeAuth();renderFeed();toast("✅ Profile saved")}
+async function syncMe(){
+  if(!logged()||FEED.synced)return;FEED.synced=1;const A=accs(),i=(ME.tk||[]).findIndex(Boolean);if(i<0||!A[i])return;
+  try{const r=await gcall(A[i].url,{action:"me",token:ME.tk[i]},30000);
+    if(r.ok){ME.name=r.user.name;ME.email=r.user.email;if(r.user.av!==ME.av){ME.av=r.user.av||"";ME.avd=""}saveMe();renderFeed()}
+    else if(r.error==="auth_user"){doLogout(true);renderFeed()}}catch(e){}}
+$("authM").addEventListener("click",async e=>{
+  if(e.target.id==="authM")return closeAuth();
+  const a=e.target.closest("[data-ax]");if(!a)return;const k=a.dataset.ax;
+  if(k==="close")return closeAuth();
+  if(k==="reg"||k==="login"||k==="forgot"){AUTH.mode=k;AUTH.step=0;drawAuth();return}
+  if(k==="eye"){const f=$(a.dataset.for);f.type=f.type==="password"?"text":"password";return}
+  if(k==="logout")return doLogout();
+  if(k==="rmav"){AUTH.rmAv=true;AUTH.newAv="";drawAuth();return}
+  if(k==="go"){const m=AUTH.mode;if(m==="reg"||m==="login")return runAuth(m);if(m==="forgot")return runForgot();return saveProfile()}});
+$("authM").addEventListener("change",async e=>{if(e.target.id!=="pFile"||!e.target.files[0])return;
+  try{AUTH.newAv=await resize(e.target.files[0],256,true,"image/jpeg",.85);AUTH.rmAv=false;const n=$v("pName");drawAuth();$("pName").value=n}catch(x){setMsg("That image can't be used.")}});
+$("authM").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.tagName==="INPUT"&&e.target.type!=="file"){e.preventDefault();const b=document.querySelector("#authBox [data-ax=go]");if(b&&!b.disabled)b.click()}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("authM").classList.contains("open"))closeAuth()});
 
 /* ===== Visitor tracking (anonymous: random id, country code, device/browser/OS, referrer host, page — no IP stored) ===== */
 const TRK={sent:{}};
@@ -1281,6 +1375,7 @@ function trafficAdm(){
   const M={loading:"⏳ Loading…",no_acc:"Feed tab-e age ekta Google Script (Drive) connect koro — stats oikhane joma hoy.",no_key:"Feed tab-e Admin key dao (ba ‘Copy script’ diye script-ta notun kore deploy koro).",
     auth:"Admin key mile nai. Feed tab-er key-ta Apps Script-er KEY-er shathe milao.",old:"Tomar Google Script ta purono. Feed tab → <b>Copy script</b> chepe notun code paste koro, tarpor <b>Deploy → Manage deployments → ✏️ → New version → Deploy</b>.",err:"Load hoyni. Pore abar chesta koro."};
   const refresh=`<button class="mini" data-trf>🔄 Refresh</button>`;
+  if(!TR.msg&&(!TR.days||!/^\d{4}-\d{2}-\d{2}$/.test(TR.today||"")))TR.msg="loading";
   if(TR.msg)return`<div class="box2"><h3>📈 Visitors</h3><p class="hint" style="margin:0">${M[TR.msg]||M.err}</p>${TR.msg==="loading"?"":refresh}</div>`;
   const N=TR.range,keys=[];let d=new Date(TR.today+"T00:00:00Z");
   for(let i=0;i<N;i++){keys.unshift(d.toISOString().slice(0,10));d=new Date(d.getTime()-864e5)}
@@ -1329,7 +1424,6 @@ function feedAdm(){setTimeout(()=>{const m=document.querySelector("[data-m=mode]
   const st=i=>{const s=ACC.st[i];return!s?"checking…":!s.ok?"❌ not reachable / not deployed":`${gb(s.used)} used of ${s.limit?gb(s.limit):"?"} · ${s.full?'<b style="color:#ef4444">FULL</b>':"free "+gb(s.free)}`};
   const sc=(n,ok,t,body)=>`<div class="stp ${ok?"ok":""}"><span class="n">${ok?"✓":n}</span><div><b>${t}</b>${body}</div></div>`;
   return`<div class="box2"><label class="sw"><input type="checkbox" data-x="fen" ${F.enabled!==false?"checked":""}> Show Community Feed on the site</label>
-  <label>✉️ Email verification (feed)<select data-m="mode"><option value="off">Off</option><option value="optional">Optional — ✔ badge, unverified: 2 posts/hour</option><option value="required">Required</option></select></label>
   <p class="hint">Feed alada page-e khole: <a href="?feed" target="_blank" rel="noopener"><code>${esc(location.origin+location.pathname)}?feed</code></a></p>
   <h3>☁️ Google Drive storage (one Apps Script per Gmail)</h3>
   <p class="hint">Posts &amp; images ei Drive-gulote save hoy. Order = priority: ekta full hole post automatic porer Drive-e jabe.</p>
@@ -1343,7 +1437,7 @@ function feedAdm(){setTimeout(()=>{const m=document.querySelector("[data-m=mode]
   <p class="hint">Notun key banale age deploy kora Drive-gulo-te script abar copy-deploy korte hobe, nahole key mile na.</p></details></div>
   <div class="box2" style="margin-top:14px"><h3>🛡️ Moderation (delete posts / ban users)</h3><div><button class="mini" data-x="fmod">🔄 Load posts</button></div><div class="hint">${esc(MOD.msg)}</div>
   ${MOD.banned.length?`<div class="chips">${MOD.banned.map(b=>`<span class="chip on" style="--c:#ef4444">${esc(b)} <a href="#" data-x="funban" data-e="${esc(b)}" style="color:#fff">✕ unban</a></span>`).join("")}</div>`:""}
-  ${MOD.posts.map((p,i)=>`<div class="ar" style="--a:#ec4899"><div><b>${esc(p.name)}</b> · ${esc(p.email)} ${p.v?"✔":"(unverified)"} · ${ago(p.ts)} · ${esc((A[p.src]||{}).name||"")}</div><div style="white-space:pre-wrap;margin:6px 0">${esc(p.text)}</div>${(p.imgs||[]).map(x=>`<img src="${thumb(x)}" alt="" style="height:60px;border-radius:8px;margin-right:6px">`).join("")}${(p.cm||[]).map((c,j)=>`<div style="margin:6px 0 0 14px;padding:6px 8px;border-left:3px solid var(--line);font-size:13px"><b>${esc(c.name)}</b> · ${esc(c.email)} ${c.v?"✔":"(unverified)"} · ${ago(c.ts)}<div style="white-space:pre-wrap;margin:3px 0">${esc(c.text)}</div><button class="mini red" data-x="fcdel" data-i="${i}" data-c="${j}">🗑 Delete comment</button></div>`).join("")}<div style="margin-top:8px;display:flex;gap:8px"><button class="mini red" data-x="fdel" data-i="${i}">🗑 Delete</button><button class="mini red" data-x="fban" data-i="${i}">🚫 Ban user</button></div></div>`).join("")}</div>`;
+  ${MOD.posts.map((p,i)=>`<div class="ar" style="--a:#ec4899"><div><b>${esc(p.name)}</b> · ${esc(p.email)} · ${ago(p.ts)} · ${esc((A[p.src]||{}).name||"")}</div><div style="white-space:pre-wrap;margin:6px 0">${esc(p.text)}</div>${(p.imgs||[]).map(x=>`<img src="${thumb(x)}" alt="" style="height:60px;border-radius:8px;margin-right:6px">`).join("")}${(p.cm||[]).map((c,j)=>`<div style="margin:6px 0 0 14px;padding:6px 8px;border-left:3px solid var(--line);font-size:13px"><b>${esc(c.name)}</b> · ${esc(c.email)} · ${ago(c.ts)}<div style="white-space:pre-wrap;margin:3px 0">${esc(c.text)}</div><button class="mini red" data-x="fcdel" data-i="${i}" data-c="${j}">🗑 Delete comment</button></div>`).join("")}<div style="margin-top:8px;display:flex;gap:8px"><button class="mini red" data-x="fdel" data-i="${i}">🗑 Delete</button><button class="mini red" data-x="fban" data-i="${i}">🚫 Ban user</button></div></div>`).join("")}</div>`;
 }
 async function testAcc(i){
   const A=CFG.feed.accounts;ACC.done=true;
