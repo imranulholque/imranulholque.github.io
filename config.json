@@ -2,8 +2,16 @@
   "site": {
     "title": "Software Hub",
     "tagline": "Free, handy software made by me. Download the latest build in one click.",
+    "owner": "Imranul Hoque Sabbir",
     "facebook": "https://www.facebook.com/imranul.hoque.sabbir1",
     "hideForks": true,
+    "theme": "auto",
+    "palette": "aurora",
+    "sort": "new",
+    "defPlat": "all",
+    "badgeDays": 14,
+    "showStats": true,
+    "email": "imranul.hoque.sabbir@gmail.com",
     "avatar": "icons/me-mwccsy8l.jpg"
   },
   "apps": {
