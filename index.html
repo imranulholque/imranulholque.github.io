@@ -183,6 +183,12 @@ img,svg,video{max-width:100%}
 .adm-side button{flex:1;flex-direction:column;gap:2px;font-size:.6875rem;padding:.5rem .25rem;justify-content:center}.adm-top{padding:.625rem .875rem}#admQ{width:100%;order:3}.adm-b{padding:.875rem}}
 
 /* FEED */
+.stp{display:flex;gap:.75rem;padding:.8rem;border:1.5px solid var(--line);border-radius:1rem;margin:.6rem 0;background:var(--card)}
+.stp .n{flex:none;width:1.8rem;height:1.8rem;border-radius:50%;background:#7c3aed;color:#fff;display:grid;place-items:center;font-weight:800;font-size:.8rem}
+.stp.ok .n{background:#10b981}.stp.ok{border-color:#10b981}.stp>div{flex:1;min-width:0}
+.stp b{display:block;margin-bottom:.25rem}.stp p,.stp ol{margin:.3rem 0;font-size:.8125rem;color:var(--muted);line-height:1.6}.stp ol{padding-left:1.1rem}
+.stp .row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem}
+#faChk{font-size:.8125rem;margin-top:.4rem;min-height:1.1rem}
 .vnav{display:flex;gap:.25rem;padding:.25rem;margin-bottom:.75rem;width:max-content;max-width:100%;background:var(--glass);backdrop-filter:blur(.625rem);border:1px solid var(--line);border-radius:1rem}
 .vnav[hidden]{display:none}
 .vnav button{border:0;background:none;color:var(--muted);font:inherit;font-weight:700;font-size:.875rem;padding:.5625rem 1rem;border-radius:.75rem;cursor:pointer}
@@ -590,7 +596,8 @@ function route(){
   const h=location.hash;
   if(h==="#admin"){openAdmin();return}
   if(h.startsWith("#app/")){openDetails(decodeURIComponent(h.slice(5)));return}
-  closeModal();setView(h==="#feed"&&feedOn()?"feed":"soft");
+  if(h==="#feed"){location.replace(location.pathname+"?feed");return}
+  closeModal();setView(isFeedPage()&&feedOn()?"feed":"soft");
 }
 $("mdl").addEventListener("click",e=>{
   if(e.target.id==="mdl"||e.target.closest("[data-x]"))return shut();
@@ -954,6 +961,7 @@ const FT={request:["🆕","Software request","#3b82f6"],bug:["🐞","Bug fix","#
 const FERR={verify:"Please verify your email first.",mail_failed:"Couldn't send the email right now.",wrong_code:"Wrong code, try again.",expired:"Code expired. Please resend.",banned:"This email is not allowed to post.",too_many:"Too many posts. Please try again later.",bad_email:"Please enter a valid email.",name:"Please enter your name.",empty:"Write something first.",too_long:"Max 200 words please.",bad_image:"One of the images isn't supported.",img_big:"An image is too large.",not_configured:"Feed is not set up yet."};
 let VSTEP=null,FEED={items:[],full:[],ok:[],loaded:false,busy:false,mode:"optional"},IMGS=[],DRAFT={text:"",type:"request",app:""},ME={};
 try{ME=JSON.parse(localStorage.getItem("feed_me")||"{}")}catch(e){}
+function isFeedPage(){return /[?&]feed\b/.test(location.search)}
 const accs=()=>((CFG.feed||{}).accounts||[]).filter(a=>a.url),feedOn=()=>(CFG.feed||{}).enabled!==false&&accs().length>0;
 const thumb=id=>"https://drive.google.com/thumbnail?id="+id+"&sz=w1200";
 async function gcall(url,body,ms){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms||30000);
@@ -965,8 +973,8 @@ const shrink=f=>new Promise((res,rej)=>{const im=new Image(),u=URL.createObjectU
 function applyFeedNav(){$("vnav").hidden=!feedOn();if(!feedOn()&&!$("feedView").hidden)setView("soft")}
 function setView(v){$("swView").hidden=v==="feed";$("feedView").hidden=v!=="feed";
   document.querySelectorAll("#vnav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
-  if(v==="feed"){if(!FEED.loaded)loadFeed();else renderFeed()}}
-$("vnav").addEventListener("click",e=>{const b=e.target.closest("button");if(b)location.hash=b.dataset.v==="feed"?"feed":"soft"});
+  if(v==="feed"){document.title="Community Feed";if(!FEED.loaded)loadFeed();else renderFeed()}}
+$("vnav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const f=b.dataset.v==="feed";if(f!==isFeedPage())location.href=location.pathname+(f?"?feed":"")});
 async function loadFeed(){
   FEED.busy=true;renderFeed();const A=accs();
   const R=await Promise.allSettled(A.map(a=>gcall(a.url+"?action=list")));
@@ -1034,22 +1042,40 @@ $("feedView").addEventListener("click",async e=>{
 
 /* ===== Admin: Feed & Drive storage ===== */
 let FKEY="";try{FKEY=localStorage.getItem("feed_key")||""}catch(e){}
-let ACC={done:false,st:{}},MOD={posts:[],banned:[],msg:""};
+let ACC={done:false,st:{}},MOD={posts:[],banned:[],msg:""},SET={copied:false,deployed:false,url:"",name:"",manual:""},SCRIPT_TXT="",CHKT;
+function genKey(){FKEY=[...crypto.getRandomValues(new Uint8Array(18))].map(n=>n.toString(36).padStart(2,"0")).join("").slice(0,24);try{localStorage.setItem("feed_key",FKEY)}catch(_){}}
+function prefetchScript(){if(SCRIPT_TXT)return;fetch("apps-script/Code.gs?t="+Date.now()).then(r=>r.text()).then(t=>{SCRIPT_TXT=t}).catch(()=>{})}
+const normUrl=v=>{v=(v||"").trim();if(/^AKfy[\w-]+$/.test(v))v="https://script.google.com/macros/s/"+v+"/exec";return/^https:\/\/script\.google\.com\/.+\/exec$/.test(v)?v:""};
+async function goScript(){
+  if(!FKEY)genKey();
+  if(!SCRIPT_TXT)SCRIPT_TXT=await(await fetch("apps-script/Code.gs?t="+Date.now())).text();
+  const t=SCRIPT_TXT.replace("PASTE_YOUR_ADMIN_KEY_HERE",FKEY);let ok=true;
+  const p=navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject();
+  window.open("https://script.new","_blank");
+  try{await p}catch(_){ok=false}
+  SET.copied=true;SET.manual=ok?"":t;
+  toast(ok?"📋 Script copy hoyeche → Google Script-e Ctrl+A, Ctrl+V, Ctrl+S":"⚠️ Auto-copy hoyni, niche theke copy koro");
+  renderAdmin();
+}
 const gb=n=>n==null?"?":(n/1073741824).toFixed(1)+" GB";
 function feedAdm(){setTimeout(()=>{const m=document.querySelector("[data-m=mode]"),s=Object.values(ACC.st).find(x=>x&&x.mode);if(m)m.value=(s&&s.mode)||"optional"},0);
+  if(!FKEY)genKey();prefetchScript();
   const F=CFG.feed,A=F.accounts||[];
   const st=i=>{const s=ACC.st[i];return!s?"checking…":!s.ok?"❌ not reachable / not deployed":`${gb(s.used)} used of ${s.limit?gb(s.limit):"?"} · ${s.full?'<b style="color:#ef4444">FULL</b>':"free "+gb(s.free)}`};
+  const sc=(n,ok,t,body)=>`<div class="stp ${ok?"ok":""}"><span class="n">${ok?"✓":n}</span><div><b>${t}</b>${body}</div></div>`;
   return`<div class="box2"><label class="sw"><input type="checkbox" data-x="fen" ${F.enabled!==false?"checked":""}> Show Community Feed on the site</label>
   <label>✉️ Email verification (feed)<select data-m="mode"><option value="off">Off</option><option value="optional">Optional — ✔ badge, unverified: 2 posts/hour</option><option value="required">Required</option></select></label>
+  <p class="hint">Feed alada page-e khole: <a href="?feed" target="_blank" rel="noopener"><code>${esc(location.origin+location.pathname)}?feed</code></a></p>
   <h3>☁️ Google Drive storage (one Apps Script per Gmail)</h3>
-  <p class="hint">Posts &amp; images ei Drive-gulote save hoy. Order = priority: ekta full hole post automatic porer Drive-e jabe. Add/remove korle <b>Save &amp; Publish</b> chapo.</p>
-  ${A.map((a,i)=>`<div class="fr"><span>${esc(a.name||"Drive "+(i+1))}<small style="display:block;color:var(--muted);font-weight:500">${st(i)}</small></span><button class="mini" data-x="ftest" data-i="${i}">🔄</button><button class="mini red" data-x="frm" data-i="${i}">🗑</button></div>`).join("")||'<div class="msg" style="padding:12px">No Drive added yet.</div>'}
-  <div class="ar-grid"><label>Name<input id="faName" placeholder="Gmail name / email (label only)"></label><label>Web app URL<input id="faUrl" placeholder="Paste Web app URL (or just its ID)"></label></div>
-  <div><button class="mini" data-x="fadd">➕ Add Drive</button></div></div>
-  <div class="box2" style="margin-top:14px"><h3>🔑 Setup (each Gmail, one time)</h3>
-  <label>Admin key (same key in every Drive)<div class="ic-in"><input id="fKey" value="${esc(FKEY)}" placeholder="Generate a secret key"><button class="mini" data-x="fgen">🎲 Generate</button></div></label>
-  <ol class="hint"><li><b>Open Google Script</b> chapo → oi Gmail diye login koro → <b>New project</b> khulbe.</li><li><b>Copy script</b> chapo, tarpor Google Script-e puro code muche <b>paste</b> koro, <b>Ctrl+S</b>.</li><li>Upore dane <b>Deploy → New deployment → ⚙️ Web app</b> → Execute as <b>Me</b>, Access <b>Anyone</b> → Deploy → <b>Allow</b> (Advanced → Go to project) → <b>Web app URL</b> copy koro.</li><li>Niche URL paste kore <b>Add Drive</b> → upore <b>Save &amp; Publish</b>.</li></ol>
-  <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="mini" href="https://script.new" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block">🔗 Open Google Script</a><button class="mini" data-x="fcode">📋 Copy script</button></div><textarea class="code" id="fCode" hidden style="min-height:140px"></textarea></div>
+  <p class="hint">Posts &amp; images ei Drive-gulote save hoy. Order = priority: ekta full hole post automatic porer Drive-e jabe.</p>
+  ${A.map((a,i)=>`<div class="fr"><span>${esc(a.name||"Drive "+(i+1))}<small style="display:block;color:var(--muted);font-weight:500">${st(i)}</small></span><button class="mini" data-x="ftest" data-i="${i}">🔄</button><button class="mini red" data-x="frm" data-i="${i}">🗑</button></div>`).join("")||'<div class="msg" style="padding:12px">No Drive added yet.</div>'}</div>
+  <div class="box2" style="margin-top:14px"><h3>➕ ${A.length?"Another Gmail add koro":"Drive add koro (3 step, one time)"}</h3>
+  ${sc(1,SET.copied,"Script copy kore Google Script kholo",`<p>Ek click-e script (admin key shoho) copy hobe ar Google Script notun tab-e khulbe. Oi Gmail diye login koro, tarpor <b>Ctrl+A → Ctrl+V → Ctrl+S</b>.</p><div class="row"><button class="mini" data-x="fgo">🚀 Copy script &amp; open Google Script</button></div>${SET.manual?`<p style="color:#f59e0b">Auto-copy hoyni. Niche-r code select kore copy koro:</p><textarea class="code" id="fScr" readonly style="min-height:120px" onfocus="this.select()">${esc(SET.manual)}</textarea>`:""}`)}
+  ${sc(2,SET.deployed,"Deploy koro",`<ol><li>Upore dane <b>Deploy → New deployment</b></li><li>⚙️ gear → <b>Web app</b></li><li>Execute as: <b>Me</b> · Who has access: <b>Anyone</b></li><li><b>Deploy</b> → <b>Allow</b> (jodi "not verified" dekhay: <b>Advanced → Go to project</b>)</li><li>Shesh-e dekha <b>Web app URL</b> copy koro</li></ol><div class="row"><button class="mini ghost" data-x="fdep">✅ Deploy hoye gese, URL copy korechi</button></div>`)}
+  ${sc(3,false,"URL paste kore Add koro",`<div class="ar-grid"><label>Web app URL<input id="faUrl" value="${esc(SET.url)}" placeholder="https://script.google.com/macros/s/…/exec"></label><label>Name (optional)<input id="faName" value="${esc(SET.name)}" placeholder="Gmail name (label only)"></label></div><div id="faChk"></div><div class="row"><button class="mini" data-x="fadd">➕ Add &amp; Publish</button></div><p>Add korle page URL check kore nijei <b>Save &amp; Publish</b> kore dey.</p>`)}
+  <details style="margin-top:8px"><summary class="hint" style="cursor:pointer">🔑 Admin key (auto-generated, shobar jonno same)</summary>
+  <label>Admin key<div class="ic-in"><input id="fKey" value="${esc(FKEY)}" placeholder="Generate a secret key"><button class="mini" data-x="fgen">🎲 Generate</button></div></label>
+  <p class="hint">Notun key banale age deploy kora Drive-gulo-te script abar copy-deploy korte hobe, nahole key mile na.</p></details></div>
   <div class="box2" style="margin-top:14px"><h3>🛡️ Moderation (delete posts / ban users)</h3><div><button class="mini" data-x="fmod">🔄 Load posts</button></div><div class="hint">${esc(MOD.msg)}</div>
   ${MOD.banned.length?`<div class="chips">${MOD.banned.map(b=>`<span class="chip on" style="--c:#ef4444">${esc(b)} <a href="#" data-x="funban" data-e="${esc(b)}" style="color:#fff">✕ unban</a></span>`).join("")}</div>`:""}
   ${MOD.posts.map((p,i)=>`<div class="ar" style="--a:#ec4899"><div><b>${esc(p.name)}</b> · ${esc(p.email)} ${p.v?"✔":"(unverified)"} · ${ago(p.ts)} · ${esc((A[p.src]||{}).name||"")}</div><div style="white-space:pre-wrap;margin:6px 0">${esc(p.text)}</div>${(p.imgs||[]).map(x=>`<img src="${thumb(x)}" alt="" style="height:60px;border-radius:8px;margin-right:6px">`).join("")}<div style="margin-top:8px;display:flex;gap:8px"><button class="mini red" data-x="fdel" data-i="${i}">🗑 Delete</button><button class="mini red" data-x="fban" data-i="${i}">🚫 Ban user</button></div></div>`).join("")}</div>`;
@@ -1067,6 +1093,16 @@ async function modLoad(){
   MOD.posts.sort((a,b)=>b.ts-a.ts);MOD.banned=[...ban];
   MOD.msg=(bad?`⚠️ ${bad} Drive failed (admin key mismatch?). `:"")+MOD.posts.length+" posts";renderAdmin();
 }
+$("adm").addEventListener("input",e=>{const id=e.target.id;
+  if(id==="faName")SET.name=e.target.value;
+  if(id!=="faUrl")return;SET.url=e.target.value;clearTimeout(CHKT);
+  const out=t=>{const el=$("faChk");if(el)el.innerHTML=t},v=e.target.value.trim(),u=normUrl(v);
+  if(!v)return out("");
+  if(!u)return out('<span style="color:#ef4444">❌ URL <code>https://script.google.com/…/exec</code> hote hobe (Deploy-er por-er Web app URL)</span>');
+  out("⏳ Check korchi…");
+  CHKT=setTimeout(async()=>{try{const r=await gcall(u+"?action=status",null,20000);
+    out(r&&r.ok?'<span style="color:#10b981">✅ Kaj korche, ebar Add &amp; Publish chapo</span>':'<span style="color:#ef4444">❌ Script uttor dichhe na. Who has access = Anyone dewa ache?</span>')}
+    catch(_){out('<span style="color:#ef4444">❌ Reach kora jachhe na. Deploy hoyeche? Who has access = Anyone?</span>')}},600)});
 $("adm").addEventListener("change",async e=>{const m=e.target.dataset.m;if(m){if(!FKEY)return toast("❌ Admin key dao");await modAll({action:"admin_setmode",mode:e.target.value});FEED.mode=e.target.value;toast("✅ Verification: "+e.target.value);return}
   if(e.target.id==="fKey"){FKEY=e.target.value.replace(/[^\w-]/g,"");try{localStorage.setItem("feed_key",FKEY)}catch(_){}}});
 
@@ -1112,15 +1148,18 @@ $("adm").addEventListener("click",async e=>{
   const x=b.dataset.x,i=+b.dataset.i,F=CFG.feed,gh=PG;
   try{
     if(x==="fen"){F.enabled=b.checked;applyFeedNav();updDirty()}
-    else if(x==="fadd"){const n=$("faName").value.trim();let u=$("faUrl").value.trim();if(/^AKfy[\w-]+$/.test(u))u="https://script.google.com/macros/s/"+u+"/exec";
-      if(!/^https:\/\/script\.google\.com\/.+\/exec$/.test(u))return toast("❌ Valid Web app URL (…/exec) dao");
-      F.accounts.push({name:n||"Drive "+(F.accounts.length+1),url:u});ACC={done:false,st:{}};updDirty();renderAdmin()}
+    else if(x==="fgo")await goScript();
+    else if(x==="fdep"){SET.deployed=true;renderAdmin()}
+    else if(x==="fadd"){const u=normUrl($("faUrl").value),n=$("faName").value.trim();
+      if(!u)return toast("❌ Valid Web app URL (…/exec) dao");
+      if(F.accounts.some(a=>a.url===u))return toast("ℹ️ Ei Drive already add kora ache");
+      b.disabled=true;b.textContent="⏳ Checking…";let s=null;try{s=await gcall(u+"?action=status",null,20000)}catch(_){}
+      if(!s||!s.ok){b.disabled=false;b.textContent="➕ Add & Publish";if(!confirm("URL kaj korche na (Who has access = Anyone dewa ache to? ba notun deployment-er URL?). Tobuo add korbe?"))return}
+      F.accounts.push({name:n||"Drive "+(F.accounts.length+1),url:u});SET={copied:false,deployed:false,url:"",name:"",manual:""};ACC={done:false,st:{}};updDirty();renderAdmin();
+      const sv=$("admSave");if(sv&&!sv.disabled)sv.click()}
     else if(x==="frm"){if(confirm("Ei Drive list theke soriye felbe? (Drive-er data thakbe)")){F.accounts.splice(i,1);ACC={done:false,st:{}};updDirty();renderAdmin()}}
     else if(x==="ftest")await testAcc(i);
-    else if(x==="fgen"){FKEY=[...crypto.getRandomValues(new Uint8Array(18))].map(n=>n.toString(36).padStart(2,"0")).join("").slice(0,24);try{localStorage.setItem("feed_key",FKEY)}catch(_){}renderAdmin()}
-    else if(x==="fcode"){if(!FKEY){FKEY=[...crypto.getRandomValues(new Uint8Array(18))].map(n=>n.toString(36).padStart(2,"0")).join("").slice(0,24);try{localStorage.setItem("feed_key",FKEY)}catch(_){}const ki=$("fKey");if(ki)ki.value=FKEY}
-      const t=(await(await fetch("apps-script/Code.gs?t="+Date.now())).text()).replace("PASTE_YOUR_ADMIN_KEY_HERE",FKEY);
-      try{await navigator.clipboard.writeText(t);toast("📋 Script copy hoyeche")}catch(_){const ta=$("fCode");ta.hidden=false;ta.value=t;ta.select();toast("Select all & copy koro")}}
+    else if(x==="fgen"){genKey();renderAdmin()}
     else if(x==="fmod"){if(!FKEY)return toast("❌ Admin key dao");await modLoad()}
     else if(x==="fdel"){const p=MOD.posts[i];if(!confirm("Ei post delete korbe?"))return;
       const r=await gcall(F.accounts[p.src].url,{action:"admin_delete",key:FKEY,id:p.id},60000);
