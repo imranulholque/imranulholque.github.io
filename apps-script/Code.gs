@@ -40,6 +40,29 @@ const cpub_=c=>({id:c.id,ts:c.ts,name:c.name,v:!!c.v,text:c.text});
 const pub_=p=>({v:!!p.v,id:p.id,ts:p.ts,name:p.name,type:p.type,app:p.app,text:p.text,imgs:p.imgs,cm:(p.cm||[]).map(cpub_)});
 function trash_(ids){(ids||[]).forEach(i=>{try{DriveApp.getFileById(i).setTrashed(true)}catch(e){}})}
 const clear_=()=>CacheService.getScriptCache().remove('l0');
+// ===== Visitor stats (anonymous: random browser id, country code, device/browser/OS, referrer host, page). No IP is stored. =====
+const TZ_='Asia/Dhaka',KEEP_DAYS=120,MAX_UIDS=4000;
+function sload_(){try{const d=JSON.parse(DriveApp.getFileById(P_().getProperty('stats')).getBlob().getDataAsString());d.days=d.days||{};return d}catch(e){return{days:{}}}}
+function ssave_(d){const s=JSON.stringify(d),p=P_();
+  try{DriveApp.getFileById(p.getProperty('stats')).setContent(s);return}catch(e){}
+  p.setProperty('stats',folders_().root.createFile('stats.json',s,'application/json').getId())}
+const inc_=(o,k)=>{k=String(k||'').replace(/[^\w .\-\/]/g,'').slice(0,40)||'other';o[k]=(o[k]||0)+1};
+function hit_(d){
+  const vid=String(d.vid||'');if(!/^[a-z0-9]{8,24}$/.test(vid))return{ok:false,error:'bad'};
+  const c=CacheService.getScriptCache(),rk='h:'+vid,n=+(c.get(rk)||0);if(n>=40)return{ok:false,error:'too_many'};c.put(rk,String(n+1),3600);
+  const st=sload_(),day=Utilities.formatDate(new Date(),TZ_,'yyyy-MM-dd');
+  const D=st.days[day]=st.days[day]||{v:0,u:[],c:{},d:{},b:{},o:{},r:{},p:{}};
+  D.v++;inc_(D.p,d.page||'home');
+  if(D.u.indexOf(vid)<0&&D.u.length<MAX_UIDS){
+    D.u.push(vid);
+    inc_(D.c,/^[A-Z]{2}$/.test(d.cc)?d.cc:'XX');
+    inc_(D.d,['mobile','tablet','desktop'].indexOf(d.dev)>=0?d.dev:'desktop');
+    inc_(D.b,d.br);inc_(D.o,d.os);inc_(D.r,d.ref||'direct');
+  }
+  const keys=Object.keys(st.days).sort();while(keys.length>KEEP_DAYS)delete st.days[keys.shift()];
+  ssave_(st);return{ok:true}}
+function stats_(){const st=sload_(),out={};
+  Object.keys(st.days).forEach(k=>{const D=st.days[k];out[k]={v:D.v,u:D.u.length,c:D.c,d:D.d,b:D.b,o:D.o,r:D.r,p:D.p}});return{ok:true,days:out,today:Utilities.formatDate(new Date(),TZ_,'yyyy-MM-dd')}}
 function doGet(e){
   if((e.parameter.action||'list')==='status')return J_(Object.assign({ok:true,mode:mode_()},space_()));
   const c=CacheService.getScriptCache(),hit=c.get('l0');
@@ -52,6 +75,7 @@ function doPost(e){let d;
   if(KEY.indexOf('PASTE')===0)return J_({ok:false,error:'not_configured'});
   const L=LockService.getScriptLock();
   try{if(d.action==='send_code'||d.action==='verify')return J_(d.action==='verify'?verify_(d):code_(d));
+    if(d.action==='hit'){L.waitLock(8000);return J_(hit_(d))}
     L.waitLock(25000);
     if(d.action==='post')return J_(post_(d));
     if(d.action==='comment')return J_(comment_(d));
@@ -124,6 +148,7 @@ function admin_(d){
     if(c===308)return{ok:true,done:false};
     if(c===200||c===201){const id=JSON.parse(r.getContentText()).id;DriveApp.getFileById(id).setSharing(DriveApp.Access.ANYONE_WITH_LINK,DriveApp.Permission.VIEW);return{ok:true,done:true,id:id}}
     return{ok:false,error:'chunk_failed_'+c}}
+  if(d.action==='admin_stats')return stats_();
   const db=load_(),em=String(d.email||'').toLowerCase();
   if(d.action==='admin_list')return Object.assign({ok:true,posts:db.posts.slice(0,100),banned:db.banned},space_());
   if(d.action==='admin_delete'){const p=db.posts.find(x=>x.id===d.id);if(p){trash_(p.imgs);db.posts=db.posts.filter(x=>x!==p)}}
