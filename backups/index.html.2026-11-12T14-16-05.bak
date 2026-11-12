@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Imranul's Software</title>
+<style>
+:root{--bg:#f7f5ff;--card:#fff;--text:#1b1830;--muted:#6a6782;--line:#e8e4f7;--glass:rgba(255,255,255,.8)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f0d1c;--card:#1a1730;--text:#f3f0ff;--muted:#a6a3c2;--line:#2c2849;--glass:rgba(26,23,48,.8)}}
+:root[data-theme="dark"]{--bg:#0f0d1c;--card:#1a1730;--text:#f3f0ff;--muted:#a6a3c2;--line:#2c2849;--glass:rgba(26,23,48,.8)}
+:root{--hero:linear-gradient(120deg,#7c3aed,#ec4899,#f59e0b,#10b981,#3b82f6,#7c3aed)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;font-size:clamp(14px,calc(12.5px + .3vw),20px);-webkit-text-size-adjust:100%}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(37.5rem 25rem at 10% 30%,rgba(236,72,153,.12),transparent),radial-gradient(37.5rem 25rem at 90% 60%,rgba(59,130,246,.12),transparent),radial-gradient(31.25rem 25rem at 50% 100%,rgba(245,158,11,.12),transparent)}
+/* HERO */
+.banner{background:#1b1830;color:#fff;text-align:center;padding:.5625rem 1rem;font-size:.875rem;font-weight:600}
+.banner[hidden]{display:none}
+.hero{position:relative;overflow:hidden;padding:clamp(1rem,2.5vw,1.75rem) clamp(.75rem,2.5vw,2rem) 4rem;color:#fff;background:var(--hero);background-size:300% 300%;animation:bg 18s ease infinite}
+@keyframes bg{50%{background-position:100% 50%}}
+.blob{position:absolute;border-radius:50%;filter:blur(2.5rem);opacity:.3;background:#fff;animation:fl 9s ease-in-out infinite alternate}
+@keyframes fl{to{transform:translate(2.5rem,1.875rem) scale(1.2)}}
+.hero-in{position:relative;max-width:min(96rem,100%);margin:0 auto;display:flex;align-items:center;gap:1.375rem;flex-wrap:wrap}
+.av{flex:none;width:6rem;height:6rem;border-radius:50%;padding:.25rem;background:conic-gradient(#fff,#fde68a,#f9a8d4,#a5b4fc,#6ee7b7,#fff);animation:spin 10s linear infinite;box-shadow:0 .625rem 1.875rem rgba(0,0,0,.25)}
+.av img{width:100%;height:100%;border-radius:50%;object-fit:cover;background:#fff;display:block;animation:spin 10s linear infinite reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hero-t{flex:1;min-width:0}
+.hero .hi{font-size:.9375rem;font-weight:700;opacity:.92}
+.hero h1{margin:2px 0 .25rem;font-size:clamp(1.75rem,4.6vw,2.625rem);line-height:1.1;font-weight:900;text-shadow:0 3px 1.125rem rgba(0,0,0,.25)}
+.hero p{margin:0 0 .625rem;max-width:35rem;opacity:.95;line-height:1.45;font-size:.9375rem}
+.stats{display:flex;gap:.5rem;flex-wrap:wrap}
+.pill{background:rgba(255,255,255,.2);backdrop-filter:blur(.5rem);border:1px solid rgba(255,255,255,.35);padding:.25rem .75rem;border-radius:62.4375rem;font-weight:700;font-size:.8125rem}
+.hero-a{display:flex;align-items:center;gap:.625rem;flex:none}
+.fb{display:inline-flex;align-items:center;gap:.5625rem;background:#1877f2;color:#fff;padding:.6875rem 1.25rem;border-radius:62.4375rem;font-weight:700;text-decoration:none;box-shadow:0 .5rem 1.375rem rgba(24,119,242,.45);transition:.2s;white-space:nowrap}
+.fb:hover{transform:translateY(-2px)}
+.fb svg{width:1.1875rem;height:1.1875rem;fill:#fff}
+.tb{width:2.625rem;height:2.625rem;border-radius:50%;border:1px solid rgba(255,255,255,.45);background:rgba(255,255,255,.2);backdrop-filter:blur(.5rem);color:#fff;font-size:1.125rem;cursor:pointer;transition:.2s}
+.tb:hover{background:rgba(255,255,255,.35)}
+/* LAYOUT */
+.wrap{max-width:min(96rem,100%);margin:-2rem auto 3.125rem;padding:0 clamp(.75rem,2.5vw,2rem);position:relative}
+.search{display:flex;align-items:center;gap:.625rem;background:var(--glass);backdrop-filter:blur(.625rem);border:1px solid var(--line);border-radius:1.125rem;padding:2px 1.125rem;box-shadow:0 .875rem 2.5rem rgba(124,58,237,.22)}
+.search input{flex:1;border:0;outline:0;background:none;color:var(--text);font-size:1rem;padding:.875rem 0}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;margin:1.25rem 0 2px}
+.seg{display:inline-flex;gap:.25rem;padding:.25rem;background:var(--card);border:1px solid var(--line);border-radius:1rem;max-width:100%;overflow-x:auto}
+.seg button{border:0;background:none;color:var(--muted);font:inherit;font-weight:700;font-size:.875rem;padding:.5625rem .9375rem;border-radius:.75rem;cursor:pointer;display:flex;align-items:center;gap:.4375rem;white-space:nowrap;transition:.2s}
+.seg button b{font-size:.75rem;background:var(--bg);color:var(--muted);padding:1px .5rem;border-radius:6.1875rem}
+.seg button:hover{color:var(--text)}
+.seg button.on{background:var(--c,#7c3aed);color:#fff;box-shadow:0 .375rem 1rem color-mix(in srgb,var(--c) 40%,transparent)}
+.seg button.on b{background:rgba(255,255,255,.25);color:#fff}
+.sort{border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit;font-size:.875rem;font-weight:600;padding:.625rem .75rem;border-radius:.75rem;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:.875rem 0 .25rem}
+.chip{border:2px solid var(--c,#7c3aed);color:var(--c,#7c3aed);background:transparent;border-radius:62.4375rem;padding:.375rem .875rem;font-weight:700;cursor:pointer;font-size:.8438rem;transition:.2s}
+.chip:hover{transform:translateY(-2px)}
+.chip.on{background:var(--c,#7c3aed);color:#fff;box-shadow:0 .375rem 1rem color-mix(in srgb,var(--c) 45%,transparent)}
+.meta{color:var(--muted);font-size:.875rem;margin:.5rem 2px 0}
+.sec-h{display:flex;align-items:center;gap:.75rem;margin:1.625rem 2px .875rem}
+.sec-h .si{width:2.875rem;height:2.875rem;border-radius:.9375rem;display:grid;place-items:center;font-size:1.4375rem;background:color-mix(in srgb,var(--c) 18%,transparent);flex:none}
+.sec-h h2{margin:0;font-size:1.375rem}
+.sec-h small{display:block;color:var(--muted);font-size:.8125rem;margin-top:2px}
+.sec-h .n{margin-left:auto;font-weight:800;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);padding:.25rem .8125rem;border-radius:6.1875rem;font-size:.8125rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,17.5rem),1fr));gap:clamp(.875rem,1.6vw,1.5rem)}
+.card{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:1.25rem;padding:1.375rem 1.25rem 1.125rem;display:flex;flex-direction:column;gap:.75rem;transition:transform .25s,box-shadow .25s}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:.3125rem;background:linear-gradient(90deg,var(--c),color-mix(in srgb,var(--c) 45%,#ec4899))}
+.card:hover{transform:translateY(-.3125rem);box-shadow:0 1rem 2.125rem color-mix(in srgb,var(--c) 28%,transparent)}
+.c-top{display:flex;gap:.875rem;align-items:center}
+.c-t{min-width:0;flex:1}
+.ic{width:3.375rem;height:3.375rem;border-radius:1.0625rem;display:grid;place-items:center;font-size:1.75rem;background:linear-gradient(135deg,color-mix(in srgb,var(--c) 28%,transparent),color-mix(in srgb,var(--c) 8%,transparent));flex:none}
+.ic img{width:2.375rem;height:2.375rem;object-fit:contain;border-radius:.625rem}
+.tags{display:flex;gap:.375rem;flex-wrap:wrap;margin-top:.375rem}
+.tag{font-size:.75rem;font-weight:800;color:var(--c);background:color-mix(in srgb,var(--c) 14%,transparent);padding:3px .625rem;border-radius:62.4375rem;white-space:nowrap}
+.tag.ver{--c:var(--muted)}
+.card h3{margin:0;font-size:1.1875rem;word-break:break-word}
+.card p{margin:0;color:var(--muted);font-size:.875rem;line-height:1.55;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+.card p.open{display:block}
+.btns{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:2px}
+.btns a{text-decoration:none;font-weight:700;border-radius:.8125rem;text-align:center}
+.dl{flex:1;font-size:.9375rem;padding:.75rem;color:#fff;background:linear-gradient(135deg,var(--c),color-mix(in srgb,var(--c) 55%,#000));box-shadow:0 .5rem 1.125rem color-mix(in srgb,var(--c) 38%,transparent);transition:.2s;text-decoration:none;font-weight:700;border-radius:.8125rem;text-align:center;white-space:nowrap}
+.dl:hover{filter:brightness(1.08);transform:scale(1.02)}
+.alt{font-size:.875rem;padding:.6875rem 1rem;color:var(--c);border:2px solid var(--c)}
+.msg{grid-column:1/-1;text-align:center;padding:3.125rem;color:var(--muted)}
+footer{text-align:center;color:var(--muted);font-size:.875rem;padding:.625rem 1rem 2.5rem;line-height:1.9}
+.flinks{display:flex;gap:1.125rem;justify-content:center;flex-wrap:wrap}
+footer a{color:#1877f2;font-weight:700;text-decoration:none}
+footer .ad{cursor:pointer;opacity:.6;background:none;border:0;color:var(--muted);font-size:.8125rem}
+.toast{position:fixed;left:50%;bottom:1.625rem;transform:translateX(-50%) translateY(1.875rem);background:#1b1830;color:#fff;padding:.75rem 1.25rem;border-radius:.875rem;opacity:0;pointer-events:none;transition:.3s;z-index:99;max-width:92vw;box-shadow:0 .625rem 1.875rem rgba(0,0,0,.4);font-weight:600}
+.toast.show{opacity:1;transform:translateX(-50%)}
+@media(max-width:720px){
+.hero{padding:1.125rem 1rem 3.625rem}.hero-in{gap:.875rem}.av{width:4.125rem;height:4.125rem}
+.hero-t{flex:1 1 calc(100% - 5.5rem)}.hero h1{font-size:1.75rem}.hero p{font-size:.875rem;margin-bottom:.5rem}
+.hero-a{width:100%}.fb{flex:1;justify-content:center}
+.seg{width:100%}.seg button{flex:1;justify-content:center;padding:.5625rem .5rem}.sort{width:100%}
+.sec-h h2{font-size:1.1875rem}}
+@media(min-width:721px) and (max-width:1000px){.hero-a{width:100%}.fb{flex:1;justify-content:center}.hero-t{flex:1 1 calc(100% - 8rem)}}
+@media(max-width:380px){.btns a{flex:1 1 100%}.chip{font-size:.8rem}.sec-h .n{display:none}}
+@media(min-width:2200px){.grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,19rem),1fr))}}
+img,svg,video{max-width:100%}
+.card h3,.sec-h h2,.hero h1{overflow-wrap:anywhere}
+.adm-b{-webkit-overflow-scrolling:touch}
+.adm .ar-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,13.75rem),1fr))}
+/* DETAILS */
+.mdl{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;padding:1.125rem;background:rgba(15,13,28,.55);backdrop-filter:blur(.375rem)}
+.mdl.open{display:flex}
+.sheet{width:min(53.75rem,100%);max-height:92vh;display:flex;flex-direction:column;background:var(--card);border-radius:1.625rem;overflow:hidden;box-shadow:0 1.875rem 5rem rgba(0,0,0,.45);animation:pop .28s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes pop{from{opacity:0;transform:translateY(1.5rem) scale(.97)}}
+.sh-h{display:flex;align-items:center;gap:.875rem;padding:1.125rem 1.25rem;border-bottom:1px solid var(--line);background:linear-gradient(120deg,color-mix(in srgb,var(--c) 20%,transparent),transparent)}
+.sh-h h3{margin:0 0 .25rem;font-size:1.375rem}
+.sh-x{margin-left:auto;border:0;background:var(--bg);color:var(--text);width:2.375rem;height:2.375rem;border-radius:50%;font-size:1.0625rem;cursor:pointer;flex:none}
+.sh-b{flex:1;overflow:auto;padding:1.375rem 1.5rem}
+.sh-f{padding:.875rem 1.25rem;border-top:1px solid var(--line);display:flex;gap:.625rem;flex-wrap:wrap}
+.sh-f a{text-decoration:none;font-weight:700;border-radius:.8125rem;text-align:center}
+.md{line-height:1.7;font-size:.9688rem;word-wrap:break-word}
+.md h1,.md h2,.md h3,.md h4{line-height:1.25;margin:1.4em 0 .5em}
+.md h1{font-size:1.75rem;padding-bottom:.3em;border-bottom:2px solid var(--line)}.md h2{font-size:1.375rem;color:var(--c)}.md h3{font-size:1.125rem}
+.md>:first-child{margin-top:0}.md p{margin:.7em 0}.md a{color:var(--c);font-weight:600}
+.md code{background:color-mix(in srgb,var(--c) 12%,transparent);padding:2px .4375rem;border-radius:.4375rem;font-size:.9em}
+.md pre{background:#17142b;color:#e9e5ff;padding:1rem;border-radius:.875rem;overflow:auto}.md pre code{background:none;padding:0;color:inherit}
+.md img{max-width:100%;height:auto;border-radius:.75rem}
+.md blockquote{margin:1em 0;padding:.5rem 1rem;border-left:.3125rem solid var(--c);background:color-mix(in srgb,var(--c) 8%,transparent);border-radius:0 .75rem .75rem 0}
+.md ul,.md ol{padding-left:1.5rem}.md li{margin:.3em 0}.md hr{border:0;height:2px;background:var(--line);margin:1.6em 0}
+.tw{overflow-x:auto;margin:1em 0}.md table{border-collapse:collapse;width:100%}.md th,.md td{border:1px solid var(--line);padding:.5rem .75rem;text-align:left}.md th{background:color-mix(in srgb,var(--c) 12%,transparent)}
+@media(max-width:640px){.mdl{padding:0;align-items:flex-end}.sheet{max-height:94vh;border-radius:1.625rem 1.625rem 0 0}.sh-b{padding:1.125rem 1rem}.sh-h h3{font-size:1.1875rem}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.btns a{flex:1}.chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:.375rem}.chip{white-space:nowrap}}
+/* ADMIN */
+.adm{position:fixed;inset:0;z-index:50;background:var(--bg);display:none}
+.adm.open{display:flex}
+.adm-side{width:14.5rem;flex:none;display:flex;flex-direction:column;gap:.375rem;padding:1.25rem .875rem;color:#fff;background:linear-gradient(170deg,#4c1d95,#7c3aed 50%,#db2777)}
+.adm-side .br{font-size:1.3125rem;font-weight:900;padding:.375rem .625rem 1.125rem}
+.adm-side button{display:flex;align-items:center;gap:.625rem;border:0;background:none;color:#fff;font:inherit;font-weight:700;padding:.75rem .875rem;border-radius:.875rem;cursor:pointer;opacity:.88;transition:.2s}
+.adm-side button:hover{background:rgba(255,255,255,.16)}
+.adm-side button.on{background:#fff;color:#6d28d9;opacity:1;box-shadow:0 .5rem 1.375rem rgba(0,0,0,.25)}
+.adm-side .sp{flex:1}
+.adm-main{flex:1;display:flex;flex-direction:column;min-width:0}
+.adm-top{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;padding:.875rem 1.375rem;border-bottom:1px solid var(--line);background:var(--glass);backdrop-filter:blur(.625rem)}
+.adm-top h2{margin:0;font-size:1.375rem;flex:1;min-width:9.375rem}
+#admQ{width:15rem;max-width:100%}
+#admSave{border:0;border-radius:.75rem;padding:.6875rem 1.125rem;font-weight:800;font-size:.875rem;color:#fff;background:linear-gradient(120deg,#10b981,#06b6d4);cursor:pointer;box-shadow:0 .5rem 1.25rem rgba(16,185,129,.35);transition:.2s}
+#admSave:disabled{background:var(--line);color:var(--muted);box-shadow:none;cursor:default}
+.adm-b{flex:1;overflow:auto;padding:1.375rem}.adm-in{max-width:min(75rem,100%);margin:0 auto}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(7.8125rem,1fr));gap:.75rem;margin-bottom:1.25rem}
+.tile{border:0;font:inherit;text-align:left;cursor:pointer;border-radius:1.125rem;padding:.875rem 1rem;color:#fff;font-weight:700;font-size:.875rem;background:linear-gradient(135deg,var(--a),var(--b));box-shadow:0 .625rem 1.375rem color-mix(in srgb,var(--a) 35%,transparent);transition:.2s;opacity:.78}.tile:hover{opacity:1}.tile.on{opacity:1;box-shadow:0 0 0 3px var(--bg),0 0 0 .375rem var(--a)}
+.tile b{font-size:1.875rem;display:block;line-height:1.2}
+.ar{position:relative;background:var(--card);border:1px solid var(--line);border-radius:1.25rem;padding:1rem 1rem 1rem 1.375rem;margin-bottom:.875rem;overflow:hidden;transition:.2s}
+.ar::before{content:"";position:absolute;left:0;top:0;bottom:0;width:.4375rem;background:linear-gradient(var(--a,#7c3aed),#ec4899)}
+.ar:hover{box-shadow:0 .625rem 1.625rem rgba(124,58,237,.16)}.ar.off{opacity:.55}
+.ar-top{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;flex-wrap:wrap}
+.ar-top .ic{width:3rem;height:3rem;font-size:1.5625rem;--c:#7c3aed}.ar-top .ic img{width:2.125rem;height:2.125rem}
+.ar-top>div:nth-child(2){flex:1;min-width:8.75rem}.ar-top small{color:var(--muted);display:block}
+.ar-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(13.75rem,1fr));gap:.75rem}
+.ar-grid label,.form label{display:flex;flex-direction:column;gap:.3125rem;font-size:.75rem;font-weight:700;color:var(--muted)}
+.wide{grid-column:1/-1}
+.form label.sw,.ar-grid label.sw{flex-direction:row;font-size:.875rem;color:var(--text)}
+.box2{background:var(--card);border:1px solid var(--line);border-radius:1.25rem;padding:1.125rem;display:grid;gap:.75rem}.box2 h3{margin:0;font-size:1.0625rem}
+.pals{display:flex;gap:.5rem;flex-wrap:wrap}.pal{width:5.5rem;height:2.75rem;border-radius:.75rem;border:3px solid transparent;cursor:pointer;color:#fff;font-weight:800;font-size:.75rem;text-shadow:0 1px 3px rgba(0,0,0,.55)}.pal.on{border-color:var(--text)}
+.ar-top .sw{font-size:.8125rem}
+.adm textarea.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.8125rem;line-height:1.55;min-height:58vh;white-space:pre;overflow:auto;tab-size:2;resize:vertical;background:#17142b;color:#e9e5ff;border-radius:.875rem}
+.subs{margin-bottom:.875rem}.subs button{border:0;background:none;color:var(--muted);font:inherit;font-weight:700;font-size:.875rem;padding:.55rem 1rem;border-radius:.75rem;cursor:pointer}.subs button.on{background:#7c3aed;color:#fff}
+.hint{color:var(--muted);font-size:.8125rem;line-height:1.6;margin:.25rem 0 .75rem}
+.ed-bar{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin-bottom:.75rem}.ed-bar b{flex:1;min-width:8rem;word-break:break-all}
+.mini.ghost{background:var(--line);color:var(--text)}.mini.green{background:#10b981}
+.adm select.bk{width:auto;max-width:100%}
+.adm input:not([type=checkbox]),.adm textarea,.adm select{font:inherit;font-size:.875rem;padding:.625rem .75rem;border-radius:.75rem;border:1.5px solid var(--line);background:var(--bg);color:var(--text);width:100%;outline:0;transition:.15s}
+.adm input:focus,.adm textarea:focus,.adm select:focus{border-color:#7c3aed;box-shadow:0 0 0 .25rem rgba(124,58,237,.15)}
+.ic-in{display:flex;gap:.375rem}
+.sw{display:flex;align-items:center;gap:.5625rem;font-weight:700;font-size:.875rem;cursor:pointer}
+.sw input{appearance:none;-webkit-appearance:none;width:2.75rem;height:1.625rem;border-radius:6.1875rem;background:var(--line);position:relative;cursor:pointer;transition:.2s;flex:none;margin:0}
+.sw input::after{content:"";position:absolute;left:3px;top:3px;width:1.25rem;height:1.25rem;border-radius:50%;background:#fff;box-shadow:0 2px .3125rem rgba(0,0,0,.3);transition:.2s}
+.sw input:checked{background:#10b981}.sw input:checked::after{transform:translateX(1.125rem)}
+.mini{border:0;border-radius:.6875rem;padding:.5625rem .8125rem;font:inherit;font-size:.8125rem;font-weight:700;cursor:pointer;background:#7c3aed;color:#fff;white-space:nowrap;transition:.2s}
+.mini:hover{filter:brightness(1.1)}.mini.red{background:#ef4444}
+.up{display:flex;align-items:center;gap:.625rem;flex-wrap:wrap;padding:.75rem .875rem;border-radius:.875rem;background:color-mix(in srgb,#3b82f6 8%,transparent);border:1.5px dashed #60a5fa;font-size:.875rem;font-weight:600}
+.up span{flex:1;min-width:9.375rem;word-break:break-all}
+.adv{font-size:.8125rem;color:var(--muted);font-weight:700}.adv summary{cursor:pointer;padding:.25rem 0}.adv .ar-grid{margin-top:.625rem}
+.form{display:grid;gap:.875rem;max-width:37.5rem}
+.box{background:var(--card);border:1px solid var(--line);border-radius:1.5rem;padding:1.625rem;max-width:32.5rem;margin:1.25rem auto;box-shadow:0 1.25rem 3.125rem rgba(124,58,237,.15)}
+.box h3{margin:0 0 .5rem;font-size:1.375rem}.box p,.box li{font-size:.875rem;color:var(--muted);line-height:1.65}
+.box button.go{margin-top:.875rem;border:0;border-radius:.875rem;background:linear-gradient(120deg,#7c3aed,#ec4899);color:#fff;font-weight:800;padding:.875rem 1.25rem;cursor:pointer;width:100%;font-size:1rem;box-shadow:0 .625rem 1.5rem rgba(124,58,237,.4)}
+.err{color:#ef4444;font-weight:700;font-size:.875rem;margin-top:.5rem}
+.dz{display:flex;flex-direction:column;align-items:center;gap:.375rem;border:2.5px dashed #a78bfa;border-radius:1.375rem;padding:1.875rem 1.125rem;text-align:center;cursor:pointer;background:color-mix(in srgb,#7c3aed 6%,transparent);color:var(--muted);font-size:.8125rem;transition:.2s}
+.dz b{font-size:1rem;color:var(--text)}.dz:hover,.dz.over{background:color-mix(in srgb,#7c3aed 15%,transparent);border-color:#7c3aed;transform:scale(1.01)}
+.fr{display:flex;align-items:center;gap:.625rem;flex-wrap:wrap;padding:.75rem .875rem;border:1px solid var(--line);background:var(--card);border-radius:1rem;margin-bottom:.5rem}
+.fr span{flex:1;min-width:9.375rem;word-break:break-all;font-weight:700;font-size:.875rem}
+@media(max-width:760px){.adm{flex-direction:column-reverse}.adm-side{width:auto;flex-direction:row;padding:.375rem;gap:2px}.adm-side .br,.adm-side .sp{display:none}
+.adm-side button{flex:1;flex-direction:column;gap:2px;font-size:.6875rem;padding:.5rem .25rem;justify-content:center}.adm-top{padding:.625rem .875rem}#admQ{width:100%;order:3}.adm-b{padding:.875rem}}
+
+/* FEED */
+.stp{display:flex;gap:.75rem;padding:.8rem;border:1.5px solid var(--line);border-radius:1rem;margin:.6rem 0;background:var(--card)}
+.stp .n{flex:none;width:1.8rem;height:1.8rem;border-radius:50%;background:#7c3aed;color:#fff;display:grid;place-items:center;font-weight:800;font-size:.8rem}
+.stp.ok .n{background:#10b981}.stp.ok{border-color:#10b981}.stp>div{flex:1;min-width:0}
+.stp b{display:block;margin-bottom:.25rem}.stp p,.stp ol{margin:.3rem 0;font-size:.8125rem;color:var(--muted);line-height:1.6}.stp ol{padding-left:1.1rem}
+.stp .row{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.5rem}
+#faChk{font-size:.8125rem;margin-top:.4rem;min-height:1.1rem}
+.vnav{display:flex;gap:.25rem;padding:.25rem;margin-bottom:.75rem;width:max-content;max-width:100%;background:var(--glass);backdrop-filter:blur(.625rem);border:1px solid var(--line);border-radius:1rem}
+.vnav[hidden]{display:none}
+.vnav button{border:0;background:none;color:var(--muted);font:inherit;font-weight:700;font-size:.875rem;padding:.5625rem 1rem;border-radius:.75rem;cursor:pointer}
+.vnav button.on{background:#7c3aed;color:#fff}
+.fc,.fp{background:var(--card);border:1px solid var(--line);border-radius:1.25rem;padding:1.125rem;margin:0 0 .875rem;max-width:46rem}
+.fc{margin-top:1.25rem}.fc h3{margin:0 0 .25rem}.fh{color:var(--muted);font-size:.8125rem;line-height:1.5;margin:0 0 .75rem}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem}
+.fin{font:inherit;font-size:.9rem;padding:.625rem .75rem;border-radius:.75rem;border:1.5px solid var(--line);background:var(--bg);color:var(--text);width:100%;outline:0;min-width:0}
+.fin:focus{border-color:#7c3aed}textarea.fin{resize:vertical}
+.fimgs{display:flex;gap:.5rem;flex-wrap:wrap;margin:.5rem 0}.fimgs div{position:relative}.fimgs img{width:4.5rem;height:4.5rem;object-fit:cover;border-radius:.75rem}
+.fimgs button{position:absolute;top:-6px;right:-6px;border:0;border-radius:50%;width:1.25rem;height:1.25rem;background:#ef4444;color:#fff;cursor:pointer;font-size:.7rem}
+.ffoot{display:flex;align-items:center;gap:.5rem;margin-top:.5rem;flex-wrap:wrap}.ffoot span{flex:1;font-size:.8125rem;color:var(--muted)}
+.fp-h{display:flex;align-items:center;gap:.625rem;flex-wrap:wrap}.fav{width:2.5rem;height:2.5rem;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}
+.fp-n{flex:1;min-width:6rem}.fp-n small{display:block;color:var(--muted);font-size:.75rem}
+.fp-t{margin:.75rem 0 .5rem;white-space:pre-wrap;line-height:1.6;overflow-wrap:anywhere}
+.fp-i{display:grid;grid-template-columns:repeat(auto-fill,minmax(7.5rem,1fr));gap:.5rem}.fp-i img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:.75rem}
+@media(max-width:560px){.fr2{grid-template-columns:1fr}}
+@media(max-width:760px){.adm-side{overflow-x:auto}.adm-side button{flex:1 0 auto;min-width:3.6rem}}
+</style>
+<style id="customCss"></style>
+</head>
+<body>
+<div class="banner" id="banner" hidden></div>
+<header class="hero">
+  <span class="blob" style="width:240px;height:240px;left:-60px;top:-90px"></span>
+  <span class="blob" style="width:280px;height:280px;right:-80px;bottom:-150px;animation-delay:-3s"></span>
+  <div class="hero-in">
+    <div class="av"><img id="avatar" alt=""></div>
+    <div class="hero-t">
+      <div class="hi" id="owner"></div>
+      <h1 id="title">Software Hub</h1>
+      <p id="sub"></p>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="hero-a">
+      <a class="fb" id="fbBtn" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg>
+        Follow me on Facebook
+      </a>
+      <button class="tb" id="themeBtn" type="button" aria-label="Switch light/dark theme">🌙</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="vnav" id="vnav" hidden><button data-v="soft" class="on">📦 Software</button><button data-v="feed">💬 Feed</button></div>
+<div id="swView">
+  <div class="search"><span>🔍</span><input id="q" placeholder="Search software by name or what it does…" autocomplete="off"></div>
+  <div class="bar"><div class="seg" id="seg"></div>
+    <select class="sort" id="sort" aria-label="Sort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="az">Name A–Z</option></select></div>
+  <div class="chips" id="chips"></div>
+  <div class="meta" id="meta"></div>
+  <div id="grid"><div class="msg">Loading software…</div></div>
+</div>
+<div id="feedView" hidden></div>
+</div>
+<footer>
+  <div id="foot"></div>
+  <div class="flinks" id="flinks"></div>
+  <div>Made with ❤️ by <b id="owner2"></b></div>
+  <button class="ad" id="admLink">Admin</button>
+</footer>
+<div class="toast" id="toast"></div>
+
+<div class="mdl" id="mdl"><div class="sheet" role="dialog" aria-modal="true"><div class="sh-h" id="mdlHead"></div><div class="sh-b" id="mdlBody"></div><div class="sh-f" id="mdlFoot"></div></div></div>
+<div class="adm" id="adm">
+ <nav class="adm-side" id="admSide"><div class="br">🛠️ Admin</div>
+  <button data-tab="apps">📦 <span>Software</span></button><button data-tab="feed">💬 <span>Feed</span></button><button data-tab="files">🗂️ <span>Files</span></button><button data-tab="code">💻 <span>Code</span></button><button data-tab="domain">🌐 <span>Domain</span></button><button data-tab="site">⚙️ <span>Settings</span></button>
+  <div class="sp"></div><button id="admOut">🚪 <span>Logout</span></button><button id="admClose">✕ <span>Close</span></button></nav>
+ <main class="adm-main"><div class="adm-top"><h2 id="admTitle"></h2><input id="admQ" type="search" placeholder="🔍 Search software…"><button id="admSave" disabled>💾 Saved</button></div>
+ <div class="adm-b"><div class="adm-in" id="admBody"></div></div></main></div>
+<datalist id="catlist"></datalist>
+
+<script>
+/* ===== Basic settings (change only if your GitHub names change) ===== */
+const USERNAME="imranulholque";
+const SITE_REPO="imranulholque.github.io";
+const BRANCH="main";
+const OWNER="Imranul Hoque Sabbir";
+const AVATAR="https://github.com/"+USERNAME+".png?size=400";
+const DEFAULT_CFG={site:{title:"Software Hub",tagline:"Free, handy software made by me. Download the latest build in one click.",owner:"Imranul Hoque Sabbir",facebook:"https://www.facebook.com/imranul.hoque.sabbir1",github:"",telegram:"",email:"",hideForks:true,avatar:"",theme:"auto",palette:"aurora",sort:"new",defPlat:"all",badgeDays:14,showStats:true,banner:"",footer:"",customCss:"",customJs:""},apps:{},feed:{enabled:true,accounts:[]}};
+const CATEGORIES={
+  game:["Games","🎮"],games:["Games","🎮"],
+  ai:["AI & ML","🤖"],ml:["AI & ML","🤖"],"machine-learning":["AI & ML","🤖"],
+  web:["Web","🌐"],website:["Web","🌐"],frontend:["Web","🌐"],
+  android:["Mobile","📱"],ios:["Mobile","📱"],mobile:["Mobile","📱"],flutter:["Mobile","📱"],
+  desktop:["Desktop","🖥️"],windows:["Desktop","🖥️"],
+  cli:["Tools","🛠️"],tool:["Tools","🛠️"],tools:["Tools","🛠️"],utility:["Tools","🛠️"],
+  bot:["Bots","🦾"],telegram:["Bots","🦾"],discord:["Bots","🦾"],
+  security:["Security","🔐"],api:["API & Backend","⚙️"],backend:["API & Backend","⚙️"],
+  data:["Data","📊"],education:["Education","🎓"]};
+const LANGS={JavaScript:["Web","🌐"],TypeScript:["Web","🌐"],HTML:["Web","🌐"],CSS:["Web","🌐"],
+  Python:["Python Apps","🐍"],Java:["Java Apps","☕"],Kotlin:["Mobile","📱"],Dart:["Mobile","📱"],
+  "C#":["Desktop","🖥️"],"C++":["Desktop","🖥️"],C:["Desktop","🖥️"],Go:["API & Backend","⚙️"],
+  Rust:["Tools","🛠️"],Shell:["Tools","🛠️"],PHP:["Web","🌐"]};
+const COLORS=["#7c3aed","#ec4899","#f59e0b","#10b981","#3b82f6","#ef4444","#14b8a6","#8b5cf6","#f97316","#06b6d4","#84cc16","#d946ef"];
+const PLATS={android:{n:"Android",i:"📱",c:"#10b981",t:"Android apps",d:"APK files for your phone"},
+  pc:{n:"PC",i:"💻",c:"#3b82f6",t:"PC software",d:"Windows programs and tools"},
+  web:{n:"Web",i:"🌐",c:"#8b5cf6",t:"Web apps",d:"Open right in your browser"}};
+const PORDER=["android","pc","web"];
+const PALETTES={aurora:["#7c3aed","#ec4899","#f59e0b","#10b981","#3b82f6"],sunset:["#f97316","#ef4444","#ec4899","#8b5cf6"],
+  ocean:["#0ea5e9","#6366f1","#14b8a6","#22d3ee"],forest:["#059669","#84cc16","#0d9488","#16a34a"],night:["#1e1b4b","#4c1d95","#be185d","#1d4ed8"]};
+/* ==================================================================== */
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let CFG=structuredClone(DEFAULT_CFG),allRepos=[],active="All",TOKEN="",savedStr="",tab="apps";
+const pendingIcons={};
+let catColor={},PLAT={},platTab="all",sortBy="";
+
+function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove("show"),4200)}
+async function cached(key,ttl,fn){
+  let c=null;try{c=JSON.parse(localStorage.getItem(key))}catch(e){}
+  if(c&&Date.now()-c.t<ttl)return c.d;
+  try{const d=await fn();try{localStorage.setItem(key,JSON.stringify({t:Date.now(),d}))}catch(e){}return d}
+  catch(e){if(c)return c.d;throw e}
+}
+const iconHtml=i=>{const s=pendingIcons[i]||i||"";
+  return /\.(png|jpe?g|svg|webp|gif|ico)$/i.test(s)||/^(https?:|data:)/.test(s)?`<img src="${esc(s)}" alt="" onerror="this.replaceWith('📦')">`:esc(s)};
+
+function categorize(r){
+  for(const t of r.topics||[])if(CATEGORIES[t])return CATEGORIES[t];
+  if(LANGS[r.language])return LANGS[r.language];
+  return["Other","✨"];
+}
+function catIconFor(c){
+  const v=Object.values({...LANGS,...CATEGORIES}).find(v=>v[0]===c);return v?v[1]:"📁";
+}
+function readmeSummary(md){
+  if(!md)return"";
+  md=md.replace(/<!--[\s\S]*?-->/g,"").replace(/```[\s\S]*?```/g,"").replace(/<[^>]+>/g," ")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g,"").replace(/\[!\[[^\]]*\]\([^)]*\)\]\([^)]*\)/g,"")
+    .replace(/\[([^\]]+)\]\([^)]*\)/g,"$1").replace(/https?:\/\/\S+/g,"");
+  for(let p of md.split(/\n\s*\n/)){
+    const lines=p.split("\n").map(l=>l.trim()).filter(l=>l&&!/^(#|[-=*_]{3,}|\||>)/.test(l));
+    p=lines.join(" ").replace(/^[-*]\s+/,"").replace(/[*_`~]/g,"").replace(/\s+/g," ").trim();
+    if(p.length>=25)return p.length>260?p.slice(0,257).replace(/\s+\S*$/,"")+"…":p;
+  }
+  return"";
+}
+async function getReadme(name){
+  return cached("rm_"+name,30*60e3,async()=>{
+    for(const f of["README.md","readme.md","Readme.md","README.txt"]){
+      try{const r=await fetch(`https://raw.githubusercontent.com/${USERNAME}/${name}/HEAD/${f}`);if(r.ok)return(await r.text()).slice(0,30000)}catch(e){}
+    }
+    return"";
+  });
+}
+function defaultVisible(r){return!(r.fork&&CFG.site.hideForks)}
+const APK=/\.apk$/i;
+function guessPlat(r,ov){
+  const cat=(ov.category||"").toLowerCase();
+  if(/android|mobile|phone/.test(cat))return"android";
+  if(/\bpc\b|desktop|windows/.test(cat))return"pc";
+  const s=(r.name+" "+(r.description||"")+" "+(r.topics||[]).join(" ")).toLowerCase();
+  if(/android|apk|kotlin|flutter|mobile/.test(s)||["Kotlin","Dart"].includes(r.language))return"android";
+  if(/windows|desktop|\bexe\b|\bpc\b/.test(s)||["C#","C++","C"].includes(r.language))return"pc";
+  if(r.homepage&&!/github\.com/i.test(r.homepage))return"web";
+  return"pc";
+}
+function ovPlat(o){
+  const a=o.uploadAndroid||(o.upload&&APK.test(o.upload)?o.upload:""),p=o.uploadPC||(o.upload&&!APK.test(o.upload)?o.upload:"");
+  return a&&p?"both":a?"android":p?"pc":"";
+}
+function platFromFiles(f){
+  const a=f.some(x=>APK.test(x.name)||/\.aab$/i.test(x.name)),p=f.some(x=>/\.(exe|msi|dmg|appimage|deb|zip|7z|rar|jar)$/i.test(x.name));
+  return a&&p?"both":a?"android":p?"pc":"";
+}
+const platName=p=>p==="both"?"Android + PC":(PLATS[p]||{}).n||p;
+function build(r){
+  const ov=CFG.apps[r.name]||{};let[c,i]=categorize(r);
+  if(ov.category){c=ov.category;i=catIconFor(c)}
+  const autoName=r.name.replace(/[-_]/g," ").replace(/([a-z0-9])([A-Z])/g,"$1 $2");
+  const vis=ov.hide===true?false:ov.hide===false?true:defaultVisible(r);
+  const autoPlat=PLAT[r.name]||guessPlat(r,ov),plat=ov.platform||ovPlat(ov)||autoPlat;
+  return{...r,ov,vis,cat:c,catIcon:i,autoName,autoCat:categorize(r)[0],autoIcon:categorize(r)[1],
+    dispName:ov.name||autoName,icon:ov.icon||i,desc:ov.desc||r.summary||r.description||"",
+    plat,autoPlat,plats:plat==="both"?["android","pc"]:[plat]};
+}
+function visItems(){return allRepos.filter(r=>!r.archived).map(build).filter(r=>r.vis)}
+function sortList(a){
+  const m=sortBy||CFG.site.sort||"new",t=x=>new Date(x.created_at);
+  const f=(x,y)=>m==="az"?x.dispName.localeCompare(y.dispName):m==="old"?t(x)-t(y):t(y)-t(x);
+  return a.sort((x,y)=>(!!y.ov.featured-!!x.ov.featured)||f(x,y));
+}
+const isNew=r=>{const d=+CFG.site.badgeDays;return d>0&&Date.now()-new Date(r.created_at)<d*864e5};
+const linkOf=(v,pre)=>{v=(v||"").trim();return!v?"":/^(https?:|mailto:)/i.test(v)?v:pre+v.replace(/^@/,"")};
+/* theme */
+function themeMode(){let m="";try{m=localStorage.getItem("theme")||""}catch(e){}return m||CFG.site.theme||"auto"}
+function isDark(){const m=themeMode();return m==="dark"||(m==="auto"&&matchMedia("(prefers-color-scheme:dark)").matches)}
+function applyTheme(){const m=themeMode();document.documentElement.dataset.theme=m==="auto"?"":m;$("themeBtn").textContent=isDark()?"☀️":"🌙"}
+$("themeBtn").onclick=()=>{try{localStorage.setItem("theme",isDark()?"light":"dark")}catch(e){}applyTheme()};
+function applySite(){
+  const s=CFG.site;$("title").textContent=s.title;document.title=s.title;$("sub").textContent=s.tagline;
+  $("owner").textContent=$("owner2").textContent=s.owner||"";$("avatar").alt=s.owner||"";
+  $("fbBtn").href=s.facebook||"#";$("fbBtn").style.display=s.facebook?"":"none";
+  const pal=PALETTES[s.palette]||PALETTES.aurora;
+  document.documentElement.style.setProperty("--hero",`linear-gradient(120deg,${[...pal,pal[0]].join(",")})`);
+  const bn=$("banner");bn.textContent=s.banner||"";bn.hidden=!s.banner;
+  $("foot").textContent=s.footer||"✨ New software appears here automatically ✨";
+  $("flinks").innerHTML=[["Facebook",s.facebook],["GitHub",linkOf(s.github,"https://github.com/")],["Telegram",linkOf(s.telegram,"https://t.me/")],["Email",s.email&&"mailto:"+s.email]]
+    .filter(x=>x[1]).map(([n,u])=>`<a href="${esc(u)}" target="_blank" rel="noopener">${n}</a>`).join("");
+  $("sort").value=sortBy||s.sort||"new";
+  $("stats").style.display=s.showStats===false?"none":"";
+  applyTheme();setAvatar();applyFeedNav();
+  $("customCss").textContent=SAFE?"":(s.customCss||"");
+}
+const SAFE=/[?&]safe\b/.test(location.search);
+function runCustomJs(){
+  const c=CFG.site.customJs;if(SAFE){toast("🛟 Safe mode: custom CSS/JS off");return}
+  if(!c)return;try{new Function(c)()}catch(e){console.error("Custom JS error:",e);toast("⚠️ Custom JS-e error: "+e.message)}
+}
+function avatarSrc(){const a=CFG.site.avatar;return a?(pendingIcons[a]||a):AVATAR}
+function setAvatar(){
+  const img=$("avatar"),src=avatarSrc();
+  if(img.dataset.src===src)return;
+  img.dataset.src=src;img.parentNode.style.display="";
+  img.onerror=function(){
+    if(this.src!==AVATAR&&!this.dataset.fb){this.dataset.fb=1;this.src=AVATAR}
+    else this.parentNode.style.display="none"};
+  delete img.dataset.fb;img.src=src;
+}
+function dlBtn(r,p){
+  const P=PLATS[p]||PLATS.pc;
+  if(p==="web"){const h=r.homepage&&!/github\.com/i.test(r.homepage)?r.homepage:r.ov.link;
+    if(h)return`<a class="dl" style="--c:${P.c}" href="${esc(h)}" target="_blank" rel="noopener">🌐 Open app</a>`}
+  const lbl=p==="android"?"⬇ Download APK":p==="pc"?"⬇ Download for PC":"⬇ Download";
+  return`<a href="#" class="dl" style="--c:${P.c}" data-r="${esc(r.name)}" data-p="${p==="web"?"":p}">${lbl}</a>`;
+}
+function tagsHtml(r){
+  return`<span class="tag">${esc(r.cat)}</span>`+r.plats.map(p=>`<span class="tag" style="--c:${(PLATS[p]||PLATS.pc).c}">${(PLATS[p]||PLATS.pc).i} ${(PLATS[p]||PLATS.pc).n}</span>`).join("")+
+    (r.ov.version?`<span class="tag ver">v${esc(String(r.ov.version).replace(/^v/i,""))}</span>`:"")+
+    (r.ov.featured?`<span class="tag" style="--c:#f59e0b">⭐ Featured</span>`:isNew(r)?`<span class="tag" style="--c:#ef4444">New</span>`:"");
+}
+function cardHtml(r,p){
+  return`<article class="card" style="--c:${catColor[r.cat]}">
+    <div class="c-top"><div class="ic">${iconHtml(r.icon)}</div><div class="c-t"><h3>${esc(r.dispName)}</h3><div class="tags">${tagsHtml(r)}</div></div></div>
+    <p title="Click to read more">${esc(r.desc)}</p>
+    <div class="btns">${dlBtn(r,p)}<a class="alt" href="#app/${encodeURIComponent(r.name)}">📖 Details</a>
+      ${p!=="web"&&r.homepage&&!/github\.com/i.test(r.homepage)?`<a class="alt" href="${esc(r.homepage)}" target="_blank" rel="noopener">Live</a>`:""}</div></article>`;
+}
+function render(){
+  const q=$("q").value.trim().toLowerCase();
+  const items=sortList(visItems());
+  const cnt=p=>items.filter(r=>r.plats.includes(p)).length,avail=PORDER.filter(cnt);
+  if(platTab!=="all"&&!avail.includes(platTab))platTab="all";
+  const inTab=platTab==="all"?items:items.filter(r=>r.plats.includes(platTab));
+  const allCats=[...new Set(items.map(r=>r.cat))].sort(),catNames=[...new Set(inTab.map(r=>r.cat))].sort();
+  catColor={};allCats.forEach((c,i)=>catColor[c]=COLORS[i%COLORS.length]);
+  if(active!=="All"&&!catNames.includes(active))active="All";
+  $("stats").innerHTML=allRepos.length?`<span class="pill">📦 ${items.length} software</span>`+avail.map(p=>`<span class="pill">${PLATS[p].i} ${cnt(p)} ${PLATS[p].n}</span>`).join(""):'<span class="pill">Loading…</span>';
+  $("seg").innerHTML=allRepos.length?[["all","✨","All",items.length],...avail.map(p=>[p,PLATS[p].i,PLATS[p].n,cnt(p)])]
+    .map(([k,i,n,c])=>`<button class="${k===platTab?"on":""}" data-p="${k}" style="--c:${k==="all"?"#7c3aed":PLATS[k].c}">${i} ${n} <b>${c}</b></button>`).join(""):"";
+  $("chips").innerHTML=catNames.length>1?["All",...catNames].map(c=>{
+    const n=c==="All"?inTab.length:inTab.filter(r=>r.cat===c).length;
+    const ico=c==="All"?"🌈":inTab.find(r=>r.cat===c).catIcon;
+    return`<button class="chip ${c===active?"on":""}" style="--c:${c==="All"?"#7c3aed":catColor[c]}" data-c="${esc(c)}">${esc(ico)} ${esc(c)} (${n})</button>`}).join(""):"";
+  const list=inTab.filter(r=>(active==="All"||r.cat===active)&&
+    (!q||[r.dispName,r.desc,r.cat,r.language,r.plat,...(r.topics||[])].join(" ").toLowerCase().includes(q)));
+  $("meta").textContent=allRepos.length?`Showing ${list.length} of ${inTab.length}`:"";
+  const groups=(platTab==="all"?avail:[platTab]).map(p=>({p,l:list.filter(r=>r.plats.includes(p))})).filter(g=>g.l.length);
+  $("grid").innerHTML=groups.length?groups.map(({p,l})=>{const P=PLATS[p];
+    return`<section style="--c:${P.c}"><div class="sec-h"><div class="si">${P.i}</div><div><h2>${P.t}</h2><small>${P.d}</small></div><span class="n">${l.length}</span></div>
+      <div class="grid">${l.map(r=>cardHtml(r,p)).join("")}</div></section>`}).join(""):`<div class="msg">${allRepos.length?"No software found 😕":"Loading software…"}</div>`;
+  $("catlist").innerHTML=[...new Set([...allCats,...Object.values(CATEGORIES).map(v=>v[0])])].map(c=>`<option value="${esc(c)}">`).join("");
+}
+let rt;const rr=()=>{clearTimeout(rt);rt=setTimeout(render,150)};
+
+/* ---------- Download (latest release, one click) ---------- */
+const PRIORITY=["exe","msi","dmg","appimage","deb","zip","7z","rar"];
+const SKIP=/(source|\.(sha\d*|md5|sig|asc|blockmap|yml|yaml|txt|md|json)$)/i;
+const BIN=/\.(exe|msi|dmg|appimage|deb|apk|zip|7z|rar|aab|jar)$/i;
+const rank=a=>{const e=a.name.split(".").pop().toLowerCase();
+  if(e==="apk")return/android/i.test(navigator.userAgent)?-1:50;const i=PRIORITY.indexOf(e);return i<0?99:i};
+async function findFiles(name){
+  const base=`https://api.github.com/repos/${USERNAME}/${name}`;
+  const rel=await fetch(base+"/releases?per_page=15");
+  if(!rel.ok)throw rel.status;
+  for(const r of await rel.json()){
+    if(r.draft)continue;
+    const f=(r.assets||[]).filter(a=>!SKIP.test(a.name)).map(a=>({name:a.name,url:a.browser_download_url}));
+    if(f.length)return f;
+  }
+  const ct=await fetch(base+"/contents/");
+  if(ct.ok){
+    const f=(await ct.json()).filter(x=>x.type==="file"&&BIN.test(x.name)&&x.download_url).map(x=>({name:x.name,url:x.download_url}));
+    if(f.length)return f;
+  }
+  return[];
+}
+const getFiles=name=>cached("dl_"+name,10*60e3,async()=>{const f=await findFiles(name);if(!f.length)throw"none";return f});
+async function download(r,el,plat){
+  const ov=CFG.apps[r.name]||{},go=u=>{location.href=u};
+  const up=plat==="android"?(ov.uploadAndroid||(APK.test(ov.upload||"")?ov.upload:"")):plat==="pc"?(ov.uploadPC||(ov.upload&&!APK.test(ov.upload)?ov.upload:"")):"";
+  if(up)return go(encodeURI(up));
+  if(ov.link&&r.plats.length===1)return go(ov.link);
+  if(!plat&&ov.upload)return go(encodeURI(ov.upload));
+  if(ov.file&&(r.plats.length===1||(plat==="android")===APK.test(ov.file)))return go(`https://github.com/${USERNAME}/${r.name}/releases/latest/download/`+encodeURIComponent(ov.file));
+  const old=el.textContent;el.textContent="⏳ Preparing…";
+  try{
+    let files=await getFiles(r.name);
+    if(plat==="android")files=files.filter(f=>APK.test(f.name)||/\.aab$/i.test(f.name));else if(plat==="pc")files=files.filter(f=>!APK.test(f.name)&&!/\.aab$/i.test(f.name));
+    if(!files.length)throw"none";
+    go([...files].sort((a,b)=>rank(a)-rank(b))[0].url);
+  }catch(e){
+    if(e==="none")toast(`Ei software-er ${plat?platName(plat)+" ":""}download file ekhono upload kora hoyni. Pore abar dekho.`);
+    else toast("Download ekhon busy. Kichukkhon pore abar try koro.");
+  }
+  finally{el.textContent=old}
+}
+$("grid").addEventListener("click",e=>{
+  const b=e.target.closest(".dl[data-r]");
+  if(b){e.preventDefault();const r=visItems().find(x=>x.name===b.dataset.r);if(r)download(r,b,b.dataset.p);return}
+  const p=e.target.closest(".card p");if(p)p.classList.toggle("open");
+});
+$("q").addEventListener("input",render);
+$("chips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(b){active=b.dataset.c;render()}});
+$("seg").addEventListener("click",e=>{const b=e.target.closest("button");if(b){platTab=b.dataset.p;active="All";render()}});
+$("sort").addEventListener("change",e=>{sortBy=e.target.value;render()});
+
+/* ---------- Loading ---------- */
+async function loadConfig(){
+  try{const r=await fetch("config.json?t="+Date.now(),{cache:"no-store"});
+    if(r.ok){const j=await r.json();return{site:{...DEFAULT_CFG.site,...(j.site||{})},apps:j.apps||{},feed:{enabled:true,accounts:[],...(j.feed||{})}}}}catch(e){}
+  return structuredClone(DEFAULT_CFG);
+}
+async function load(){
+  applyTheme();CFG=await loadConfig();platTab=CFG.site.defPlat||"all";applySite();
+  try{
+    allRepos=(await cached("repos_"+USERNAME,10*60e3,async()=>{
+      const res=await fetch(`https://api.github.com/users/${USERNAME}/repos?per_page=100&sort=created`);
+      if(!res.ok)throw res.status;
+      return(await res.json()).filter(r=>r.name!==SITE_REPO).map(r=>({name:r.name,description:r.description,fork:r.fork,archived:r.archived,
+        topics:r.topics,language:r.language,homepage:r.homepage,created_at:r.created_at}));
+    }));
+  }catch(e){
+    $("grid").innerHTML='<div class="msg">Could not load software right now. Please try again in a few minutes.</div>';;return}
+  savedStr=JSON.stringify(cleaned());
+  runCustomJs();
+  render();
+  const detect=visItems().filter(r=>!r.ov.platform&&!ovPlat(r.ov)).map(r=>r.name);
+  await Promise.allSettled([...allRepos.filter(r=>!r.archived).map(async r=>{r.summary=readmeSummary(await getReadme(r.name))}),
+    ...detect.map(async n=>{const p=platFromFiles(await getFiles(n));if(p)PLAT[n]=p})]);
+  render();
+  route();
+}
+
+/* ---------- Details (README viewer) ---------- */
+function md(src,base){
+  const U=u=>{u=u.trim();if(/^javascript:/i.test(u))return"#";return/^(https?:|data:|mailto:|#)/i.test(u)?u:base+u.replace(/^\.?\//,"")};
+  const stash=[],keep=h=>"\u0001"+(stash.push(h)-1)+"\u0001";
+  src=src.replace(/\r/g,"").replace(/<!--[\s\S]*?-->/g,"")
+   .replace(/<h([1-6])[^>]*>([\s\S]*?)<\/h\1>/gi,(m,n,t)=>"\n\n"+"#".repeat(n)+" "+t.replace(/<[^>]+>/g,"")+"\n\n")
+   .replace(/<img\b[^>]*>/gi,t=>{const a=(t.match(/src=["']([^"']+)["']/i)||[])[1],b=(t.match(/alt=["']([^"']*)["']/i)||[])[1]||"";return a?`![${b}](${a})`:""})
+   .replace(/<br\s*\/?>/gi,"\n").replace(/<\/?(?:p|div|center|details|summary|picture|source|span|b|i|em|strong|a|sup|sub|kbd|table|tr|td|th|thead|tbody)\b[^>]*>/gi,"")
+   .replace(/^```\w*[^\n]*\n([\s\S]*?)^```/gm,(m,c)=>"\n\n"+keep(`<pre><code>${esc(c.replace(/\n$/,""))}</code></pre>`)+"\n\n");
+  const inl=s=>{const cd=[];
+    s=s.replace(/`([^`]+)`/g,(m,c)=>"\u0002"+(cd.push(c)-1)+"\u0002");
+    s=esc(s).replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+&quot;[^)]*&quot;)?\)/g,(m,a,u)=>`<img src="${U(u)}" alt="${a}" loading="lazy">`)
+     .replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+&quot;[^)]*&quot;)?\)/g,(m,t,u)=>`<a href="${U(u)}" target="_blank" rel="noopener">${t}</a>`)
+     .replace(/\*\*\*([^*]+)\*\*\*/g,"<b><i>$1</i></b>").replace(/(\*\*|__)(?=\S)([\s\S]*?\S)\1/g,"<b>$2</b>")
+     .replace(/(^|[\s(])\*(?=\S)([^*]+?\S)\*(?=[\s).,!?:;]|$)/g,"$1<i>$2</i>").replace(/~~([^~]+)~~/g,"<s>$1</s>")
+     .replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g,'$1<a href="$2" target="_blank" rel="noopener">$2</a>');
+    return s.replace(/\u0002(\d+)\u0002/g,(m,i)=>`<code>${esc(cd[i])}</code>`)};
+  const L=src.split("\n"),HR=/^\s*([-*_])(\s*\1){2,}\s*$/,isLi=l=>/^\s*(?:[-*+]|\d+[.)])\s+/.test(l),
+    isBlk=l=>/^(#{1,6}\s|>|\u0001)/.test(l)||isLi(l)||HR.test(l);
+  let out="",i=0,m;
+  while(i<L.length){
+    const l=L[i];if(!l.trim()){i++;continue}
+    if(m=l.match(/^\u0001(\d+)\u0001\s*$/)){out+=stash[m[1]];i++;continue}
+    if(m=l.match(/^(#{1,6})\s+(.*?)\s*#*\s*$/)){out+=`<h${m[1].length}>${inl(m[2])}</h${m[1].length}>`;i++;continue}
+    if(HR.test(l)){out+="<hr>";i++;continue}
+    if(l[0]===">"){const t=[];while(i<L.length&&L[i][0]===">")t.push(L[i++].replace(/^>\s?/,""));out+=`<blockquote>${inl(t.join(" "))}</blockquote>`;continue}
+    if(isLi(l)){let it="";const ord=/^\s*\d/.test(l);
+      while(i<L.length&&(isLi(L[i])||/^\s{2,}\S/.test(L[i]))){
+        if(isLi(L[i])){const q=L[i].match(/^(\s*)(?:[-*+]|\d+[.)])\s+(.*)$/);let t=q[2],cb="";const k=t.match(/^\[( |x|X)\]\s+(.*)$/);
+          if(k){cb=`<input type="checkbox" disabled ${k[1]!==" "?"checked":""}> `;t=k[2]}
+          it+=`<li style="margin-left:${Math.min(q[1].length,8)*9}px">${cb}${inl(t)}`}else it+=" "+inl(L[i].trim());
+        i++;if(L[i]!==undefined&&!L[i].trim()&&isLi(L[i+1]||""))i++}
+      out+=ord?`<ol>${it}</ol>`:`<ul>${it}</ul>`;continue}
+    if(l.includes("|")&&/^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$/.test(L[i+1]||"")){
+      const cl=x=>x.trim().replace(/^\||\|$/g,"").split("|").map(c=>c.trim()),hd=cl(l);i+=2;let rw="";
+      while(i<L.length&&L[i].trim()&&L[i].includes("|")){rw+=`<tr>${cl(L[i]).map(c=>`<td>${inl(c)}</td>`).join("")}</tr>`;i++}
+      out+=`<div class="tw"><table><thead><tr>${hd.map(c=>`<th>${inl(c)}</th>`).join("")}</tr></thead><tbody>${rw}</tbody></table></div>`;continue}
+    const p=[];while(i<L.length&&L[i].trim()&&!(p.length&&isBlk(L[i])))p.push(L[i++].trim());
+    out+=`<p>${inl(p.join(" "))}</p>`;
+  }
+  return out;
+}
+function closeModal(){$("mdl").classList.remove("open");document.body.style.overflow=""}
+function shut(){history.replaceState(null,"",location.pathname+location.search);closeModal()}
+async function openDetails(name){
+  const raw=allRepos.find(x=>x.name===name);if(!raw)return;
+  const r=build(raw),m=$("mdl");
+  m.style.setProperty("--c",catColor[r.cat]||"#7c3aed");
+  $("mdlHead").innerHTML=`<div class="ic">${iconHtml(r.icon)}</div><div><h3>${esc(r.dispName)}</h3><div class="tags">${tagsHtml(r)}</div></div><button class="sh-x" data-x aria-label="Close">✕</button>`;
+  $("mdlFoot").innerHTML=r.plats.map(p=>dlBtn(r,p)).join("");m.classList.add("open");document.body.style.overflow="hidden";
+  const b=$("mdlBody");b.innerHTML='<div class="msg">Loading details…</div>';
+  const src=r.ov.details||featureText(await getReadme(name));
+  if(location.hash!=="#app/"+encodeURIComponent(name))return;
+  b.innerHTML=src?`<div class="md">${md(src,`https://raw.githubusercontent.com/${USERNAME}/${name}/HEAD/`)}</div>`:'<div class="msg">Feature details coming soon.</div>';
+  b.scrollTop=0;
+}
+function route(){
+  const h=location.hash;
+  if(h==="#admin"){openAdmin();return}
+  if(h.startsWith("#app/")){openDetails(decodeURIComponent(h.slice(5)));return}
+  if(h==="#feed"){location.replace(location.pathname+"?feed");return}
+  closeModal();setView(isFeedPage()&&feedOn()?"feed":"soft");
+}
+$("mdl").addEventListener("click",e=>{
+  if(e.target.id==="mdl"||e.target.closest("[data-x]"))return shut();
+  const b=e.target.closest(".dl[data-r]");if(b){e.preventDefault();const r=visItems().find(x=>x.name===b.dataset.r)||build(allRepos.find(x=>x.name===b.dataset.r));if(r)download(r,b,b.dataset.p)}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("mdl").classList.contains("open"))shut()});
+window.addEventListener("hashchange",route);
+
+/* ---------- Admin ---------- */
+const FIELDS=["name","icon","category","platform","version","featured","desc","details","file","link","upload","uploadAndroid","uploadPC","hide"],MAXMB=50;
+let FILES=null,admStatus="all",admPlat="all";
+const fnm=p=>p.includes("#")?p.split("#").pop():p.split("/").pop();
+const safe=n=>n.replace(/[^\w.\-]+/g,"_"),sz=n=>n>1048576?(n/1048576).toFixed(1)+" MB":Math.max(1,Math.ceil(n/1024))+" KB";
+const toB64=f=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(",")[1]);r.onerror=rej;r.readAsDataURL(f)});
+const resize=(file,S,cover,type,q)=>new Promise((res,rej)=>{const img=new Image(),u=URL.createObjectURL(file);
+  img.onload=()=>{const c=document.createElement("canvas");c.width=c.height=S;const x=c.getContext("2d"),k=(cover?Math.max:Math.min)(S/img.width,S/img.height),w=img.width*k,h=img.height*k;
+    x.drawImage(img,(S-w)/2,(S-h)/2,w,h);URL.revokeObjectURL(u);res(c.toDataURL(type,q))};img.onerror=rej;img.src=u});
+function cleaned(){
+  const apps={};
+  for(const n of Object.keys(CFG.apps).sort()){
+    const o=CFG.apps[n],r=allRepos.find(x=>x.name===n),out={};
+    for(const f of FIELDS){let v=o[f];if(v===undefined||v===""||(f==="featured"&&!v))continue;if(f==="hide"&&r&&v===!defaultVisible(r))continue;out[f]=v}
+    if(Object.keys(out).length)apps[n]=out;
+  }
+  const s=CFG.site,site={title:s.title,tagline:s.tagline,owner:s.owner,facebook:s.facebook,hideForks:!!s.hideForks,theme:s.theme,palette:s.palette,sort:s.sort,defPlat:s.defPlat,badgeDays:Number(s.badgeDays)||0,showStats:s.showStats!==false};
+  for(const k of["github","telegram","email","banner","footer","avatar","customCss","customJs"])if(s[k])site[k]=s[k];
+  const fd=CFG.feed||{};return{site,apps,feed:{enabled:fd.enabled!==false,accounts:(fd.accounts||[]).map(a=>({name:a.name,url:a.url}))}};
+}
+const isDirty=()=>TOKEN&&JSON.stringify(cleaned())!==savedStr;
+function updDirty(){const d=isDirty(),b=$("admSave");b.disabled=!d;b.textContent=d?"💾 Save & Publish •":"💾 Saved"}
+window.addEventListener("beforeunload",e=>{if(isDirty()){e.preventDefault();e.returnValue=""}});
+async function ghApi(path,opt={}){
+  return fetch("https://api.github.com"+path,{...opt,headers:{Accept:"application/vnd.github+json",Authorization:"Bearer "+TOKEN,"Content-Type":"application/json",...(opt.headers||{})}});
+}
+async function putFile(path,b64c,msg){
+  const base=`/repos/${USERNAME}/${SITE_REPO}/contents/${path}`;
+  for(let k=0;k<2;k++){
+    let sha;const g=await ghApi(`${base}?ref=${BRANCH}&t=${Date.now()}`);
+    if(g.ok)sha=(await g.json()).sha;
+    const p=await ghApi(base,{method:"PUT",body:JSON.stringify({message:msg,content:b64c,branch:BRANCH,sha})});
+    if(p.ok)return true;
+    if(p.status===401||p.status===403||p.status===404)throw new Error("Permission problem ("+p.status+"). Token check koro.");
+    if(p.status!==409&&p.status!==422)throw new Error("Error "+p.status);
+  }
+  throw new Error("Conflict, abar try koro");
+}
+const b64=s=>btoa(unescape(encodeURIComponent(s)));
+async function uploadFiles(files,dir){
+  for(const f of files){
+    if(f.size>MAXMB*1048576){toast(`❌ ${f.name} khub boro (max ${MAXMB} MB)`);continue}
+    try{toast(`⏳ ${f.name} upload hocche (${sz(f.size)})…`);await putFile(`${dir}/${safe(f.name)}`,await toB64(f),"Upload "+f.name);FILES=null;toast(`✅ ${f.name} upload hoyeche`)}
+    catch(x){toast("❌ "+x.message)}
+  }
+}
+async function loadFiles(){
+  try{const r=await ghApi(`/repos/${USERNAME}/${SITE_REPO}/contents/uploads?ref=${BRANCH}&t=${Date.now()}`);
+    FILES=r.ok?(await r.json()).filter(x=>x.type==="file").map(x=>({name:x.name,path:x.path,sha:x.sha,size:x.size})):[]}
+  catch(e){FILES=[]}
+  if(tab==="files")renderAdmin();
+}
+function loginHtml(){return`<div class="box"><h3>🔐 Admin Login</h3>
+  <p>Shudhu tumi (site owner) save korte parbe. Ekta <b>GitHub Token</b> lagbe — ekbar banale ei browser-e mone rakhbe.</p>
+  <ol><li>GitHub → Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b> → Generate new token</li>
+  <li>Repository access: <b>Only select repositories</b> → <code>${esc(SITE_REPO)}</code></li>
+  <li>Permissions → Repository permissions → <b>Contents: Read and write</b></li><li>(Domain-er jonno) <b>Pages: Read and write</b> permission-o dao</li><li>Token-ta niche paste koro</li></ol>
+  <input type="password" id="tokIn" placeholder="github_pat_..." autocomplete="off">
+  <label class="sw" style="margin-top:12px"><input type="checkbox" id="tokRem" checked> Ei browser-e mone rakho</label>
+  <button class="go" data-act="login">Login</button><div class="err" id="loginErr"></div></div>`}
+const adminAll=()=>allRepos.filter(r=>!r.archived).map(build).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+function tilesHtml(){
+  const all=adminAll(),pub=all.filter(r=>r.vis).length,n=p=>all.filter(r=>r.plats.includes(p)).length;
+  const T=(k,v,ic,l,num,a,b,on)=>`<button type="button" class="tile ${on?"on":""}" data-flt="${k}:${v}" style="--a:${a};--b:${b}">${ic} ${l}<b>${num}</b></button>`;
+  return T("all","all","📦","All",all.length,"#7c3aed","#ec4899",admStatus==="all"&&admPlat==="all")
+    +T("status","pub","✅","Published",pub,"#10b981","#06b6d4",admStatus==="pub")
+    +T("status","unpub","🙈","Unpublished",all.length-pub,"#f59e0b","#ef4444",admStatus==="unpub")
+    +T("plat","android","📱","Android",n("android"),"#16a34a","#10b981",admPlat==="android")
+    +T("plat","pc","💻","PC",n("pc"),"#2563eb","#3b82f6",admPlat==="pc")
+    +T("plat","web","🌐","Web",n("web"),"#7c3aed","#8b5cf6",admPlat==="web");
+}
+const slot=(o,k,label,acc)=>`<div class="up"><span>${o[k]?"📎 "+esc(fnm(o[k])):label}</span>${o[k]?`<button type="button" class="mini red" data-rmup="${k}">Remove</button>`:""}<button type="button" class="mini" data-appup="${k}">📤 Upload</button><input type="file" ${acc?`accept="${acc}"`:""} hidden data-appfile="${k}"></div>`;
+function appRow(r){const o=r.ov;
+  const opts=[["","Auto ("+platName(r.autoPlat)+")"],["android","📱 Android"],["pc","💻 PC"],["both","📱💻 Android + PC"],["web","🌐 Web"]];
+  return`<div class="ar ${r.vis?"":"off"}" data-r="${esc(r.name)}" style="--a:${catColor[r.cat]||"#7c3aed"}">
+    <div class="ar-top"><div class="ic" data-prev>${iconHtml(r.icon)}</div>
+      <div><b>${esc(r.name)}</b><small>GitHub name${r.fork?" · fork":""}</small></div>
+      <label class="sw"><input type="checkbox" data-f="pub" ${r.vis?"checked":""}> Published</label>
+      <label class="sw"><input type="checkbox" data-f="featured" ${o.featured?"checked":""}> ⭐ Featured</label></div>
+    <div class="ar-grid">
+      <label>Display name<input data-f="name" value="${esc(o.name||"")}" placeholder="${esc(r.autoName)}"></label>
+      <label>Category<input data-f="category" list="catlist" value="${esc(o.category||"")}" placeholder="${esc(r.autoCat)}"></label>
+      <label>Platform<select data-f="platform">${opts.map(([v,l])=>`<option value="${v}" ${(o.platform||"")===v?"selected":""}>${l}</option>`).join("")}</select></label>
+      <label>Version<input data-f="version" value="${esc(o.version||"")}" placeholder="e.g. 1.2.0"></label>
+      <label class="wide">Icon (emoji / image link)<div class="ic-in"><input data-f="icon" value="${esc(o.icon||"")}" placeholder="${esc(r.autoIcon)}"><button type="button" class="mini" data-up>📤 Upload</button><input type="file" accept="image/*" hidden data-file></div></label>
+      ${slot(o,"uploadAndroid","📱 Android file (.apk) upload koro",".apk,.aab")}
+      ${slot(o,"uploadPC","💻 PC file (.exe / .zip) upload koro","")}
+      ${o.upload?`<div class="wide">${slot(o,"upload","📎 Any-platform file","")}</div>`:""}
+      <div class="wide" style="color:var(--muted);font-size:12px;font-weight:600">Upload na korle GitHub release theke auto file nibe.</div>
+      <label class="wide">Description<textarea data-f="desc" rows="2" placeholder="${esc("Auto (README): "+(r.summary||r.description||"—"))}">${esc(o.desc||"")}</textarea></label>
+      <label class="wide">Details (Markdown) — khali thakle README theke shudhu feature/function ongsho dekhabe<textarea data-f="details" rows="5" placeholder="# Features&#10;- ...">${esc(o.details||"")}</textarea></label>
+      <div class="wide"><button type="button" class="mini" data-mdup>📄 .md file theke load koro</button><input type="file" accept=".md,.markdown,.txt" hidden data-mdfile></div>
+      <details class="wide adv"><summary>⚙️ Advanced download options</summary><div class="ar-grid">
+        <label>Release file name<input data-f="file" value="${esc(o.file||"")}" placeholder="auto-detect"></label>
+        <label>Direct download link<input data-f="link" value="${esc(o.link||"")}" placeholder="https://..."></label></div></details>
+    </div></div>`;
+}
+function appsHtml(){
+  const all=adminAll();
+  if(!all.length)return'<div class="msg">No software loaded.</div>';
+  const q=$("admQ").value.trim().toLowerCase();
+  let rows=all.filter(r=>!q||(r.name+" "+r.dispName).toLowerCase().includes(q));
+  if(admStatus==="pub")rows=rows.filter(r=>r.vis);else if(admStatus==="unpub")rows=rows.filter(r=>!r.vis);
+  if(admPlat!=="all")rows=rows.filter(r=>r.plats.includes(admPlat));
+  return`<div class="tiles" id="admTiles">${tilesHtml()}</div><p style="color:var(--muted);font-size:14px;margin-top:0">Tile-e click korle filter hobe. Change korle <b>Save &amp; Publish</b> chapo.</p>`+
+    (rows.length?rows.map(appRow).join(""):'<div class="msg">Ei filter-e kichu nai. <button type="button" class="mini" data-flt="all:all">Show all</button></div>');
+}
+function appFilesHtml(){
+  const g={android:[],pc:[]};
+  for(const[n,o]of Object.entries(CFG.apps)){const nm=o.name||n;
+    if(o.uploadAndroid)g.android.push([nm,o.uploadAndroid]);if(o.uploadPC)g.pc.push([nm,o.uploadPC]);
+    if(o.upload)(APK.test(o.upload)?g.android:g.pc).push([nm,o.upload])}
+  const blk=(t,l)=>`<h3 style="margin:24px 0 10px">${t}</h3>`+(l.length?l.map(([n,p])=>`<div class="fr" data-p="${esc(p)}"><span>📎 ${esc(fnm(p))}<small style="display:block;color:var(--muted);font-weight:500">${esc(n)}</small></span><button class="mini" data-copy>🔗 Copy link</button></div>`).join(""):'<div class="msg" style="padding:16px">Kono file nai</div>');
+  return blk("📱 Android downloads",g.android)+blk("💻 PC downloads",g.pc);
+}
+function filesHtml(){
+  const list=FILES===null?'<div class="msg">Loading…</div>':FILES.length?FILES.map(f=>`<div class="fr" data-p="${esc(f.path)}" data-sha="${f.sha}"><span>📄 ${esc(f.name)}<small style="display:block;color:var(--muted);font-weight:500">${sz(f.size)}</small></span><button class="mini" data-copy>🔗 Copy link</button><button class="mini red" data-del>🗑 Delete</button></div>`).join(""):'<div class="msg">Ekhono kono file upload kora hoyni.</div>';
+  return`<label class="dz" id="dz"><span style="font-size:40px">☁️</span><b>File ekhane drop koro ba click kore bachho</b><span>Image, zip, exe, apk, pdf… · max ${MAXMB} MB · <code>uploads/</code> folder-e save hobe, Save chapar dorkar nai</span><input type="file" id="multiUp" multiple hidden></label>${appFilesHtml()}<h3 style="margin:24px 0 10px">📁 Other uploads</h3>${list}`;
+}
+function siteHtml(){const s=CFG.site;
+  const inp=(k,l,ph,t)=>`<label>${l}<input type="${t||"text"}" data-s="${k}" value="${esc(s[k]??"")}" placeholder="${esc(ph||"")}"></label>`;
+  const sel=(k,l,o)=>`<label>${l}<select data-s="${k}">${o.map(([v,n])=>`<option value="${v}" ${(s[k]||"")===v?"selected":""}>${n}</option>`).join("")}</select></label>`;
+  const sw=(k,l)=>`<label class="sw"><input type="checkbox" data-s="${k}" ${s[k]?"checked":""}> ${l}</label>`;
+  const pal=Object.entries(PALETTES).map(([k,c])=>`<button type="button" class="pal ${s.palette===k?"on":""}" data-pal="${k}" style="background:linear-gradient(120deg,${c.join(",")})">${k}</button>`).join("");
+  return`<div class="form">
+  <div class="ar" style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+    <img id="avPrev" src="${esc(avatarSrc())}" alt="" style="width:84px;height:84px;border-radius:50%;object-fit:cover;background:#fff">
+    <div style="flex:1;min-width:160px"><b>Tomar chobi (profile picture)</b><small style="display:block;color:var(--muted);margin:2px 0 8px">Upload koro, tarpor Save &amp; Publish chapo.</small>
+      <button type="button" class="mini" data-avup>📤 Chobi upload</button> <button type="button" class="mini" style="background:var(--line);color:var(--text)" data-avreset>GitHub-er chobi</button>
+      <input type="file" accept="image/*" hidden id="avFile"></div></div>
+  <div class="box2"><h3>✍️ Texts</h3>${inp("title","Site title")}${inp("owner","Your name")}
+    <label>Tagline<textarea data-s="tagline" rows="2">${esc(s.tagline)}</textarea></label>
+    ${inp("banner","Announcement banner (khali = off)","e.g. New version out now!")}${inp("footer","Footer text (khali = default)")}</div>
+  <div class="box2"><h3>🎨 Look</h3>
+    ${sel("theme","Default theme",[["auto","Auto (device-er moto)"],["light","☀️ Light"],["dark","🌙 Dark"]])}
+    <div><div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px">Top banner color</div><div class="pals">${pal}</div></div>
+    ${sel("sort","Default sort",[["new","Newest first"],["old","Oldest first"],["az","Name A–Z"]])}
+    ${sel("defPlat","Home page-e prothome ki dekhabe",[["all","✨ All"],["android","📱 Android"],["pc","💻 PC"],["web","🌐 Web"]])}
+    ${inp("badgeDays","'New' badge koy din thakbe (0 = off)","14","number")}
+    ${sw("showStats","Top-e software count pill dekhao")}</div>
+  <div class="box2"><h3>🔗 Links</h3>${inp("facebook","Facebook link")}${inp("github","GitHub (username ba link)")}${inp("telegram","Telegram (username ba link)")}${inp("email","Email")}</div>
+  <div class="box2"><h3>🧰 Other</h3>${sw("hideForks","Forked repo gulo default-e hide koro")}
+    <div><button type="button" class="mini" data-backup>⬇ Config backup (config.json)</button></div></div></div>`}
+
+/* ---------- Code editor ---------- */
+let codeSub="css",CODEFILES=null,curFile=null,BACKUPS=[];
+const TEXTFILE=/\.(html?|css|js|json|md|txt|xml)$/i,bdec=b=>new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g,"")),c=>c.charCodeAt(0)));
+function checkCode(path,text){
+  try{
+    if(/\.json$/i.test(path)){JSON.parse(text);return""}
+    if(/\.js$/i.test(path)){new Function(text);return""}
+    if(/\.html?$/i.test(path)){
+      const d=new DOMParser().parseFromString(text,"text/html");
+      for(const sc of d.querySelectorAll("script:not([src])"))if(!sc.type||/^(text|application)\/javascript$/.test(sc.type))new Function(sc.textContent);
+    }
+  }catch(e){return e.message}
+  return"";
+}
+async function loadCodeFiles(){
+  try{const r=await ghApi(`/repos/${USERNAME}/${SITE_REPO}/contents/?ref=${BRANCH}&t=${Date.now()}`);
+    CODEFILES=r.ok?(await r.json()).filter(x=>x.type==="file"&&TEXTFILE.test(x.name)).map(x=>({name:x.name,path:x.path,size:x.size})):[]}
+  catch(e){CODEFILES=[]}
+  if(tab==="code")renderAdmin();
+}
+async function openFile(path){
+  const r=await ghApi(`/repos/${USERNAME}/${SITE_REPO}/contents/${path}?ref=${BRANCH}&t=${Date.now()}`);
+  if(!r.ok)throw new Error("File khola gelo na ("+r.status+")");
+  const j=await r.json();if(j.encoding!=="base64")throw new Error("File khub boro, ekhane edit kora jabe na");
+  curFile={path,text:bdec(j.content),orig:bdec(j.content)};BACKUPS=[];
+  try{const b=await ghApi(`/repos/${USERNAME}/${SITE_REPO}/contents/backups?ref=${BRANCH}&t=${Date.now()}`);
+    if(b.ok)BACKUPS=(await b.json()).filter(x=>x.name.startsWith(path.split("/").pop()+".")).map(x=>x.path).sort().reverse()}catch(e){}
+  renderAdmin();
+}
+function codeHtml(){
+  const sub=(k,l)=>`<button type="button" class="${codeSub===k?"on":""}" data-sub="${k}">${l}</button>`;
+  const head=`<div class="seg subs">${sub("css","🎨 Custom CSS")}${sub("js","⚡ Custom JS")}${sub("files","📄 Site files")}</div>`;
+  if(codeSub==="css"||codeSub==="js"){
+    const k=codeSub==="css"?"customCss":"customJs";
+    return head+`<div class="hint">${codeSub==="css"?"Ekhane CSS likhle site-er design override hobe (live preview hocche). Upore <b>Save &amp; Publish</b> chapo.":"Ekhane JavaScript likhle site load hole cholbe. <b>Save &amp; Publish</b> chapo, tarpor page reload koro."} Kichu bhenge gele <code>?safe</code> diye site kholo (<code>/?safe#admin</code>) — custom code off thakbe, tumi theek korte parbe.</div>
+      <textarea class="code" data-s="${k}" spellcheck="false" wrap="off" placeholder="${codeSub==="css"?"/* e.g. */\n.card{border-radius:2rem}":"// e.g.\nconsole.log('hello')"}">${esc(CFG.site[k]||"")}</textarea>`;
+  }
+  if(CODEFILES===null){loadCodeFiles();return head+'<div class="msg">Loading…</div>'}
+  if(!curFile)return head+`<div class="hint">⚠️ Eikhane theke site-er asol file edit hoy. Save korar age <b>automatic backup</b> <code>backups/</code> folder-e hoye jay. Index.html-e bhul korle <code>/?safe#admin</code> diye admin kholo ba GitHub-e file-ta restore koro.</div>`+
+    (CODEFILES.length?CODEFILES.map(f=>`<div class="fr"><span>📄 ${esc(f.name)}<small style="display:block;color:var(--muted);font-weight:500">${sz(f.size)}</small></span><button class="mini" data-edit="${esc(f.path)}">✏️ Edit</button></div>`).join(""):'<div class="msg">Kono file paoa jayni.</div>');
+  return head+`<div class="ed-bar"><button class="mini ghost" data-back>← Back</button><b>📄 ${esc(curFile.path)}</b>
+      <button class="mini ghost" data-check>✔ Check syntax</button>
+      ${BACKUPS.length?`<select class="bk" id="bkSel">${BACKUPS.map(p=>`<option value="${esc(p)}">${esc(p.split("/").pop().replace(curFile.path.split("/").pop()+".",""))}</option>`).join("")}</select><button class="mini ghost" data-restore>↩ Restore</button>`:""}
+      <button class="mini green" data-savecode>💾 Save to GitHub</button></div>
+    ${curFile.path==="config.json"?'<div class="hint">⚠️ config.json ekhane edit korle pore Software/Settings tab theke Save korle seta overwrite hote pare. Page reload kore nao.</div>':""}
+    <textarea class="code" id="codeEd" spellcheck="false" wrap="off">${esc(curFile.text)}</textarea>`;
+}
+async function saveCode(){
+  const ta=$("codeEd");if(!ta||!curFile)return;const text=ta.value,p=curFile.path;
+  const err=checkCode(p,text);
+  if(err&&!confirm("⚠️ Syntax error: "+err+"\n\nTobu save korbe? (site bhenge jete pare)"))return;
+  if(p==="index.html"&&!confirm("index.html save korbe? Age backup hoye jabe."))return;
+  try{
+    toast("⏳ Backup & save hocche…");
+    const ts=new Date().toISOString().replace(/[:.]/g,"-").slice(0,19);
+    if(curFile.orig)await putFile(`backups/${p.split("/").pop()}.${ts}.bak`,b64(curFile.orig),"Backup before editing "+p);
+    await putFile(p,b64(text),"Edit "+p+" from admin panel");
+    curFile.orig=curFile.text=text;
+    if(p==="config.json"){/* user edited config directly */}
+    toast("✅ Saved! 1-2 minute-er moddhe live hobe.");
+    const b=await ghApi(`/repos/${USERNAME}/${SITE_REPO}/contents/backups?ref=${BRANCH}&t=${Date.now()}`);
+    if(b.ok)BACKUPS=(await b.json()).filter(x=>x.name.startsWith(p.split("/").pop()+".")).map(x=>x.path).sort().reverse();
+    renderAdmin();
+  }catch(e){toast("❌ "+e.message)}
+}
+document.addEventListener("keydown",e=>{
+  const t=e.target;if(e.key==="Tab"&&t.classList&&t.classList.contains("code")){
+    e.preventDefault();const a=t.selectionStart;t.setRangeText("  ",a,t.selectionEnd,"end");t.dispatchEvent(new Event("input",{bubbles:true}))}
+  if((e.ctrlKey||e.metaKey)&&e.key==="s"&&t.id==="codeEd"){e.preventDefault();saveCode()}
+});
+
+function renderAdmin(){
+  const on=!!TOKEN,sb=document.querySelector(".adm-b"),sc=sb?sb.scrollTop:0;
+  document.querySelectorAll("#admSide [data-tab]").forEach(b=>{b.style.display=on?"":"none";b.classList.toggle("on",b.dataset.tab===tab)});
+  $("admOut").style.display=$("admSave").style.display=on?"":"none";$("admQ").style.display=on&&tab==="apps"?"":"none";
+  $("admTitle").textContent=on?{apps:"📦 Software",feed:"💬 Feed & Storage",files:"🗂️ Files",code:"💻 Code",domain:"🌐 Domain",site:"⚙️ Site settings"}[tab]:"🔐 Admin Login";
+  $("admBody").innerHTML=!on?loginHtml():tab==="apps"?appsHtml():tab==="files"?filesHtml():tab==="code"?codeHtml():tab==="feed"?feedAdm():tab==="domain"?domAdm():siteHtml();
+  if(on&&tab==="files"&&FILES===null)loadFiles();
+  if(on&&tab==="domain"&&!DOM.done)loadDom();
+  if(on&&tab==="feed"&&!ACC.done)testAcc();
+  sb.scrollTop=sc;updDirty();
+}
+async function login(tok,remember){
+  TOKEN=tok.trim();
+  const r=await ghApi(`/repos/${USERNAME}/${SITE_REPO}`);
+  if(!r.ok){TOKEN="";throw new Error("Token kaj korche na (ba repo access nai)")}
+  const j=await r.json();
+  if(!j.permissions||!j.permissions.push){TOKEN="";throw new Error("Ei token-e write permission nai (Contents: Read and write dao)")}
+  try{(remember?localStorage:sessionStorage).setItem("adm_tok",TOKEN)}catch(e){}
+}
+async function openAdmin(){
+  $("adm").classList.add("open");
+  if(!TOKEN){
+    let t=null;try{t=localStorage.getItem("adm_tok")||sessionStorage.getItem("adm_tok")}catch(e){}
+    if(t){try{await login(t,!!localStorage.getItem("adm_tok"))}catch(e){TOKEN="";try{localStorage.removeItem("adm_tok");sessionStorage.removeItem("adm_tok")}catch(_){}}}
+  }
+  renderAdmin();
+}
+function closeAdmin(){$("adm").classList.remove("open");if(location.hash==="#admin")history.replaceState(null,"",location.pathname);render()}
+function setField(repo,f,v){const o=CFG.apps[repo]||(CFG.apps[repo]={});if(v===""||v===undefined)delete o[f];else o[f]=v}
+$("admLink").onclick=openAdmin;
+$("admClose").onclick=closeAdmin;
+$("admOut").onclick=()=>{curFile=null;CODEFILES=null;try{localStorage.removeItem("adm_tok");sessionStorage.removeItem("adm_tok")}catch(e){}TOKEN="";FILES=null;renderAdmin()};
+$("admQ").addEventListener("input",renderAdmin);
+$("admSave").onclick=async()=>{
+  const btn=$("admSave");btn.disabled=true;btn.textContent="Saving…";
+  try{const c=cleaned();await putFile("config.json",b64(JSON.stringify(c,null,2)+"\n"),"Update site config from admin panel");
+    savedStr=JSON.stringify(c);toast("✅ Saved! 1-2 minute-er moddhe sobar jonno live hobe.")}
+  catch(e){toast("❌ Save hoyni: "+e.message)}
+  updDirty();
+};
+$("adm").addEventListener("click",async e=>{
+  const T=e.target,row=T.closest(".ar"),repo=row&&row.dataset.r,q=s=>T.closest(s);
+  if(q("[data-tab]")){tab=q("[data-tab]").dataset.tab;renderAdmin();return}
+  if(q("[data-flt]")){const[k,v]=q("[data-flt]").dataset.flt.split(":");
+    if(k==="all"){admStatus="all";admPlat="all"}else if(k==="status")admStatus=admStatus===v?"all":v;else admPlat=admPlat===v?"all":v;
+    renderAdmin();return}
+  if(q("[data-sub]")){codeSub=q("[data-sub]").dataset.sub;renderAdmin();return}
+  if(q("[data-edit]")){try{await openFile(q("[data-edit]").dataset.edit)}catch(x){toast("❌ "+x.message)}return}
+  if(q("[data-back]")){const ta=$("codeEd");if(ta&&ta.value!==curFile.orig&&!confirm("Save kora hoyni. Back jabe?"))return;curFile=null;renderAdmin();return}
+  if(q("[data-check]")){const err=checkCode(curFile.path,$("codeEd").value);toast(err?"❌ "+err:"✅ Syntax thik ache");return}
+  if(q("[data-savecode]")){await saveCode();return}
+  if(q("[data-restore]")){try{const r=await ghApi(`/repos/${USERNAME}/${SITE_REPO}/contents/${$("bkSel").value}?ref=${BRANCH}`);
+    if(!r.ok)throw new Error("Backup khola gelo na");curFile.text=bdec((await r.json()).content);renderAdmin();toast("↩ Backup editor-e load hoyeche. Save to GitHub chapo.")}catch(x){toast("❌ "+x.message)}return}
+  if(q("[data-pal]")){CFG.site.palette=q("[data-pal]").dataset.pal;applySite();renderAdmin();return}
+  if(q("[data-backup]")){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(cleaned(),null,2)],{type:"application/json"}));a.download="config.json";a.click();return}
+  if(q("[data-avup]")){$("avFile").click();return}
+  if(q("[data-avreset]")){CFG.site.avatar="";setAvatar();$("avPrev").src=avatarSrc();updDirty();return}
+  if(q("[data-up]")){row.querySelector("[data-file]").click();return}
+  if(q("[data-appup]")){row.querySelector(`[data-appfile="${q("[data-appup]").dataset.appup}"]`).click();return}
+  if(q("[data-mdup]")){row.querySelector("[data-mdfile]").click();return}
+  if(q("[data-rmup]")){setField(repo,q("[data-rmup]").dataset.rmup,"");renderAdmin();return}
+  if(q("[data-copy]")){const u=new URL(q(".fr").dataset.p,location.origin+location.pathname).href;try{await navigator.clipboard.writeText(u);toast("🔗 Link copy hoyeche")}catch(x){prompt("Link:",u)}return}
+  if(q("[data-del]")){const fr=q(".fr");if(!confirm("Ei file delete korbe?"))return;
+    const r=await ghApi(`/repos/${USERNAME}/${SITE_REPO}/contents/${fr.dataset.p}`,{method:"DELETE",body:JSON.stringify({message:"Delete "+fr.dataset.p,sha:fr.dataset.sha,branch:BRANCH})});
+    if(r.ok){FILES=null;renderAdmin();toast("🗑 Delete hoyeche")}else toast("❌ Delete hoyni ("+r.status+")");return}
+  if(q("[data-act=login]")){const err=$("loginErr");err.textContent="";
+    try{await login($("tokIn").value,$("tokRem").checked);renderAdmin()}catch(x){err.textContent=x.message}}
+});
+["dragover","dragleave","drop"].forEach(ev=>$("adm").addEventListener(ev,async e=>{
+  const z=e.target.closest("#dz");if(!z)return;e.preventDefault();
+  z.classList.toggle("over",ev==="dragover");
+  if(ev==="drop"){await uploadFiles([...e.dataTransfer.files],"uploads");renderAdmin()}
+}));
+$("adm").addEventListener("input",e=>{
+  const el=e.target;
+  if(el.dataset.s){CFG.site[el.dataset.s]=el.type==="checkbox"?el.checked:el.value;applySite();updDirty();rr();return}
+  const row=el.closest(".ar");if(!row||!el.dataset.f)return;
+  const repo=row.dataset.r,f=el.dataset.f;
+  if(f==="pub"){setField(repo,"hide",!el.checked);row.classList.toggle("off",!el.checked)}
+  else if(f==="featured")setField(repo,"featured",el.checked?true:"");
+  else setField(repo,f,el.value.trim());
+  if(f==="pub"||f==="platform"){const t=$("admTiles");if(t)t.innerHTML=tilesHtml()}
+  if(f==="icon"||f==="category"){const r=build(allRepos.find(x=>x.name===repo));row.querySelector("[data-prev]").innerHTML=iconHtml(r.icon)}
+  updDirty();rr();
+});
+$("adm").addEventListener("change",async e=>{
+  const el=e.target,f=el.files&&el.files[0];if(!f)return;
+  const row=el.closest(".ar"),repo=row&&row.dataset.r;
+  try{
+    if(el.id==="avFile"){
+      toast("⏳ Chobi upload hocche…");const url=await resize(f,400,true,"image/jpeg",.88),path=`icons/me-${Date.now().toString(36)}.jpg`;
+      await putFile(path,url.split(",")[1],"Update profile picture");pendingIcons[path]=url;CFG.site.avatar=path;setAvatar();$("avPrev").src=url;updDirty();toast("✅ Chobi upload hoyeche. Ekhon Save & Publish chapo.")}
+    else if(el.id==="multiUp"){await uploadFiles([...el.files],"uploads");renderAdmin()}
+    else if(el.matches("[data-file]")){
+      toast("⏳ Icon upload hocche…");const url=await resize(f,160,false,"image/png"),path=`icons/${repo.toLowerCase().replace(/[^a-z0-9]/g,"")}-${Date.now().toString(36)}.png`;
+      await putFile(path,url.split(",")[1],"Add icon for "+repo);pendingIcons[path]=url;setField(repo,"icon",path);
+      row.querySelector('[data-f="icon"]').value=path;row.querySelector("[data-prev]").innerHTML=iconHtml(path);updDirty();rr();toast("✅ Icon upload hoyeche. Ekhon Save & Publish chapo.")}
+    else if(el.matches("[data-appfile]")){
+      const dest=await pickDest(f);if(dest===null){el.value="";return}
+      if(dest!=="gh"){const u=await driveUp(f,+dest);setField(repo,el.dataset.appfile,u);renderAdmin();toast("✅ Drive-e upload hoyeche. Ekhon Save & Publish chapo.");return}
+      if(f.size>MAXMB*1048576)throw new Error(`File khub boro (max ${MAXMB} MB)`);
+      toast(`⏳ ${f.name} upload hocche (${sz(f.size)})…`);const k=el.dataset.appfile,sub=k==="uploadAndroid"?"android/":k==="uploadPC"?"pc/":"";
+      const path=`files/${repo}/${sub}${safe(f.name)}`;
+      await putFile(path,await toB64(f),"Upload download file for "+repo);setField(repo,k,path);renderAdmin();toast("✅ File upload hoyeche. Ekhon Save & Publish chapo.")}
+    else if(el.matches("[data-mdfile]")){
+      const t=await f.text();setField(repo,"details",t);row.querySelector('[data-f="details"]').value=t;updDirty();toast("✅ Details load hoyeche. Save & Publish chapo.")}
+  }catch(x){toast("❌ "+(x.message||"Upload hoyni"))}
+  el.value="";
+});
+
+/* ===== Details: only features & functions (no build / GitHub info) ===== */
+const F_KEEP=/feature|function|usage|\buse\b|using|how|work|what|overview|about|descri|highlight|capabilit|screenshot|demo|preview|option|support|mode|tool|command|shortcut|setting|faq|tips?|workflow|why|benefit|includ|menu|interface|\bui\b|\bgui\b|guide|ফিচার|সুবিধা|ব্যবহার/i;
+const F_DROP=/install|build|compil|setup|set up|clone|develop|contribut|licen|tech|stack|built with|made with|github|\bgit\b|changelog|what'?s new|release|credit|acknowledg|author|contact|donat|sponsor|requirement|prerequisite|dependenc|deploy|structure|roadmap|to-?do|\btests?\b|testing|folder|architect|source|\bcode\b|getting started|quick ?start|history|thanks|\bfork|issue|support me|buy me/i;
+const F_JUNK=/github\.com|git clone|npm (?:i|install|run)|pip install|gradle|android studio|pull request|star this|licensed under|shields\.io|badge/i;
+function featureText(src){
+  if(!src)return"";
+  src=src.replace(/\r/g,"").replace(/<!--[\s\S]*?-->/g,"").replace(/^(```|~~~)[^\n]*\n[\s\S]*?^\1/gm,"");
+  const S=[];let c={l:0,t:"",b:[]};
+  for(const ln of src.split("\n")){const m=ln.match(/^(#{1,6})\s+(.*?)\s*#*\s*$/);if(m){S.push(c);c={l:m[1].length,t:m[2],b:[]}}else c.b.push(ln)}
+  S.push(c);
+  const st=[],out=[];let h1=false;
+  for(const s of S){
+    const t=s.t.replace(/[^\p{L}\p{N}\s'’]/gu,"").trim();
+    while(st.length&&st[st.length-1].l>=s.l)st.pop();
+    const par=st.length?st[st.length-1].k:false;
+    const k=s.l===0||(s.l===1&&!h1)?true:F_DROP.test(t)?false:F_KEEP.test(t)?true:par;
+    if(s.l===1)h1=true;
+    st.push({l:s.l,k:s.l<=1?false:k});
+    if(!k)continue;
+    const b=s.b.filter(x=>!F_JUNK.test(x)).join("\n").replace(/\[!\[[^\]]*\]\([^)]*\)\]\([^)]*\)/g,"").replace(/<img\b[^>]*(?:shields\.io|badge)[^>]*>/gi,"").replace(/\[([^\]]+)\]\(https?:\/\/(?:www\.)?github\.com[^)]*\)/gi,"$1").trim();
+    if(b)out.push((s.l>1?"#".repeat(s.l)+" "+s.t+"\n\n":"")+b);
+  }
+  return out.join("\n\n").slice(0,12000);
+}
+
+/* ===== Community feed (data lives in your Google Drive via Apps Script) ===== */
+const FT={request:["🆕","Software request","#3b82f6"],bug:["🐞","Bug fix","#ef4444"],idea:["💡","Idea","#f59e0b"],other:["💬","General","#7c3aed"]};
+const FERR={verify:"Please verify your email first.",mail_failed:"Couldn't send the email right now.",wrong_code:"Wrong code, try again.",expired:"Code expired. Please resend.",banned:"This email is not allowed to post.",too_many:"Too many posts. Please try again later.",bad_email:"Please enter a valid email.",name:"Please enter your name.",empty:"Write something first.",too_long:"Max 200 words please.",bad_image:"One of the images isn't supported.",img_big:"An image is too large.",not_configured:"Feed is not set up yet."};
+let VSTEP=null,FEED={items:[],full:[],ok:[],loaded:false,busy:false,mode:"optional"},IMGS=[],DRAFT={text:"",type:"request",app:""},ME={};
+try{ME=JSON.parse(localStorage.getItem("feed_me")||"{}")}catch(e){}
+function isFeedPage(){return /[?&]feed\b/.test(location.search)}
+const accs=()=>((CFG.feed||{}).accounts||[]).filter(a=>a.url),feedOn=()=>(CFG.feed||{}).enabled!==false&&accs().length>0;
+const thumb=id=>"https://drive.google.com/thumbnail?id="+id+"&sz=w1200";
+async function gcall(url,body,ms){const c=new AbortController(),t=setTimeout(()=>c.abort(),ms||30000);
+  try{const r=await(body?fetch(url,{method:"POST",body:JSON.stringify(body),signal:c.signal}):fetch(url,{signal:c.signal}));return await r.json()}finally{clearTimeout(t)}}
+const ago=t=>{const s=(Date.now()-t)/1e3;return s<60?"just now":s<3600?Math.floor(s/60)+"m ago":s<86400?Math.floor(s/3600)+"h ago":s<2592e3?Math.floor(s/86400)+"d ago":new Date(t).toLocaleDateString()};
+const vOK=()=>!!ME.token&&ME.vmail===(ME.email||"").trim().toLowerCase()&&ME.exp>Date.now();
+const wc=t=>t.trim().split(/\s+/).filter(Boolean).length;
+const shrink=f=>new Promise((res,rej)=>{const im=new Image(),u=URL.createObjectURL(f);im.onload=()=>{const k=Math.min(1,1280/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL("image/jpeg",.8))};im.onerror=rej;im.src=u});
+function applyFeedNav(){$("vnav").hidden=!feedOn();if(!feedOn()&&!$("feedView").hidden)setView("soft")}
+function setView(v){$("swView").hidden=v==="feed";$("feedView").hidden=v!=="feed";
+  document.querySelectorAll("#vnav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  if(v==="feed"){document.title="Community Feed";if(!FEED.loaded)loadFeed();else renderFeed()}}
+$("vnav").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const f=b.dataset.v==="feed";if(f!==isFeedPage())location.href=location.pathname+(f?"?feed":"")});
+async function loadFeed(){
+  FEED.busy=true;renderFeed();const A=accs();
+  const R=await Promise.allSettled(A.map(a=>gcall(a.url+"?action=list")));
+  FEED.items=[];FEED.full=[];FEED.ok=[];
+  R.forEach((r,i)=>{const v=r.value,ok=r.status==="fulfilled"&&v&&v.ok;if(ok&&v.mode&&!FEED.modeSet){FEED.mode=v.mode;FEED.modeSet=1}FEED.ok[i]=!!ok;FEED.full[i]=!!(ok&&v.full);if(ok)v.posts.forEach(p=>FEED.items.push({...p,src:i}))});
+  FEED.items.sort((a,b)=>b.ts-a.ts);FEED.busy=false;FEED.loaded=true;renderFeed();
+}
+const postHtml=p=>{const t=FT[p.type]||FT.other;return`<article class="fp"><div class="fp-h"><div class="fav" style="background:${COLORS[(p.name.charCodeAt(0)||0)%COLORS.length]}">${esc((p.name[0]||"?").toUpperCase())}</div><div class="fp-n"><b>${esc(p.name)}</b>${p.v?' <span title="Verified email" style="color:#10b981">✔</span>':""}<small>${ago(p.ts)}</small></div><div class="tags"><span class="tag" style="--c:${t[2]}">${t[0]} ${t[1]}</span>${p.app?`<span class="tag ver">📦 ${esc(p.app)}</span>`:""}</div></div><div class="fp-t">${esc(p.text)}</div>${p.imgs&&p.imgs.length?`<div class="fp-i">${p.imgs.map(i=>`<a href="${thumb(i)}" target="_blank" rel="noopener"><img src="${thumb(i)}" loading="lazy" alt=""></a>`).join("")}</div>`:""}</article>`};
+function cnt(){const t=$("fText");if(!t)return;const n=wc(t.value),c=$("fCnt");c.textContent=n+"/200 words";c.style.color=n>200?"#ef4444":""}
+function renderFeed(){
+  const v=$("feedView");if(v.hidden)return;
+  const ta=$("fText");if(ta)DRAFT.text=ta.value;const ft=$("fType");if(ft)DRAFT.type=ft.value;const fa=$("fApp");if(fa)DRAFT.app=fa.value;
+  const apps=visItems().map(r=>r.dispName).sort();
+  v.innerHTML=`<div class="fc"><h3>💬 Community Feed</h3><p class="fh">Request new software, report a bug, or share anything — up to 200 words and 5 images. Your email is required but stays private; only the site owner can see it.</p>
+  <div class="fr2"><input class="fin" id="fName" placeholder="Your name" maxlength="40" value="${esc(ME.name||"")}"><input class="fin" id="fMail" type="email" placeholder="Your own email (required)" value="${esc(ME.email||"")}"></div>
+  ${FEED.mode!=="off"?`<div class="ffoot" style="margin:0 0 .5rem">${vOK()?'<span class="tag" style="--c:#10b981">✔ Email verified</span>':`<button class="mini ghost" id="fVer" type="button">✉️ Verify email</button><span>${FEED.mode==="required"?"Required to post.":"Optional — verified posts get a ✔ and higher limits."}</span>`}</div>`:""}${VSTEP&&!vOK()?`<div class="fr2"><input class="fin" id="fCode" inputmode="numeric" maxlength="6" placeholder="6-digit code (check spam too)"><div class="ffoot" style="margin:0"><button class="mini" id="fVok" type="button">Confirm</button><button class="mini ghost" id="fRes" type="button" ${Date.now()-VSTEP.t<3e4?"disabled":""}>Resend</button></div></div>`:""}
+  <div class="fr2"><select class="fin" id="fType">${Object.entries(FT).map(([k,t])=>`<option value="${k}" ${DRAFT.type===k?"selected":""}>${t[0]} ${t[1]}</option>`).join("")}</select>
+  <select class="fin" id="fApp"><option value="">Which software? (optional)</option>${apps.map(a=>`<option ${DRAFT.app===a?"selected":""}>${esc(a)}</option>`).join("")}</select></div>
+  <textarea class="fin" id="fText" rows="4" placeholder="Write here…">${esc(DRAFT.text)}</textarea>
+  <div class="fimgs">${IMGS.map((d,i)=>`<div><img src="${d}" alt=""><button type="button" data-fx="${i}">✕</button></div>`).join("")}</div>
+  <div class="ffoot"><span id="fCnt"></span><label class="mini ghost">🖼 Images ${IMGS.length}/5<input type="file" id="fImg" accept="image/*" multiple hidden></label><button class="mini" id="fPost" type="button">Post</button></div><div class="err" id="fErr"></div></div>`
+  +(FEED.busy?'<div class="msg">Loading…</div>':!FEED.ok.some(Boolean)?'<div class="msg">Feed is not available right now.</div>':FEED.items.length?FEED.items.map(postHtml).join(""):'<div class="msg">No posts yet. Be the first! ✨</div>');
+  cnt();
+}
+$("feedView").addEventListener("input",e=>{const i=e.target.id;
+  if(i==="fText")cnt();
+  if(i==="fName"||i==="fMail"){ME={...ME,name:$("fName").value,email:$("fMail").value};try{localStorage.setItem("feed_me",JSON.stringify(ME))}catch(x){}}});
+$("feedView").addEventListener("change",async e=>{if(e.target.id!=="fImg")return;
+  for(const f of[...e.target.files].slice(0,5-IMGS.length)){try{IMGS.push(await shrink(f))}catch(x){}}renderFeed()});
+$("feedView").addEventListener("click",async e=>{
+  const x=e.target.closest("[data-fx]");if(x){IMGS.splice(+x.dataset.fx,1);renderFeed();return}
+  const id=e.target.id,eb=$("fErr"),mail0=($("fMail")||{value:""}).value.trim().toLowerCase();
+  if(id==="fVer"||id==="fRes"){
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail0))return eb.textContent="Enter your email first.";
+    e.target.disabled=true;e.target.textContent="Sending…";let msg="",A=accs();
+    for(let i=0;i<A.length;i++){if(FEED.ok[i]===false)continue;
+      try{const r=await gcall(A[i].url,{action:"send_code",email:mail0},25000);
+        if(r.ok){VSTEP={acc:i,t:Date.now(),mail:mail0};setTimeout(renderFeed,30500);renderFeed();toast("✉️ Code sent — check inbox/spam");return}
+        if(r.error==="mail_failed")continue;msg=FERR[r.error]||r.error;break}catch(x){}}
+    renderFeed();$("fErr").textContent=(msg||FERR.mail_failed)+(FEED.mode==="required"?" Please try again in a minute.":" You can still post without verifying.");return}
+  if(id==="fVok"){const code=$("fCode").value.trim();if(!code)return;e.target.disabled=true;
+    try{const r=await gcall(accs()[VSTEP.acc].url,{action:"verify",email:VSTEP.mail,code},25000);
+      if(r.ok){ME={...ME,token:r.token,vmail:VSTEP.mail,exp:Date.now()+29*864e5};try{localStorage.setItem("feed_me",JSON.stringify(ME))}catch(_){}VSTEP=null;renderFeed();toast("✔ Email verified");return}
+      e.target.disabled=false;eb.textContent=FERR[r.error]||r.error}catch(x){e.target.disabled=false;eb.textContent="Network problem."}return}
+  if(id!=="fPost")return;
+  const err=$("fErr"),btn=e.target,name=$("fName").value.trim(),mail=$("fMail").value.trim(),text=$("fText").value.trim();
+  err.textContent="";
+  if(name.length<2)return err.textContent="Please enter your name.";
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail))return err.textContent="Please enter your own valid email.";
+  if(!text)return err.textContent="Write something first.";
+  if(wc(text)>200)return err.textContent="Max 200 words please.";
+  if(FEED.mode==="required"&&!vOK())return err.textContent=FERR.verify;
+  btn.disabled=true;btn.textContent="Posting…";
+  const body={action:"post",token:vOK()?ME.token:"",name,email:mail,type:$("fType").value,app:$("fApp").value,text,images:IMGS},A=accs();
+  let done=false,msg="";
+  for(let i=0;i<A.length;i++){if(FEED.ok[i]===false||FEED.full[i])continue;
+    try{const r=await gcall(A[i].url,body,90000);
+      if(r.ok){done=true;IMGS=[];FEED.items.unshift({...r.post,src:i});break}
+      if(r.error==="full"){FEED.full[i]=true;continue}
+      msg=FERR[r.error]||"Could not post ("+r.error+")";break}
+    catch(x){msg="Network problem, please try again."}}
+  if(done){$("fText").value="";DRAFT.text="";toast("✅ Posted!")}
+  renderFeed();if(!done){const e2=$("fErr");if(e2)e2.textContent=msg||"No storage available right now."}
+});
+
+/* ===== Admin: Feed & Drive storage ===== */
+let FKEY="";try{FKEY=localStorage.getItem("feed_key")||""}catch(e){}
+let ACC={done:false,st:{}},MOD={posts:[],banned:[],msg:""},SET={copied:false,deployed:false,url:"",name:"",manual:""},SCRIPT_TXT="",CHKT;
+function genKey(){FKEY=[...crypto.getRandomValues(new Uint8Array(18))].map(n=>n.toString(36).padStart(2,"0")).join("").slice(0,24);try{localStorage.setItem("feed_key",FKEY)}catch(_){}}
+function prefetchScript(){if(SCRIPT_TXT)return;fetch("apps-script/Code.gs?t="+Date.now()).then(r=>r.text()).then(t=>{SCRIPT_TXT=t}).catch(()=>{})}
+const normUrl=v=>{v=(v||"").trim();if(/^AKfy[\w-]+$/.test(v))v="https://script.google.com/macros/s/"+v+"/exec";return/^https:\/\/script\.google\.com\/.+\/exec$/.test(v)?v:""};
+async function goScript(){
+  if(!FKEY)genKey();
+  if(!SCRIPT_TXT)SCRIPT_TXT=await(await fetch("apps-script/Code.gs?t="+Date.now())).text();
+  const t=SCRIPT_TXT.replace("PASTE_YOUR_ADMIN_KEY_HERE",FKEY);let ok=true;
+  const p=navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject();
+  window.open("https://script.new","_blank");
+  try{await p}catch(_){ok=false}
+  SET.copied=true;SET.manual=ok?"":t;
+  toast(ok?"📋 Script copy hoyeche → Google Script-e Ctrl+A, Ctrl+V, Ctrl+S":"⚠️ Auto-copy hoyni, niche theke copy koro");
+  renderAdmin();
+}
+const gb=n=>n==null?"?":(n/1073741824).toFixed(1)+" GB";
+function feedAdm(){setTimeout(()=>{const m=document.querySelector("[data-m=mode]"),s=Object.values(ACC.st).find(x=>x&&x.mode);if(m)m.value=(s&&s.mode)||"optional"},0);
+  if(!FKEY)genKey();prefetchScript();
+  const F=CFG.feed,A=F.accounts||[];
+  const st=i=>{const s=ACC.st[i];return!s?"checking…":!s.ok?"❌ not reachable / not deployed":`${gb(s.used)} used of ${s.limit?gb(s.limit):"?"} · ${s.full?'<b style="color:#ef4444">FULL</b>':"free "+gb(s.free)}`};
+  const sc=(n,ok,t,body)=>`<div class="stp ${ok?"ok":""}"><span class="n">${ok?"✓":n}</span><div><b>${t}</b>${body}</div></div>`;
+  return`<div class="box2"><label class="sw"><input type="checkbox" data-x="fen" ${F.enabled!==false?"checked":""}> Show Community Feed on the site</label>
+  <label>✉️ Email verification (feed)<select data-m="mode"><option value="off">Off</option><option value="optional">Optional — ✔ badge, unverified: 2 posts/hour</option><option value="required">Required</option></select></label>
+  <p class="hint">Feed alada page-e khole: <a href="?feed" target="_blank" rel="noopener"><code>${esc(location.origin+location.pathname)}?feed</code></a></p>
+  <h3>☁️ Google Drive storage (one Apps Script per Gmail)</h3>
+  <p class="hint">Posts &amp; images ei Drive-gulote save hoy. Order = priority: ekta full hole post automatic porer Drive-e jabe.</p>
+  ${A.map((a,i)=>`<div class="fr"><span>${esc(a.name||"Drive "+(i+1))}<small style="display:block;color:var(--muted);font-weight:500">${st(i)}</small></span><button class="mini" data-x="ftest" data-i="${i}">🔄</button><button class="mini red" data-x="frm" data-i="${i}">🗑</button></div>`).join("")||'<div class="msg" style="padding:12px">No Drive added yet.</div>'}</div>
+  <div class="box2" style="margin-top:14px"><h3>➕ ${A.length?"Another Gmail add koro":"Drive add koro (3 step, one time)"}</h3>
+  ${sc(1,SET.copied,"Script copy kore Google Script kholo",`<p>Ek click-e script (admin key shoho) copy hobe ar Google Script notun tab-e khulbe. Oi Gmail diye login koro, tarpor <b>Ctrl+A → Ctrl+V → Ctrl+S</b>.</p><div class="row"><button class="mini" data-x="fgo">🚀 Copy script &amp; open Google Script</button></div>${SET.manual?`<p style="color:#f59e0b">Auto-copy hoyni. Niche-r code select kore copy koro:</p><textarea class="code" id="fScr" readonly style="min-height:120px" onfocus="this.select()">${esc(SET.manual)}</textarea>`:""}`)}
+  ${sc(2,SET.deployed,"Deploy koro",`<ol><li>Upore dane <b>Deploy → New deployment</b></li><li>⚙️ gear → <b>Web app</b></li><li>Execute as: <b>Me</b> · Who has access: <b>Anyone</b></li><li><b>Deploy</b> → <b>Allow</b> (jodi "not verified" dekhay: <b>Advanced → Go to project</b>)</li><li>Shesh-e dekha <b>Web app URL</b> copy koro</li></ol><div class="row"><button class="mini ghost" data-x="fdep">✅ Deploy hoye gese, URL copy korechi</button></div>`)}
+  ${sc(3,false,"URL paste kore Add koro",`<div class="ar-grid"><label>Web app URL<input id="faUrl" value="${esc(SET.url)}" placeholder="https://script.google.com/macros/s/…/exec"></label><label>Name (optional)<input id="faName" value="${esc(SET.name)}" placeholder="Gmail name (label only)"></label></div><div id="faChk"></div><div class="row"><button class="mini" data-x="fadd">➕ Add &amp; Publish</button></div><p>Add korle page URL check kore nijei <b>Save &amp; Publish</b> kore dey.</p>`)}
+  <details style="margin-top:8px"><summary class="hint" style="cursor:pointer">🔑 Admin key (auto-generated, shobar jonno same)</summary>
+  <label>Admin key<div class="ic-in"><input id="fKey" value="${esc(FKEY)}" placeholder="Generate a secret key"><button class="mini" data-x="fgen">🎲 Generate</button></div></label>
+  <p class="hint">Notun key banale age deploy kora Drive-gulo-te script abar copy-deploy korte hobe, nahole key mile na.</p></details></div>
+  <div class="box2" style="margin-top:14px"><h3>🛡️ Moderation (delete posts / ban users)</h3><div><button class="mini" data-x="fmod">🔄 Load posts</button></div><div class="hint">${esc(MOD.msg)}</div>
+  ${MOD.banned.length?`<div class="chips">${MOD.banned.map(b=>`<span class="chip on" style="--c:#ef4444">${esc(b)} <a href="#" data-x="funban" data-e="${esc(b)}" style="color:#fff">✕ unban</a></span>`).join("")}</div>`:""}
+  ${MOD.posts.map((p,i)=>`<div class="ar" style="--a:#ec4899"><div><b>${esc(p.name)}</b> · ${esc(p.email)} ${p.v?"✔":"(unverified)"} · ${ago(p.ts)} · ${esc((A[p.src]||{}).name||"")}</div><div style="white-space:pre-wrap;margin:6px 0">${esc(p.text)}</div>${(p.imgs||[]).map(x=>`<img src="${thumb(x)}" alt="" style="height:60px;border-radius:8px;margin-right:6px">`).join("")}<div style="margin-top:8px;display:flex;gap:8px"><button class="mini red" data-x="fdel" data-i="${i}">🗑 Delete</button><button class="mini red" data-x="fban" data-i="${i}">🚫 Ban user</button></div></div>`).join("")}</div>`;
+}
+async function testAcc(i){
+  const A=CFG.feed.accounts;ACC.done=true;
+  await Promise.all(A.map(async(a,k)=>{if(i!=null&&i!==k)return;try{ACC.st[k]=await gcall(a.url+"?action=status",null,20000)}catch(e){ACC.st[k]={ok:false}}}));
+  if(tab==="feed")renderAdmin();
+}
+const modAll=b=>Promise.all(CFG.feed.accounts.map(a=>gcall(a.url,{...b,key:FKEY},60000).catch(()=>({ok:false}))));
+async function modLoad(){
+  MOD.msg="Loading…";renderAdmin();
+  const R=await modAll({action:"admin_list"}),ban=new Set();let bad=0;MOD.posts=[];
+  R.forEach((r,i)=>{if(!r.ok){bad++;return}(r.banned||[]).forEach(b=>ban.add(b));r.posts.forEach(p=>MOD.posts.push({...p,src:i}))});
+  MOD.posts.sort((a,b)=>b.ts-a.ts);MOD.banned=[...ban];
+  MOD.msg=(bad?`⚠️ ${bad} Drive failed (admin key mismatch?). `:"")+MOD.posts.length+" posts";renderAdmin();
+}
+$("adm").addEventListener("input",e=>{const id=e.target.id;
+  if(id==="faName")SET.name=e.target.value;
+  if(id!=="faUrl")return;SET.url=e.target.value;clearTimeout(CHKT);
+  const out=t=>{const el=$("faChk");if(el)el.innerHTML=t},v=e.target.value.trim(),u=normUrl(v);
+  if(!v)return out("");
+  if(!u)return out('<span style="color:#ef4444">❌ URL <code>https://script.google.com/…/exec</code> hote hobe (Deploy-er por-er Web app URL)</span>');
+  out("⏳ Check korchi…");
+  CHKT=setTimeout(async()=>{try{const r=await gcall(u+"?action=status",null,20000);
+    out(r&&r.ok?'<span style="color:#10b981">✅ Kaj korche, ebar Add &amp; Publish chapo</span>':'<span style="color:#ef4444">❌ Script uttor dichhe na. Who has access = Anyone dewa ache?</span>')}
+    catch(_){out('<span style="color:#ef4444">❌ Reach kora jachhe na. Deploy hoyeche? Who has access = Anyone?</span>')}},600)});
+$("adm").addEventListener("change",async e=>{const m=e.target.dataset.m;if(m){if(!FKEY)return toast("❌ Admin key dao");await modAll({action:"admin_setmode",mode:e.target.value});FEED.mode=e.target.value;toast("✅ Verification: "+e.target.value);return}
+  if(e.target.id==="fKey"){FKEY=e.target.value.replace(/[^\w-]/g,"");try{localStorage.setItem("feed_key",FKEY)}catch(_){}}});
+
+/* ===== Upload destination (GitHub or Drive) ===== */
+function pickDest(f){return new Promise(async res=>{
+  const A=CFG.feed.accounts||[];if(A.length&&FKEY&&!ACC.done)await testAcc();
+  const big=f.size>MAXMB*1048576,d=document.createElement("div");d.className="mdl open";d.style.zIndex=70;
+  const opt=(v,l,sub,dis)=>`<label class="fr" style="${dis?"opacity:.5":"cursor:pointer"}"><input type="radio" name="dst" value="${v}" ${dis?"disabled":""}><span>${l}<small style="display:block;color:var(--muted);font-weight:500">${sub}</small></span></label>`;
+  d.innerHTML=`<div class="sheet" style="width:min(30rem,100%)"><div class="sh-b"><h3 style="margin:0 0 6px">Kothay rakhbe?</h3><p class="hint">${esc(f.name)} · ${sz(f.size)}</p>
+  ${opt("gh","🐙 GitHub","Site repo-te · max "+MAXMB+" MB",big)}
+  ${A.map((a,i)=>{const s=ACC.st[i]||{},no=!FKEY||!s.ok||(s.free!=null&&s.free<f.size+1.2e8);return opt(i,"☁️ "+esc(a.name||"Drive "+(i+1)),!FKEY?"Feed tab-e Admin key dao":!s.ok?"not reachable":s.free==null?"free space unknown":"free "+gb(s.free),no)}).join("")}
+  </div><div class="sh-f"><button class="mini ghost" data-c>Cancel</button><button class="mini" data-ok>Upload</button></div></div>`;
+  document.body.appendChild(d);const first=d.querySelector("input:not(:disabled)");if(first)first.checked=true;
+  const done=v=>{d.remove();res(v)};
+  d.onclick=e=>{if(e.target===d||e.target.closest("[data-c]"))done(null);if(e.target.closest("[data-ok]")){const r=d.querySelector("input:checked");if(r)done(r.value)}};
+})}
+async function driveUp(f,i){const a=CFG.feed.accounts[i],uid=Date.now().toString(36)+Math.random().toString(36).slice(2,7),mime=f.type||"application/octet-stream",CH=3145728;
+  let r=await gcall(a.url,{action:"admin_up_start",key:FKEY,uid,name:f.name,mime,size:f.size},60000);if(!r.ok)throw new Error(r.error==="full"?"Drive-e jayga nai":"Drive start failed: "+r.error);
+  for(let st=0;st<f.size;st+=CH){toast(`⏳ ${f.name} → Drive ${Math.round(st/f.size*100)}%`);
+    r=await gcall(a.url,{action:"admin_up_chunk",key:FKEY,uid,start:st,size:f.size,mime,data:await toB64(f.slice(st,st+CH))},120000);if(!r.ok)throw new Error("Drive: "+r.error)}
+  if(!r.done)throw new Error("Upload incomplete");
+  return"https://drive.google.com/uc?export=download&id="+r.id+"#"+safe(f.name)}
+
+/* ===== Admin: Domain ===== */
+let DOM={done:false,cname:"",pg:null,msg:""};
+const GHIP=["185.199.108.153","185.199.109.153","185.199.110.153","185.199.111.153"];
+const cleanDom=v=>{v=v.trim().toLowerCase().replace(/^https?:\/\//,"").replace(/[\/:?#].*$/,"").replace(/\.$/,"");return/^(?!-)([a-z0-9-]{1,63}\.)+[a-z0-9-]{2,63}$/.test(v)&&!/github\.io$/.test(v)?v:""};
+const PG=`/repos/${USERNAME}/${SITE_REPO}/pages`;
+async function loadDom(){DOM.done=true;
+  try{const r=await ghApi(`/repos/${USERNAME}/${SITE_REPO}/contents/CNAME?ref=${BRANCH}&t=${Date.now()}`);DOM.cname=r.ok?bdec((await r.json()).content).trim():"";
+    const p=await ghApi(PG);DOM.pg=p.ok?await p.json():null;if(DOM.pg&&DOM.pg.cname)DOM.cname=DOM.pg.cname}catch(e){}
+  if(tab==="domain")renderAdmin()}
+function domAdm(){return`<div class="box2"><h3>🌐 Website domain</h3>
+  <p class="hint">Ekhon: <b>${esc(location.host)}</b>${DOM.cname?` · Custom domain: <b>${esc(DOM.cname)}</b>`:" (free github.io)"}${DOM.pg&&DOM.pg.https_enforced?" · 🔒 HTTPS on":""}</p>
+  <label>Custom / free domain<input id="dIn" value="${esc(DOM.cname)}" placeholder="example.com ba app.example.com"></label>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="mini" data-x="dset">🔗 Connect domain</button><button class="mini" data-x="dhttps">🔒 Enable HTTPS</button>${DOM.cname?'<button class="mini red" data-x="drm">✕ Remove</button>':""}</div>
+  <div class="hint">${esc(DOM.msg)}</div></div>
+  <div class="box2" style="margin-top:14px"><h3>DNS records (domain provider-er DNS panel-e)</h3>
+  <p class="hint"><b>Root domain</b> (example.com) → 4 ta <b>A</b> record: ${GHIP.join(", ")}<br><b>Subdomain</b> (www / app …) → <b>CNAME</b> → <code>${USERNAME}.github.io</code><br>DNS change hote kichu minute–ghonta lagte pare, tarpor <b>Enable HTTPS</b> chapo.</p>
+  <p class="hint"><b>Free:</b> <code>${USERNAME}.github.io</code> already free. Free subdomain: is-a.dev, js.org, eu.org, DigitalPlat FreeDomain, FreeDNS (afraid.org) — terms bodlate pare, check kore nio. Domain bodle notun address-e browser data alada, tai ei admin-e abar GitHub token diye login korte hobe.</p></div>`}
+$("adm").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-x]");if(!b)return;if(b.type!=="checkbox")e.preventDefault();
+  const x=b.dataset.x,i=+b.dataset.i,F=CFG.feed,gh=PG;
+  try{
+    if(x==="fen"){F.enabled=b.checked;applyFeedNav();updDirty()}
+    else if(x==="fgo")await goScript();
+    else if(x==="fdep"){SET.deployed=true;renderAdmin()}
+    else if(x==="fadd"){const u=normUrl($("faUrl").value),n=$("faName").value.trim();
+      if(!u)return toast("❌ Valid Web app URL (…/exec) dao");
+      if(F.accounts.some(a=>a.url===u))return toast("ℹ️ Ei Drive already add kora ache");
+      b.disabled=true;b.textContent="⏳ Checking…";let s=null;try{s=await gcall(u+"?action=status",null,20000)}catch(_){}
+      if(!s||!s.ok){b.disabled=false;b.textContent="➕ Add & Publish";if(!confirm("URL kaj korche na (Who has access = Anyone dewa ache to? ba notun deployment-er URL?). Tobuo add korbe?"))return}
+      F.accounts.push({name:n||"Drive "+(F.accounts.length+1),url:u});SET={copied:false,deployed:false,url:"",name:"",manual:""};ACC={done:false,st:{}};updDirty();renderAdmin();
+      const sv=$("admSave");if(sv&&!sv.disabled)sv.click()}
+    else if(x==="frm"){if(confirm("Ei Drive list theke soriye felbe? (Drive-er data thakbe)")){F.accounts.splice(i,1);ACC={done:false,st:{}};updDirty();renderAdmin()}}
+    else if(x==="ftest")await testAcc(i);
+    else if(x==="fgen"){genKey();renderAdmin()}
+    else if(x==="fmod"){if(!FKEY)return toast("❌ Admin key dao");await modLoad()}
+    else if(x==="fdel"){const p=MOD.posts[i];if(!confirm("Ei post delete korbe?"))return;
+      const r=await gcall(F.accounts[p.src].url,{action:"admin_delete",key:FKEY,id:p.id},60000);
+      if(r.ok){MOD.posts.splice(i,1);renderAdmin()}else toast("❌ "+r.error)}
+    else if(x==="fban"){const p=MOD.posts[i];if(!confirm("Ban "+p.email+" ?"))return;
+      const purge=confirm("Tar sob post-o delete korbo? (OK = delete, Cancel = rekhe dao)");
+      await modAll({action:"admin_ban",email:p.email,purge});await modLoad()}
+    else if(x==="funban"){await modAll({action:"admin_unban",email:b.dataset.e});await modLoad()}
+    else if(x==="dset"){const d=cleanDom($("dIn").value);if(!d)return toast("❌ Valid domain dao (e.g. example.com)");
+      await putFile("CNAME",b64(d+"\n"),"Set custom domain");
+      const r=await ghApi(gh,{method:"PUT",body:JSON.stringify({cname:d})});
+      DOM.msg=r.ok?"✅ Connected. DNS thik thakle kichukkhon-e cholbe, tarpor Enable HTTPS chapo.":"✅ CNAME file save hoyeche. (Pages API "+r.status+": token-e Pages permission dile auto hobe, na hole GitHub → Settings → Pages-e domain-ta dao.)";
+      DOM.done=false;renderAdmin()}
+    else if(x==="drm"){if(!confirm("Custom domain soriye felbe?"))return;
+      const g=await ghApi(`/repos/${USERNAME}/${SITE_REPO}/contents/CNAME?ref=${BRANCH}&t=${Date.now()}`);
+      if(g.ok)await ghApi(`/repos/${USERNAME}/${SITE_REPO}/contents/CNAME`,{method:"DELETE",body:JSON.stringify({message:"Remove custom domain",sha:(await g.json()).sha,branch:BRANCH})});
+      await ghApi(gh,{method:"PUT",body:JSON.stringify({cname:null})});DOM.msg="Domain remove hoyeche.";DOM.cname="";DOM.done=false;renderAdmin()}
+    else if(x==="dhttps"){const r=await ghApi(gh,{method:"PUT",body:JSON.stringify({https_enforced:true})});
+      DOM.msg=r.ok?"🔒 HTTPS enabled.":"HTTPS ekhono hoyni ("+r.status+"). DNS thik hole certificate toiri hote kichu minute lage — pore abar chapo.";DOM.done=false;renderAdmin()}
+  }catch(err){toast("❌ "+(err.message||"Failed"))}
+});
+
+load();
+</script>
+</body>
+</html>
