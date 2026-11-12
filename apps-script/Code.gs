@@ -2,6 +2,18 @@
 // 1) Run setup() once and Allow.  2) Deploy > New deployment > Web app (Execute as: Me, Access: Anyone).
 const KEY='PASTE_YOUR_ADMIN_KEY_HERE';
 const MIN_FREE=100*1048576,MAX_WORDS=200,MAX_IMG=5,MAX_IMG_BYTES=3*1048576,PER_HOUR=5,PER_HOUR_UNV=2;
+const MAX_CWORDS=80,MAX_CMT=300,PER_HOUR_C=12,PER_HOUR_C_UNV=5;
+// Link blocker: posts and comments can never contain links (checked here on the server, so it cannot be bypassed from the browser).
+const TLD_='com|net|org|io|me|co|app|dev|xyz|info|biz|link|ly|gl|be|tv|bd|in|us|uk|site|online|store|tech|ai|gg|cc|ws|to|fm|page|live|shop|top|click|cloud|pro|club|vip|fun|icu|one|bio|ink|wiki|edu|gov|mil|int|asia|news|blog|world|space|website|download|zip|mov|so|sh|im|ru|cn|de|fr|jp|kr|pk|np|lk|ae|sa|ca|au|nz|za|ng|ke|br|mx|ar|es|it|nl|se|no|fi|pl|ua|tr|ir|id|my|sg|ph|vn|th|tw|hk';
+function hasLink_(t){
+  let s=String(t||'');try{s=s.normalize('NFKC')}catch(e){}
+  s=s.replace(/[\u200B-\u200F\u2060\uFEFF\u00AD]/g,'').toLowerCase();
+  s=s.replace(/\s*[\[\(\{]\s*(?:dot|\.)\s*[\]\)\}]\s*/g,'.')
+     .replace(new RegExp('\\s+(?:dot|\u09a1\u099f)\\s+(?=(?:'+TLD_+')\\b)','g'),'.')
+     .replace(new RegExp('([a-z0-9])\\s+\\.\\s*(?=(?:'+TLD_+')\\b)','g'),'$1.')
+     .replace(/\bh\s*t\s*t\s*p\s*s?\s*:\s*\/\s*\//g,'http://');
+  if(/(?:https?|ftp|ftps|file):\/\/|\/\/[a-z0-9-]+\.|\bwww\s*\.|\bmailto:|\b(?:t\.me|wa\.me|bit\.ly|tinyurl|youtu\.be|goo\.gl|fb\.me|m\.me|discord\.gg|linktr\.ee)\b/.test(s))return true;
+  return new RegExp('[a-z0-9][a-z0-9-]*(?:\\.[a-z0-9-]+)*\\.(?:'+TLD_+')(?![a-z0-9-])(?:[\\/:?#]|\\b)').test(s)}
 function setup(){folders_();Logger.log('OK, used '+DriveApp.getStorageUsed())}
 const mode_=()=>P_().getProperty('mode')||'optional';
 const cleanEm_=v=>{v=String(v||'').trim().toLowerCase();return/^[^\s@|]+@[^\s@|]+\.[^\s@|]{2,}$/.test(v)?v:''};
@@ -24,7 +36,8 @@ function save_(d){const s=JSON.stringify(d),p=P_();
   p.setProperty('index',folders_().root.createFile('index.json',s,'application/json').getId())}
 function space_(){let u=0,l=0;try{u=DriveApp.getStorageUsed();l=DriveApp.getStorageLimit()}catch(e){}
   return{used:u,limit:l,free:l?l-u:null,full:!!l&&l-u<MIN_FREE}}
-const pub_=p=>({v:!!p.v,id:p.id,ts:p.ts,name:p.name,type:p.type,app:p.app,text:p.text,imgs:p.imgs});
+const cpub_=c=>({id:c.id,ts:c.ts,name:c.name,v:!!c.v,text:c.text});
+const pub_=p=>({v:!!p.v,id:p.id,ts:p.ts,name:p.name,type:p.type,app:p.app,text:p.text,imgs:p.imgs,cm:(p.cm||[]).map(cpub_)});
 function trash_(ids){(ids||[]).forEach(i=>{try{DriveApp.getFileById(i).setTrashed(true)}catch(e){}})}
 const clear_=()=>CacheService.getScriptCache().remove('l0');
 function doGet(e){
@@ -41,6 +54,7 @@ function doPost(e){let d;
   try{if(d.action==='send_code'||d.action==='verify')return J_(d.action==='verify'?verify_(d):code_(d));
     L.waitLock(25000);
     if(d.action==='post')return J_(post_(d));
+    if(d.action==='comment')return J_(comment_(d));
     if(String(d.action).indexOf('admin_')===0)return J_(admin_(d));
     return J_({ok:false,error:'bad'})}
   catch(err){return J_({ok:false,error:String(err.message||err)})}
@@ -66,6 +80,7 @@ function post_(d){
   const name=String(d.name||'').trim().slice(0,40),text=String(d.text||'').trim(),n=text.split(/\s+/).filter(Boolean).length;
   if(name.length<2)return{ok:false,error:'name'};
   if(!n)return{ok:false,error:'empty'};
+  if(hasLink_(name)||hasLink_(text)||hasLink_(d.app))return{ok:false,error:'no_links'};
   if(n>MAX_WORDS||text.length>3000)return{ok:false,error:'too_long'};
   const im=Array.isArray(d.images)?d.images:[];if(im.length>MAX_IMG)return{ok:false,error:'bad_image'};
   const c=CacheService.getScriptCache(),rk='r:'+em,r=+(c.get(rk)||0);
@@ -78,6 +93,22 @@ function post_(d){
   catch(x){trash_(ids);return{ok:false,error:String(x.message)}}
   const p={v:ver,id:id,ts:Date.now(),name:name,email:em,type:['request','bug','idea'].indexOf(d.type)>=0?d.type:'other',app:String(d.app||'').slice(0,60),text:text,imgs:ids};
   db.posts.unshift(p);save_(db);clear_();return{ok:true,post:pub_(p)}}
+function comment_(d){
+  const em=cleanEm_(d.email);if(!em)return{ok:false,error:'bad_email'};
+  const ver=tokOk_(d.token,em);if(!ver&&mode_()==='required')return{ok:false,error:'verify'};
+  const db=load_();if(db.banned.indexOf(em)>=0)return{ok:false,error:'banned'};
+  const p=db.posts.find(x=>x.id===String(d.pid||''));if(!p)return{ok:false,error:'gone'};
+  const name=String(d.name||'').trim().slice(0,40),text=String(d.text||'').trim(),n=text.split(/\s+/).filter(Boolean).length;
+  if(name.length<2)return{ok:false,error:'name'};
+  if(!n)return{ok:false,error:'empty'};
+  if(hasLink_(name)||hasLink_(text))return{ok:false,error:'no_links'};
+  if(n>MAX_CWORDS||text.length>800)return{ok:false,error:'too_long_c'};
+  p.cm=p.cm||[];if(p.cm.length>=MAX_CMT)return{ok:false,error:'cfull'};
+  if(space_().full)return{ok:false,error:'full'};
+  const c=CacheService.getScriptCache(),rk='k:'+em,r=+(c.get(rk)||0);
+  if(r>=(ver?PER_HOUR_C:PER_HOUR_C_UNV))return{ok:false,error:'too_many'};c.put(rk,String(r+1),3600);
+  const cm={id:Utilities.getUuid().replace(/-/g,'').slice(0,10),ts:Date.now(),name:name,email:em,v:ver,text:text};
+  p.cm.push(cm);save_(db);clear_();return{ok:true,comment:cpub_(cm)}}
 function admin_(d){
   if(d.key!==KEY)return{ok:false,error:'auth'};
   if(d.action==='admin_setmode'){P_().setProperty('mode',['off','optional','required'].indexOf(d.mode)>=0?d.mode:'optional');clear_();return{ok:true}}
@@ -96,8 +127,9 @@ function admin_(d){
   const db=load_(),em=String(d.email||'').toLowerCase();
   if(d.action==='admin_list')return Object.assign({ok:true,posts:db.posts.slice(0,100),banned:db.banned},space_());
   if(d.action==='admin_delete'){const p=db.posts.find(x=>x.id===d.id);if(p){trash_(p.imgs);db.posts=db.posts.filter(x=>x!==p)}}
+  else if(d.action==='admin_delcomment'){const p=db.posts.find(x=>x.id===d.pid);if(p&&p.cm)p.cm=p.cm.filter(c=>c.id!==d.cid)}
   else if(d.action==='admin_ban'){if(db.banned.indexOf(em)<0)db.banned.push(em);
-    if(d.purge)db.posts=db.posts.filter(x=>{if(x.email!==em)return true;trash_(x.imgs);return false})}
+    if(d.purge){db.posts=db.posts.filter(x=>{if(x.email!==em)return true;trash_(x.imgs);return false});db.posts.forEach(x=>{if(x.cm)x.cm=x.cm.filter(c=>c.email!==em)})}}
   else if(d.action==='admin_unban')db.banned=db.banned.filter(x=>x!==em);
   else return{ok:false,error:'bad'};
   save_(db);clear_();return{ok:true}}
