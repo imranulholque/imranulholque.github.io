@@ -1044,12 +1044,12 @@ function feedAdm(){setTimeout(()=>{const m=document.querySelector("[data-m=mode]
   <h3>☁️ Google Drive storage (one Apps Script per Gmail)</h3>
   <p class="hint">Posts &amp; images ei Drive-gulote save hoy. Order = priority: ekta full hole post automatic porer Drive-e jabe. Add/remove korle <b>Save &amp; Publish</b> chapo.</p>
   ${A.map((a,i)=>`<div class="fr"><span>${esc(a.name||"Drive "+(i+1))}<small style="display:block;color:var(--muted);font-weight:500">${st(i)}</small></span><button class="mini" data-x="ftest" data-i="${i}">🔄</button><button class="mini red" data-x="frm" data-i="${i}">🗑</button></div>`).join("")||'<div class="msg" style="padding:12px">No Drive added yet.</div>'}
-  <div class="ar-grid"><label>Name<input id="faName" placeholder="Gmail 1"></label><label>Web app URL<input id="faUrl" placeholder="https://script.google.com/macros/s/…/exec"></label></div>
+  <div class="ar-grid"><label>Name<input id="faName" placeholder="Gmail name / email (label only)"></label><label>Web app URL<input id="faUrl" placeholder="Paste Web app URL (or just its ID)"></label></div>
   <div><button class="mini" data-x="fadd">➕ Add Drive</button></div></div>
   <div class="box2" style="margin-top:14px"><h3>🔑 Setup (each Gmail, one time)</h3>
   <label>Admin key (same key in every Drive)<div class="ic-in"><input id="fKey" value="${esc(FKEY)}" placeholder="Generate a secret key"><button class="mini" data-x="fgen">🎲 Generate</button></div></label>
-  <ol class="hint"><li><b>Copy script</b> chapo.</li><li>Oi Gmail-e <b>script.google.com</b> → New project → paste → Save → <code>setup</code> run kore Allow koro.</li><li><b>Deploy → New deployment → Web app</b> → Execute as <b>Me</b>, Access <b>Anyone</b> → <code>/exec</code> URL copy koro.</li><li>(Script update korle: Deploy → Manage deployments → ✏️ → New version, ar <code>setup</code> abar run kore Allow.)</li><li>Upore URL paste kore Add Drive → Save &amp; Publish.</li></ol>
-  <div><button class="mini" data-x="fcode">📋 Copy script</button></div><textarea class="code" id="fCode" hidden style="min-height:140px"></textarea></div>
+  <ol class="hint"><li><b>Open Google Script</b> chapo → oi Gmail diye login koro → <b>New project</b> khulbe.</li><li><b>Copy script</b> chapo, tarpor Google Script-e puro code muche <b>paste</b> koro, <b>Ctrl+S</b>.</li><li>Upore dane <b>Deploy → New deployment → ⚙️ Web app</b> → Execute as <b>Me</b>, Access <b>Anyone</b> → Deploy → <b>Allow</b> (Advanced → Go to project) → <b>Web app URL</b> copy koro.</li><li>Niche URL paste kore <b>Add Drive</b> → upore <b>Save &amp; Publish</b>.</li></ol>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="mini" href="https://script.new" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block">🔗 Open Google Script</a><button class="mini" data-x="fcode">📋 Copy script</button></div><textarea class="code" id="fCode" hidden style="min-height:140px"></textarea></div>
   <div class="box2" style="margin-top:14px"><h3>🛡️ Moderation (delete posts / ban users)</h3><div><button class="mini" data-x="fmod">🔄 Load posts</button></div><div class="hint">${esc(MOD.msg)}</div>
   ${MOD.banned.length?`<div class="chips">${MOD.banned.map(b=>`<span class="chip on" style="--c:#ef4444">${esc(b)} <a href="#" data-x="funban" data-e="${esc(b)}" style="color:#fff">✕ unban</a></span>`).join("")}</div>`:""}
   ${MOD.posts.map((p,i)=>`<div class="ar" style="--a:#ec4899"><div><b>${esc(p.name)}</b> · ${esc(p.email)} ${p.v?"✔":"(unverified)"} · ${ago(p.ts)} · ${esc((A[p.src]||{}).name||"")}</div><div style="white-space:pre-wrap;margin:6px 0">${esc(p.text)}</div>${(p.imgs||[]).map(x=>`<img src="${thumb(x)}" alt="" style="height:60px;border-radius:8px;margin-right:6px">`).join("")}<div style="margin-top:8px;display:flex;gap:8px"><button class="mini red" data-x="fdel" data-i="${i}">🗑 Delete</button><button class="mini red" data-x="fban" data-i="${i}">🚫 Ban user</button></div></div>`).join("")}</div>`;
@@ -1112,13 +1112,13 @@ $("adm").addEventListener("click",async e=>{
   const x=b.dataset.x,i=+b.dataset.i,F=CFG.feed,gh=PG;
   try{
     if(x==="fen"){F.enabled=b.checked;applyFeedNav();updDirty()}
-    else if(x==="fadd"){const n=$("faName").value.trim(),u=$("faUrl").value.trim();
+    else if(x==="fadd"){const n=$("faName").value.trim();let u=$("faUrl").value.trim();if(/^AKfy[\w-]+$/.test(u))u="https://script.google.com/macros/s/"+u+"/exec";
       if(!/^https:\/\/script\.google\.com\/.+\/exec$/.test(u))return toast("❌ Valid Web app URL (…/exec) dao");
       F.accounts.push({name:n||"Drive "+(F.accounts.length+1),url:u});ACC={done:false,st:{}};updDirty();renderAdmin()}
     else if(x==="frm"){if(confirm("Ei Drive list theke soriye felbe? (Drive-er data thakbe)")){F.accounts.splice(i,1);ACC={done:false,st:{}};updDirty();renderAdmin()}}
     else if(x==="ftest")await testAcc(i);
     else if(x==="fgen"){FKEY=[...crypto.getRandomValues(new Uint8Array(18))].map(n=>n.toString(36).padStart(2,"0")).join("").slice(0,24);try{localStorage.setItem("feed_key",FKEY)}catch(_){}renderAdmin()}
-    else if(x==="fcode"){if(!FKEY)return toast("❌ Age Admin key generate koro");
+    else if(x==="fcode"){if(!FKEY){FKEY=[...crypto.getRandomValues(new Uint8Array(18))].map(n=>n.toString(36).padStart(2,"0")).join("").slice(0,24);try{localStorage.setItem("feed_key",FKEY)}catch(_){}const ki=$("fKey");if(ki)ki.value=FKEY}
       const t=(await(await fetch("apps-script/Code.gs?t="+Date.now())).text()).replace("PASTE_YOUR_ADMIN_KEY_HERE",FKEY);
       try{await navigator.clipboard.writeText(t);toast("📋 Script copy hoyeche")}catch(_){const ta=$("fCode");ta.hidden=false;ta.value=t;ta.select();toast("Select all & copy koro")}}
     else if(x==="fmod"){if(!FKEY)return toast("❌ Admin key dao");await modLoad()}
