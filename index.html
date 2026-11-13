@@ -1285,7 +1285,7 @@ async function runAuth(kind){
     if(r.ok){tk[i]=r.token;ids[i]=r.user.id;if(!user)user=r.user}
     else if(!user){err=r.error;if(err!=="net")break}}
   setBusy(false);
-  if(!user)return setMsg(FERR[err]||(err==="not_configured"?FERR.not_configured:FERR.net));
+  if(!user)return setMsg(FERR[err]||(err&&err!=="net"?("Server error: "+err):FERR.net));
   ME={name:user.name,email:user.email,av:user.av||"",avd:"",tk,ids};saveMe();closeAuth();renderFeed();
   toast(kind==="reg"?"🎉 Welcome, "+user.name.split(" ")[0]+"!":"✅ Logged in")}
 async function runForgot(){
