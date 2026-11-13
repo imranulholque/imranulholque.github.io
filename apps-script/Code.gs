@@ -72,7 +72,7 @@ function hit_(d){
 function stats_(){const st=sload_(),out={};
   Object.keys(st.days).forEach(k=>{const D=st.days[k];out[k]={v:D.v,u:D.u.length,c:D.c,d:D.d,b:D.b,o:D.o,r:D.r,p:D.p}});return{ok:true,days:out,today:Utilities.formatDate(new Date(),TZ_,'yyyy-MM-dd')}}
 function doGet(e){
-  if((e.parameter.action||'list')==='status')return J_(Object.assign({ok:true},space_()));
+  if((e.parameter.action||'list')==='status')return J_(Object.assign({ok:true,v:2},space_()));
   const c=CacheService.getScriptCache(),hit=c.get('l0');
   if(hit)return ContentService.createTextOutput(hit).setMimeType(ContentService.MimeType.JSON);
   const s=JSON.stringify(Object.assign({ok:true,posts:load_().posts.slice(0,50).map(pub_)},space_()));
