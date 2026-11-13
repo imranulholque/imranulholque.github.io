@@ -26,7 +26,7 @@ function uload_(){try{const d=JSON.parse(DriveApp.getFileById(P_().getProperty('
 function usave_(d){const s=JSON.stringify(d),p=P_();
   try{DriveApp.getFileById(p.getProperty('users')).setContent(s);return}catch(e){}
   p.setProperty('users',folders_().root.createFile('users.json',s,'application/json').getId())}
-function hash_(pw,salt){let h=Utilities.computeHmacSha256Signature(String(pw),salt);for(let i=0;i<100;i++)h=Utilities.computeHmacSha256Signature(h,salt);return Utilities.base64EncodeWebSafe(h)}
+function hash_(pw,salt){const k=Utilities.newBlob(String(salt)).getBytes();let h=Utilities.computeHmacSha256Signature(Utilities.newBlob(String(pw)).getBytes(),k);for(let i=0;i<100;i++)h=Utilities.computeHmacSha256Signature(h,k);return Utilities.base64EncodeWebSafe(h)}
 const upub_=u=>({id:u.id,name:u.name,email:u.email,av:u.av||''});
 function auth_(d){const id=tokId_(d.token);if(!id)return null;const u=uload_().u[id];if(!u||load_().banned.indexOf(u.email)>=0)return null;return u}
 function dl_(){const p=P_();try{return DriveApp.getFolderById(p.getProperty('dl'))}catch(e){const f=folders_().root.createFolder('downloads');p.setProperty('dl',f.getId());return f}}
